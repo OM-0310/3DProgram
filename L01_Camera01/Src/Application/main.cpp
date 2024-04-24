@@ -66,9 +66,21 @@ void Application::Update()
 {
 	// カメラ行列の更新
 	{
-		// カメラのワールド行列を作成、適応させる
-		Math::Matrix _nWorld =
+		// 大きさ
+		Math::Matrix _mScale =
+			Math::Matrix::CreateScale(1);
+
+		// 基準点（ターゲットからどれだけ離れているか）
+		Math::Matrix _mTrans =
 			Math::Matrix::CreateTranslation(0, 6, 0);
+
+		// どれだけ傾けているか
+		Math::Matrix _mRotation =
+			Math::Matrix::CreateRotationX(
+				DirectX::XMConvertToRadians(45));
+
+		// カメラのワールド行列を作成、適応させる
+		Math::Matrix _nWorld = _mScale * _mRotation * _mTrans;
 		m_spCamera->SetCameraMatrix(_nWorld);
 	}
 }
@@ -246,6 +258,8 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	m_spPoly = std::make_shared<KdSquarePolygon>();
 	m_spPoly->SetMaterial("Asset/Data/LessonData/Character/ca.png");
+	m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
+
 	//===================================================================
 	// 地形初期化
 	//===================================================================
