@@ -64,6 +64,13 @@ void Application::PreUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Update()
 {
+	// カメラ行列の更新
+	{
+		// カメラのワールド行列を作成、適応させる
+		Math::Matrix _nWorld =
+			Math::Matrix::CreateTranslation(0, 6, 0);
+		m_spCamera->SetCameraMatrix(_nWorld);
+	}
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -124,6 +131,9 @@ void Application::Draw()
 			CreateTranslation(0, 0, 5);
 		KdShaderManager::Instance().m_StandardShader.
 			DrawPolygon(*m_spPoly,_mat);
+
+		KdShaderManager::Instance().m_StandardShader
+			.DrawModel(*m_spModel);
 	}
 	KdShaderManager::Instance().m_StandardShader.EndLit();
 
@@ -232,10 +242,17 @@ bool Application::Init(int w, int h)
 	m_spCamera = std::make_shared<KdCamera>();
 
 	//===================================================================
-	// カメラ初期化
+	// ポリゴン初期化
 	//===================================================================
 	m_spPoly = std::make_shared<KdSquarePolygon>();
 	m_spPoly->SetMaterial("Asset/Data/LessonData/Character/ca.png");
+	//===================================================================
+	// 地形初期化
+	//===================================================================
+	m_spModel = std::make_shared<KdModelData>();
+	m_spModel->Load("Asset/Data/LessonData/Terrain/Terrain.gltf");
+
+	m_pos.z = 0.01f;
 
 	return true;
 }
