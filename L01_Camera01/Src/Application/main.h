@@ -55,6 +55,7 @@ private:
 	std::shared_ptr<KdCamera>			m_spCamera = nullptr;
 	// ポリゴンデータ
 	std::shared_ptr<KdSquarePolygon>	m_spPoly = nullptr;
+	Math::Matrix						m_mHamuWorld = Math::Matrix::Identity;
 	Math::Vector3 m_pos;
 
 	// 地形データ
