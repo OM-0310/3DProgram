@@ -3,8 +3,8 @@
 class HamuHamu : public KdGameObject
 {
 public:
-	HamuHamu(){}
-	~HamuHamu()override{}
+	HamuHamu();
+	~HamuHamu()override;
 
 	void Init()override;
 	void Update()override;
@@ -12,4 +12,6 @@ public:
 
 private:
 	std::shared_ptr<KdSquarePolygon>m_spPoly = nullptr;
+
+	void Release(){}
 };

@@ -51,11 +51,7 @@ private:
 	// ゲーム終了フラグ trueで終了する
 	bool		m_endFlag = false;
 
-	// カメラ
-	std::shared_ptr<KdCamera>			m_spCamera = nullptr;
-
-	// ゲームオブジェクトリスト
-	std::vector<std::shared_ptr<KdGameObject>> m_GameObjList;
+	std::shared_ptr<KdCamera>			m_spCamera		= nullptr;
 
 //=====================================================
 // シングルトンパターン
