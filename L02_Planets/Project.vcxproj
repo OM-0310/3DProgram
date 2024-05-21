@@ -147,6 +147,9 @@
     <ClInclude Include="..\Library\tinygltf\stb_image_write.h" />
     <ClInclude Include="..\Library\tinygltf\tiny_gltf.h" />
     <ClInclude Include="Src\Application\main.h" />
+    <ClInclude Include="Src\Application\Object\Earth\Earth.h" />
+    <ClInclude Include="Src\Application\Object\Moon\Moon.h" />
+    <ClInclude Include="Src\Application\Object\Sun\Sun.h" />
     <ClInclude Include="Src\Framework\Direct3D\KdMaterial.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.h" />
@@ -185,6 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Application\main.cpp" />
+    <ClCompile Include="Src\Application\Object\Earth\Earth.cpp" />
+    <ClCompile Include="Src\Application\Object\Moon\Moon.cpp" />
+    <ClCompile Include="Src\Application\Object\Sun\Sun.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\KdMaterial.cpp">
       <SubType>
       </SubType>
