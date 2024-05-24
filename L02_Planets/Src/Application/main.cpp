@@ -1,4 +1,7 @@
 ﻿#include "main.h"
+#include "Object/Sun/Sun.h"
+#include "Object/Earth/Earth.h"
+#include "Object/Moon/Moon.h"
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // エントリーポイント
@@ -57,6 +60,41 @@ void Application::KdPostUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PreUpdate()
 {
+	// Updateの前の更新処理
+// オブジェクトリストの整理 ・・・ 無効なオブジェクトを削除
+	auto it = m_objList.begin();
+
+	while (it != m_objList.end())
+	{
+		if ((*it)->IsExpired())	// IsExpired() ・・・ 無効ならtrue
+		{
+			// 無効なオブジェクトをリストから削除
+			it = m_objList.erase(it);
+		}
+		else
+		{
+			++it;	// 次の要素へイテレータを進める
+		}
+	}
+
+	// ↑の後には有効なオブジェクトだけのリストになっている
+
+	for (auto& obj : m_objList)
+	{
+		obj->PreUpdate();
+	}
+	Math::Matrix sunMat;
+	if (m_sun.expired() == false)
+	{
+		sunMat = m_sun.lock()->GetMatrix();
+	}
+	m_earth.lock()->SetMat(sunMat);
+	Math::Matrix earthMat;
+	if (m_earth.expired() == false)
+	{
+		earthMat = m_earth.lock()->GetMatrix();
+	}
+	m_moon.lock()->SetMat(earthMat);
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -64,6 +102,10 @@ void Application::PreUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Update()
 {
+	for (auto& obj : m_objList)
+	{
+		obj->Update();
+	}
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -71,6 +113,10 @@ void Application::Update()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PostUpdate()
 {
+	for (auto& obj : m_objList)
+	{
+		obj->PostUpdate();
+	}
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -101,6 +147,11 @@ void Application::KdPostDraw()
 void Application::PreDraw()
 {
 	m_spCamera->SetToShader();
+
+	for (auto& obj : m_objList)
+	{
+		obj->PreDraw();
+	}
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -112,6 +163,10 @@ void Application::Draw()
 	// 光を遮るオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginGenerateDepthMapFromLight();
 	{
+		for (auto& obj : m_objList)
+		{
+			obj->GenerateDepthMapFromLight();
+		}
 	}
 	KdShaderManager::Instance().m_StandardShader.EndGenerateDepthMapFromLight();
 
@@ -120,6 +175,10 @@ void Application::Draw()
 	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
+		for (auto& obj : m_objList)
+		{
+			obj->DrawLit();
+		}
 	}
 	KdShaderManager::Instance().m_StandardShader.EndLit();
 
@@ -128,6 +187,10 @@ void Application::Draw()
 	// 陰影のないオブジェクト(透明な部分を含む物体やエフェクト)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginUnLit();
 	{
+		for (auto& obj : m_objList)
+		{
+			obj->DrawUnLit();
+		}
 	}
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
 
@@ -136,6 +199,10 @@ void Application::Draw()
 	// 光源オブジェクト(自ら光るオブジェクトやエフェクト)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_postProcessShader.BeginBright();
 	{
+		for (auto& obj : m_objList)
+		{
+			obj->DrawBright();
+		}
 	}
 	KdShaderManager::Instance().m_postProcessShader.EndBright();
 }
@@ -158,6 +225,10 @@ void Application::DrawSprite()
 	// 2Dの描画はこの間で行う
 	KdShaderManager::Instance().m_spriteShader.Begin();
 	{
+		for (auto& obj : m_objList)
+		{
+			obj->DrawSprite();
+		}
 	}
 	KdShaderManager::Instance().m_spriteShader.End();
 }
@@ -226,6 +297,33 @@ bool Application::Init(int w, int h)
 	// カメラ初期化
 	//===================================================================
 	m_spCamera	= std::make_shared<KdCamera>();
+
+	//===================================================================
+	// 太陽初期化
+	//===================================================================
+	std::shared_ptr<Sun> sun;
+	sun = std::make_shared<Sun>();
+	sun->Init();
+	m_objList.push_back(sun);
+	m_sun = sun;
+
+	//===================================================================
+	// 地球初期化
+	//===================================================================
+	std::shared_ptr<Earth> earth;
+	earth = std::make_shared<Earth>();
+	earth->Init();
+	m_objList.push_back(earth);
+	m_earth = earth;
+
+	//===================================================================
+	// 月初期化
+	//===================================================================
+	std::shared_ptr<Moon> moon;
+	moon = std::make_shared<Moon>();
+	moon->Init();
+	m_objList.push_back(moon);
+	m_moon = moon;
 
 	return true;
 }

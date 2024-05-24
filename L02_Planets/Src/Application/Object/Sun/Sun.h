@@ -13,8 +13,7 @@ public:
 
 private:
 
-	KdSquarePolygon m_polygon;
-	Math::Matrix m_scaleMat;
+	KdModelData m_model;
 	Math::Matrix m_rotMat;
 	Math::Matrix m_transMat;
 	Math::Vector3 m_pos;

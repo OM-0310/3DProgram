@@ -4,6 +4,11 @@
 // アプリケーションクラス
 //	APP.～ でどこからでもアクセス可能
 //============================================================
+
+class Sun;
+class Earth;
+class Moon;
+
 class Application
 {
 // メンバ
@@ -50,6 +55,11 @@ private:
 
 	// ゲーム終了フラグ trueで終了する
 	bool		m_endFlag = false;
+
+	std::list<std::shared_ptr<KdGameObject>> m_objList;
+	std::weak_ptr<Sun> m_sun;
+	std::weak_ptr<Earth> m_earth;
+	std::weak_ptr<Moon> m_moon;
 
 	std::shared_ptr<KdCamera>			m_spCamera		= nullptr;
 
