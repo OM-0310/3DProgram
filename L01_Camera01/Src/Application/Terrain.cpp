@@ -14,10 +14,6 @@ void Terrain::Init()
 	m_spModel->Load("Asset/Data/LessonData/Terrain/Terrain.gltf");
 }
 
-void Terrain::Update()
-{
-}
-
 void Terrain::DrawLit()
 {
 	KdShaderManager::Instance().m_StandardShader
