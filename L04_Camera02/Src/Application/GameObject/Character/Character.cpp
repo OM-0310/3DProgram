@@ -1,5 +1,6 @@
 ﻿#include "Character.h"
 #include "../../main.h"
+#include "../../GameObject/Camera/CameraBase.h"
 
 void Character::Init()
 {
@@ -22,6 +23,12 @@ void Character::Update()
 	if (GetAsyncKeyState('A')) { moveVec.x = -1.0f; }
 	if (GetAsyncKeyState('W')) { moveVec.z = 1.0f; }
 	if (GetAsyncKeyState('S')) { moveVec.z = -1.0f; }
+
+	const std::shared_ptr<CameraBase> _spCamere = m_wpCamera.lock();
+	if (_spCamere)
+	{
+		moveVec = moveVec.TransformNormal(moveVec, _spCamere->GetRotationYMatrix());
+	}
 	moveVec.Normalize();
 	moveVec *= moveSpd;
 	nowPos += moveVec;
