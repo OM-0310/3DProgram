@@ -5,6 +5,8 @@
 
 #include "GameObject/Camera/TrackingCamera/TrackingCamera.h"
 #include "GameObject/Camera/FPSCamera/FPSCamera.h"
+#include "GameObject/Camera/TPSCamera/TPSCamera.h"
+
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // エントリーポイント
 // アプリケーションはこの関数から進行する
