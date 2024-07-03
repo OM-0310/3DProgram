@@ -30,6 +30,11 @@ public:
 		return Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_DegAng.y));
 	}
 
+	void RegistHitObject(const std::shared_ptr<KdGameObject>& object)
+	{
+		m_wpHitObjectList.push_back(object);
+	}
+
 private:
 	// カメラの回転速度
 	Math::Vector3				m_DegAng	= Math::Vector3::Zero;
@@ -39,6 +44,7 @@ protected:
 
 	std::shared_ptr<KdCamera>	m_spCamera	= nullptr;
 	std::weak_ptr<KdGameObject> m_wpTarget;
+	std::vector<std::weak_ptr<KdGameObject>> m_wpHitObjectList{};
 
 	Math::Matrix				m_mLocalPos = Math::Matrix::Identity;
 	Math::Matrix				m_mRotation = Math::Matrix::Identity;
