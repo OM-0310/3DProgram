@@ -82,6 +82,24 @@
     <Filter Include="Src\Application\GameObject\Camera\TPSCamera">
       <UniqueIdentifier>{c8cf7720-4d00-4c0b-a1cf-bc64280b295f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains">
+      <UniqueIdentifier>{233e043b-10da-43e5-8875-4663a3698447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Ground">
+      <UniqueIdentifier>{08ba074e-2347-4e86-9a72-6df36349082f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Guns">
+      <UniqueIdentifier>{1e091458-ae0d-4eea-8714-8610cdef373b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Guns\Pistol">
+      <UniqueIdentifier>{e7c03c77-4549-4a83-8626-926307d37587}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters">
+      <UniqueIdentifier>{fd231edd-a7a6-4886-a9ee-00972e45e575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Player">
+      <UniqueIdentifier>{c9f2517f-0e03-43b1-9d11-9b04c4bd9483}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -258,6 +276,24 @@
     <ClInclude Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.h">
       <Filter>Src\Application\GameObject\Camera\FPSCamera</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Guns\GunBase.h">
+      <Filter>Src\Application\GameObject\Guns</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\CharaBase.h">
+      <Filter>Src\Application\GameObject\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Guns\Pistol\Pistol.h">
+      <Filter>Src\Application\GameObject\Guns\Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\TerrainBase.h">
+      <Filter>Src\Application\GameObject\Terrains</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Player\Player.h">
+      <Filter>Src\Application\GameObject\Characters\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h">
+      <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -406,6 +442,24 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\FPSCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Guns\GunBase.cpp">
+      <Filter>Src\Application\GameObject\Guns</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\CharaBase.cpp">
+      <Filter>Src\Application\GameObject\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Guns\Pistol\Pistol.cpp">
+      <Filter>Src\Application\GameObject\Guns\Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\TerrainBase.cpp">
+      <Filter>Src\Application\GameObject\Terrains</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Player\Player.cpp">
+      <Filter>Src\Application\GameObject\Characters\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
