@@ -45,7 +45,7 @@ private:
 protected:
 	void UpdateRotateByMouse();
 
-	std::shared_ptr<KdCamera>	m_spCamera		= nullptr;
+	std::shared_ptr<KdCamera>	m_spCamera = nullptr;
 	std::weak_ptr<KdGameObject>	m_wpTarget;
 
 	Math::Matrix				m_mLocalPos		= Math::Matrix::Identity;

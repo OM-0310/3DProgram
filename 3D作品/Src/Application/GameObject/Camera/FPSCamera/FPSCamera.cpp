@@ -6,7 +6,9 @@ void FPSCamera::Init()
 	CameraBase::Init();
 
 	// 基準点(ターゲット)の目線
-	m_mLocalPos = Math::Matrix::CreateTranslation(0, 1.5f, 0.0f);
+	m_mLocalPos = Math::Matrix::CreateTranslation(0.f, 1.7f, -0.2f);
+
+	m_mRotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 }

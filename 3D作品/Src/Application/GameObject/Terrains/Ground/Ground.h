@@ -9,7 +9,6 @@ public:
 	~Ground		()	override	{ Release(); }
 
 	void Init	()	override;
-	void Update	()	override;
 
 private:
 };

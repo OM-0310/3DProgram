@@ -20,6 +20,7 @@ protected:
 
 
 	Math::Matrix					m_mTrans	= Math::Matrix::Identity;
+	Math::Matrix					m_mScale	= Math::Matrix::Identity;
 	Math::Matrix					m_mRot		= Math::Matrix::Identity;
 
 	Math::Vector3					m_pos		= Math::Vector3::Zero;
