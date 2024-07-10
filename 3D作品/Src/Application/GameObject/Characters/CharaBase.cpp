@@ -6,6 +6,8 @@ void CharaBase::Init()
 {
 	m_gravity	= 0.0f;
 
+	m_color = { 1.f,1.f,1.f,m_alpha };
+
 	m_mTrans	= Math::Matrix::Identity;
 	m_mRot		= Math::Matrix::Identity;
 	m_mWorld	= Math::Matrix::Identity;
@@ -21,7 +23,7 @@ void CharaBase::PostUpdate()
 	KdCollider::RayInfo rayInfo;
 	rayInfo.m_pos	= m_pos;
 	rayInfo.m_dir	= Math::Vector3::Down;
-	rayInfo.m_pos.y += 0.1f;
+	rayInfo.m_pos.y -= 0.05f;
 
 	//float enableStepHigh = 0.2f;
 	//rayInfo.m_pos.y += enableStepHigh;
@@ -50,7 +52,7 @@ void CharaBase::PostUpdate()
 	}
 	if (ishit)
 	{
-		m_pos = hitPos + Math::Vector3(0, -0.1f, 0);
+		m_pos = hitPos + Math::Vector3(0, 0.05f, 0);
 		m_gravity = 0;
 	}
 	//=========================================================
@@ -60,7 +62,7 @@ void CharaBase::PostUpdate()
 
 void CharaBase::DrawLit()
 {
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, m_color);
 }
 
 void CharaBase::GenerateDepthMapFromLight()

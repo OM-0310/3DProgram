@@ -31,6 +31,6 @@ void GameScene::Init()
 	camera->Init();
 	m_objList.push_back(camera);
 
-	camera->SetTarget(player);
+	camera->SetPlayer(player);
 	player->SetCamera(camera);
 }

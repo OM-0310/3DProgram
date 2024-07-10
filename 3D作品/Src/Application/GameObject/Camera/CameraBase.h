@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class Player;
+
 class CameraBase : public KdGameObject
 {
 public:
@@ -10,7 +12,7 @@ public:
 	void Update()			override;
 	void PreDraw()			override;
 
-	void SetTarget(const std::shared_ptr<KdGameObject>& target);
+	void SetPlayer(const std::shared_ptr<Player>& player);
 
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
@@ -24,33 +26,33 @@ public:
 		return m_spCamera;
 	}
 
-	const Math::Matrix GetRotationMatrix()const
-	{
-		return Math::Matrix::CreateFromYawPitchRoll(
-		       DirectX::XMConvertToRadians(m_DegAng.y),
-		       DirectX::XMConvertToRadians(m_DegAng.x),
-		       DirectX::XMConvertToRadians(m_DegAng.z));
-	}
+	//const Math::Matrix GetRotationMatrix()const
+	//{
+	//	return Math::Matrix::CreateFromYawPitchRoll(
+	//	       DirectX::XMConvertToRadians(m_DegAng.y),
+	//	       DirectX::XMConvertToRadians(m_DegAng.x),
+	//	       DirectX::XMConvertToRadians(m_DegAng.z));
+	//}
 
-	const Math::Matrix GetRotationYMatrix() const
-	{
-		return Math::Matrix::CreateRotationY(
-			   DirectX::XMConvertToRadians(m_DegAng.y));
-	}
+	//const Math::Matrix GetRotationYMatrix() const
+	//{
+	//	return Math::Matrix::CreateRotationY(
+	//		   DirectX::XMConvertToRadians(m_DegAng.y));
+	//}
 
 private:
 	// カメラ回転用角度
-	Math::Vector3				m_DegAng		= Math::Vector3::Zero;
+	//Math::Vector3				m_DegAng		= Math::Vector3::Zero;
 
 protected:
-	void UpdateRotateByMouse();
+	//void UpdateRotateByMouse();
 
 	std::shared_ptr<KdCamera>	m_spCamera = nullptr;
-	std::weak_ptr<KdGameObject>	m_wpTarget;
+	std::weak_ptr<Player>		m_wpPlayer;
 
 	Math::Matrix				m_mLocalPos		= Math::Matrix::Identity;
-	Math::Matrix				m_mRotation		= Math::Matrix::Identity;
+	//Math::Matrix				m_mRotation		= Math::Matrix::Identity;
 
 	// カメラ回転用マウス座標の差分
-	POINT						m_FixMousePos{};
+	//POINT						m_FixMousePos{};
 };

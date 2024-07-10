@@ -25,6 +25,8 @@ protected:
 	Math::Matrix					m_mRot		= Math::Matrix::Identity;
 
 	Math::Vector3					m_pos		= Math::Vector3::Zero;
+	Math::Color						m_color		= kWhiteColor;
 
-	float							m_gravity	= 0.0f;
+	float							m_gravity	= 0.f;
+	float							m_alpha		= 1.f;
 };

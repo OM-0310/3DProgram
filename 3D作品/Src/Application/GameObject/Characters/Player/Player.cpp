@@ -6,10 +6,16 @@ void Player::Init()
 	m_spModel	= std::make_shared<KdModelData>();
 	m_spModel->Load("Asset/Models/Characters/Player/Swat.gltf");
 
-	m_pos		= {0.f,0.f,-1.2f};
+	m_pos		= { 0.f,0.f,-1.2f };
 	m_moveDir	= {};
-	m_moveSpeed = -0.5f;
+	m_moveSpeed = 0.25f;
 
+	// ↓画面中央座標
+	m_FixMousePos.x = 640;
+	m_FixMousePos.y = 360;
+
+	m_walkFlg	= false;
+	m_dashFlg	= false;
 	m_keyFlg	= false;
 
 	CharaBase::Init();
@@ -17,14 +23,113 @@ void Player::Init()
 
 void Player::Update()
 {
-	const std::shared_ptr<TPSCamera> _spCamere = m_wpCamera.lock();
+	// 移動処理
+	MoveProcess();
 
+	// 視点切り替え処理
+	ChanegeViewPointProcess();
+
+	//	キャラクターの回転角度を計算する
+	UpdateRotate(m_moveDir);
+	UpdateRotateByMouse();
+
+	m_moveDir = m_moveDir.TransformNormal(m_moveDir, GetRotationYMatrix());
+
+	m_moveDir.Normalize();
+
+	m_pos		+= m_moveDir * m_moveSpeed;
+
+	m_pos.y -= m_gravity;
+	m_gravity += 0.04f;
+
+	m_color = { 1.f,1.f,1.f,m_alpha };
+
+	m_mTrans	= Math::Matrix::CreateTranslation(m_pos);
+	m_mRot		= GetRotationYMatrix() * Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
+	m_mWorld = m_mRot * m_mTrans;
+}
+
+void Player::PostUpdate()
+{
+	CharaBase::PostUpdate();
+}
+
+//================================================================================================================================
+// 移動処理・・・ここから
+//================================================================================================================================
+void Player::MoveProcess()
+{
 	m_moveDir = Math::Vector3::Zero;
 
-	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += { 0.f, 0.f, -1.f}; }
-	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += { 0.f, 0.f, 1.f}; }
-	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += { 1.f, 0.f, 0.f}; }
-	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += {-1.f, 0.f, 0.f}; }
+	// 移動処理
+	if (GetAsyncKeyState('W') & 0x8000)
+	{
+		m_walkFlg = true;
+		m_moveDir += { 0.f, 0.f, 1.f};
+	}
+	else
+	{
+		if (!m_walkFlg)
+		{
+			if (m_dashFlg)m_dashFlg = false;
+		}
+	}
+	if (GetAsyncKeyState('S') & 0x8000)
+	{
+		m_walkFlg = true;
+		m_moveDir += { 0.f, 0.f, -1.f};
+	}
+	else
+	{
+		if (!m_walkFlg)
+		{
+			if (m_dashFlg)m_dashFlg = false;
+		}
+	}
+	if (GetAsyncKeyState('A') & 0x8000)
+	{
+		m_walkFlg = true;
+		m_moveDir += {-1.f, 0.f, 0.f};
+	}
+	else
+	{
+		if (!m_walkFlg)
+		{
+			if (m_dashFlg)m_dashFlg = false;
+		}
+	}
+	if (GetAsyncKeyState('D') & 0x8000)
+	{
+		m_walkFlg = true;
+		m_moveDir += { 1.f, 0.f, 0.f};
+	}
+	else
+	{
+		if (!m_walkFlg)
+		{
+			if (m_dashFlg)	m_dashFlg = false;
+		}
+	}
+	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
+	{
+		m_dashFlg = true;
+	}
+
+	if (m_moveDir == Math::Vector3::Zero)	m_walkFlg = false;
+
+	if (m_dashFlg)							m_moveSpeed = 0.5f;
+	else									m_moveSpeed = 0.25f;
+}
+//================================================================================================================================
+// 移動処理・・・ここまで
+//================================================================================================================================
+
+//================================================================================================================================
+// 視点切り替え処理・・・ここから
+//================================================================================================================================
+void Player::ChanegeViewPointProcess()
+{
+	const std::shared_ptr<TPSCamera> _spCamere = m_wpCamera.lock();
 
 	// 視点切り替え
 	if (GetAsyncKeyState('F') & 0x8000)
@@ -35,6 +140,7 @@ void Player::Update()
 			if (!m_keyFlg)
 			{
 				m_keyFlg = true;
+				m_alpha = 1.0f;
 				_spCamere->ChangeTPS();
 			}
 			break;
@@ -42,6 +148,7 @@ void Player::Update()
 			if (!m_keyFlg)
 			{
 				m_keyFlg = true;
+				m_alpha = 0.0f;
 				_spCamere->ChangeFPS();
 			}
 			break;
@@ -53,27 +160,29 @@ void Player::Update()
 	{
 		m_keyFlg = false;
 	}
-
-	// ベクトルの向きをY軸の回転行列で変換
-	if (_spCamere)
-	{
-		m_moveDir = m_moveDir.TransformNormal(m_moveDir, _spCamere->GetRotationYMatrix());
-	}
-
-	m_moveDir.Normalize();
-
-	//	キャラクターの回転角度を計算する
-	UpdateRotate(m_moveDir);
-
-	m_pos		+= m_moveDir * m_moveSpeed;
-
-	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
-	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-	m_mWorld = m_mRot * m_mTrans;
 }
+//================================================================================================================================
+// 視点切り替え処理・・・ここまで
+//================================================================================================================================
 
-void Player::PostUpdate()
+void Player::UpdateRotateByMouse()
 {
+	// マウスでカメラを回転させる処理
+	POINT _nowPos;
+	GetCursorPos(&_nowPos);
+
+	POINT _mouseMove{};
+	_mouseMove.x = _nowPos.x - m_FixMousePos.x;
+	_mouseMove.y = _nowPos.y - m_FixMousePos.y;
+
+	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
+
+	// 実際にカメラを回転させる処理(0.15はただの補正値)
+	m_degAng.x += _mouseMove.y * 0.15f;
+	m_degAng.y += _mouseMove.x * 0.15f;
+
+	// 回転制御
+	m_degAng.x = std::clamp(m_degAng.x, -45.f, 45.f);
 }
 
 void Player::UpdateRotate(const Math::Vector3& srcMoveVec)
