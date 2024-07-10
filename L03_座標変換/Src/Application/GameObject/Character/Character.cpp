@@ -80,11 +80,10 @@ void Character::DrawLit()
 
 void Character::DrawSprite()
 {
+	// 2D座標を3D座標へ変換
 	Math::Vector3 charaPos;
 	Math::Vector3 nowPos = GetPos();
 	m_wpCamera.lock()->ConvertWorldToScreenDetail(nowPos, charaPos);
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, charaPos.x, charaPos.y);
-
-	// 2D座標を3D座標へ変換
 }
