@@ -1,22 +1,23 @@
 ﻿#include "Player.h"
-#include "../../../GameObject/Camera/TPSCamera/TPSCamera.h"
+#include "../../Camera/TPSCamera/TPSCamera.h"
+#include "../../Weapon/WeaponBase.h"
 
 void Player::Init()
 {
-	m_spModel	= std::make_shared<KdModelData>();
-	m_spModel->Load("Asset/Models/Characters/Player/Swat.gltf");
+	m_spModel		= std::make_shared<KdModelWork>();
+	m_spModel->SetModelData("Asset/Models/Characters/Player/Swat.gltf");
 
-	m_pos		= { 0.f,0.f,-1.2f };
-	m_moveDir	= {};
-	m_moveSpeed = 0.25f;
+	m_pos			= { 0.f,0.f,-1.2f };
+	m_moveDir		= {};
+	m_moveSpeed		= 0.25f;
 
 	// ↓画面中央座標
 	m_FixMousePos.x = 640;
 	m_FixMousePos.y = 360;
 
-	m_walkFlg	= false;
-	m_dashFlg	= false;
-	m_keyFlg	= false;
+	m_walkFlg		= false;
+	m_dashFlg		= false;
+	m_keyFlg		= false;
 
 	CharaBase::Init();
 }
@@ -29,24 +30,27 @@ void Player::Update()
 	// 視点切り替え処理
 	ChanegeViewPointProcess();
 
+	// 銃構え処理
+	AimProcess();
+
 	//	キャラクターの回転角度を計算する
 	UpdateRotate(m_moveDir);
 	UpdateRotateByMouse();
 
-	m_moveDir = m_moveDir.TransformNormal(m_moveDir, GetRotationYMatrix());
+	m_moveDir	= m_moveDir.TransformNormal(m_moveDir, GetRotationYMatrix());
 
 	m_moveDir.Normalize();
 
 	m_pos		+= m_moveDir * m_moveSpeed;
 
-	m_pos.y -= m_gravity;
-	m_gravity += 0.04f;
+	m_pos.y		-= m_gravity;
+	m_gravity	+= 0.04f;
 
-	m_color = { 1.f,1.f,1.f,m_alpha };
+	m_color		= { 1.f,1.f,1.f,m_alpha };
 
 	m_mTrans	= Math::Matrix::CreateTranslation(m_pos);
-	m_mRot		= GetRotationYMatrix() * Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
-	m_mWorld = m_mRot * m_mTrans;
+	m_mRot		= GetRotationMatrix();
+	m_mWorld	= m_mRot * m_mTrans;
 }
 
 void Player::PostUpdate()
@@ -65,7 +69,7 @@ void Player::MoveProcess()
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
 		m_walkFlg = true;
-		m_moveDir += { 0.f, 0.f, 1.f};
+		m_moveDir += { 0.f, 0.f, -1.f};
 	}
 	else
 	{
@@ -77,7 +81,7 @@ void Player::MoveProcess()
 	if (GetAsyncKeyState('S') & 0x8000)
 	{
 		m_walkFlg = true;
-		m_moveDir += { 0.f, 0.f, -1.f};
+		m_moveDir += { 0.f, 0.f, 1.f};
 	}
 	else
 	{
@@ -89,7 +93,7 @@ void Player::MoveProcess()
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
 		m_walkFlg = true;
-		m_moveDir += {-1.f, 0.f, 0.f};
+		m_moveDir += {1.f, 0.f, 0.f};
 	}
 	else
 	{
@@ -101,7 +105,7 @@ void Player::MoveProcess()
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
 		m_walkFlg = true;
-		m_moveDir += { 1.f, 0.f, 0.f};
+		m_moveDir += { -1.f, 0.f, 0.f};
 	}
 	else
 	{
@@ -164,6 +168,21 @@ void Player::ChanegeViewPointProcess()
 //================================================================================================================================
 // 視点切り替え処理・・・ここまで
 //================================================================================================================================
+
+
+void Player::AimProcess()
+{
+	std::shared_ptr<WeaponBase> _spWeapon = m_wpWeapon.lock();
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_spWeapon->Hold();
+	}
+	else
+	{
+		_spWeapon->UnHold();
+	}
+}
+
 
 void Player::UpdateRotateByMouse()
 {

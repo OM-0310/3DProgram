@@ -5,11 +5,11 @@ class CharaBase : public KdGameObject
 public:
 
 	CharaBase						()				{}
-	~CharaBase						()	override	{ Release(); }
+	virtual ~CharaBase				()	override	{ Release(); }
 
-	void Init						()	override;
-	void Update						()	override	{}
-	void PostUpdate					()	override;
+	virtual void Init				()	override;
+	virtual void Update				()	override	{}
+	virtual void PostUpdate			()	override;
 	void DrawLit					()	override;
 	void GenerateDepthMapFromLight	()	override;
 
@@ -19,7 +19,7 @@ protected:
 
 protected:
 
-	std::shared_ptr<KdModelData>	m_spModel	= nullptr;
+	std::shared_ptr<KdModelWork>	m_spModel	= nullptr;
 
 	Math::Matrix					m_mTrans	= Math::Matrix::Identity;
 	Math::Matrix					m_mRot		= Math::Matrix::Identity;

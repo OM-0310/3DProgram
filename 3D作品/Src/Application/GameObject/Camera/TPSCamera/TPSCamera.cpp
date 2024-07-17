@@ -44,11 +44,9 @@ void TPSCamera::Update()
 	}
 
 	// カメラの回転
-	//UpdateRotateByMouse();
-	//m_mRotation = GetRotationMatrix();
-	//m_mWorld = (m_mLocalPos * m_mRotation) *  _targetMat;
+	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
 	m_mLocalPos = Math::Matrix::CreateTranslation(m_basePoint);
-	m_mWorld =  m_mLocalPos * _targetMat;
+	m_mWorld = m_mRot * m_mLocalPos * _targetMat;
 
 	CameraBase::Update();
 }

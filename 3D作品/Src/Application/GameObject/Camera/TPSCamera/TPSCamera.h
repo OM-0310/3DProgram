@@ -23,8 +23,8 @@ public:
 
 private:
 
-	const Math::Vector3 m_fpsBasePoint = { 0.f, 1.8f, 0.2f };
-	const Math::Vector3 m_tpsBasePoint = { 0.f, 1.8f, -3.f };
+	const Math::Vector3 m_fpsBasePoint = { 0.f, 1.8f, -0.8f };
+	const Math::Vector3 m_tpsBasePoint = { 0.f, 1.8f, 3.f };
 
 	Math::Vector3		m_basePoint;
 

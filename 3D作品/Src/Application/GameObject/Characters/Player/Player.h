@@ -2,6 +2,7 @@
 #include "../CharaBase.h"
 
 class TPSCamera;
+class WeaponBase;
 
 class Player : public CharaBase
 {
@@ -14,12 +15,18 @@ public:
 	void Update		()	override;
 	void PostUpdate	()	override;
 
-	void MoveProcess();			// 移動処理
+	void MoveProcess();				// 移動処理
 	void ChanegeViewPointProcess();	// 視点切り替え処理
+	void AimProcess();				// 銃構え処理
 
 	void SetCamera	(const std::weak_ptr<TPSCamera>& camera)
 	{
 		m_wpCamera = camera;
+	}
+
+	void SetWeapon(const std::weak_ptr<WeaponBase>& weapon)
+	{
+		m_wpWeapon = weapon;
 	}
 
 	const Math::Matrix GetRotationMatrix()const
@@ -58,6 +65,7 @@ private:
 	void UpdateRotate(const Math::Vector3& srcMoveVec);
 
 	std::weak_ptr<TPSCamera>	m_wpCamera;		// カメラ情報
+	std::weak_ptr<WeaponBase>	m_wpWeapon;		// 武器情報
 
 	Math::Vector3				m_degAng;		// 角度
 
