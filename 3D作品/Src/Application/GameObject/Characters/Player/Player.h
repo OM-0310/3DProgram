@@ -3,6 +3,8 @@
 
 class TPSCamera;
 class WeaponBase;
+class Pistol;
+class AssaultRifle;
 
 class Player : public CharaBase
 {
@@ -18,6 +20,7 @@ public:
 	void MoveProcess();				// 移動処理
 	void ChanegeViewPointProcess();	// 視点切り替え処理
 	void AimProcess();				// 銃構え処理
+	void ChanegeWeaponProcess();	// 武器切り替え処理
 
 	void SetCamera	(const std::weak_ptr<TPSCamera>& camera)
 	{
@@ -33,7 +36,7 @@ public:
 	{
 		return Math::Matrix::CreateFromYawPitchRoll(
 			DirectX::XMConvertToRadians(m_degAng.y),
-			DirectX::XMConvertToRadians(m_degAng.x),
+			DirectX::XMConvertToRadians(-m_degAng.x),
 			DirectX::XMConvertToRadians(m_degAng.z));
 	}
 
@@ -77,6 +80,7 @@ private:
 	bool						m_walkFlg;		// 歩行フラグ
 	bool						m_dashFlg;		// 走行フラグ
 	bool						m_keyFlg;		// キーフラグ
+	bool						m_changeKeyFlg;	// 視点切り替え時用キーフラグ
 
 	POINT						m_FixMousePos;	// カメラ回転用マウス座標の原点
 };

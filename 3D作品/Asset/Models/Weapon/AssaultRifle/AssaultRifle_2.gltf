@@ -15,7 +15,7 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Pistol_1",
+			"name":"AssaultRifle_2",
 			"rotation":[
 				0,
 				-0.7071068286895752,
@@ -27,12 +27,26 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"DarkWood",
+			"name":"Wood",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.10246890038251877,
-					0.07204850763082504,
-					0.055191364139318466,
+					0.13285954296588898,
+					0.09002935886383057,
+					0.06840453296899796,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"Black",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.026966236531734467,
+					0.02748231776058674,
+					0.02909727953374386,
 					1
 				],
 				"metallicFactor":0,
@@ -69,26 +83,12 @@
 		},
 		{
 			"doubleSided":true,
-			"name":"Black",
+			"name":"DarkWood",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.026966236531734467,
-					0.02748231776058674,
-					0.02909727953374386,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"Black2",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.013695953413844109,
-					0.013931839726865292,
-					0.014667932875454426,
+					0.10246890038251877,
+					0.07204850763082504,
+					0.055191364139318466,
 					1
 				],
 				"metallicFactor":0,
@@ -98,7 +98,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Cube.204",
+			"name":"Cube.136",
 			"primitives":[
 				{
 					"attributes":{
@@ -147,240 +147,240 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":448,
+			"count":390,
 			"max":[
-				0.18867217004299164,
-				0.36738359928131104,
-				0.1616048365831375
+				2.48712420463562,
+				0.653942346572876,
+				0.08368338644504547
 			],
 			"min":[
-				-0.23292870819568634,
-				-0.3553687632083893,
-				-0.16160494089126587
+				-1.558630347251892,
+				-0.2725173532962799,
+				-0.08368311822414398
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":448,
+			"count":390,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5123,
-			"count":672,
+			"count":654,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":3,
 			"componentType":5126,
-			"count":224,
+			"count":748,
 			"max":[
-				1.37189519405365,
-				0.42934608459472656,
-				0.13898901641368866
+				2.457498073577881,
+				0.8082783222198486,
+				0.07624378800392151
 			],
 			"min":[
-				-0.336443692445755,
-				-0.38435500860214233,
-				-0.13898910582065582
+				-1.6048098802566528,
+				-0.7415415048599243,
+				-0.07624375075101852
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":224,
+			"count":748,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5123,
-			"count":396,
+			"count":1206,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":180,
+			"count":650,
 			"max":[
-				1.3724327087402344,
-				0.7536340355873108,
-				0.06749434769153595
+				3.816847085952759,
+				0.7774773836135864,
+				0.07841348648071289
 			],
 			"min":[
-				-0.3395498991012573,
-				0.0785968005657196,
-				-0.06749437004327774
+				-0.17887505888938904,
+				0.14525839686393738,
+				-0.07841331511735916
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":7,
 			"componentType":5126,
-			"count":180,
+			"count":650,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":8,
 			"componentType":5123,
-			"count":276,
+			"count":1200,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":826,
+			"count":418,
 			"max":[
-				1.479757308959961,
-				0.7391843199729919,
-				0.1504664421081543
+				3.734915018081665,
+				0.8598202466964722,
+				0.09801056981086731
 			],
 			"min":[
-				-0.3396436870098114,
-				-0.4079217314720154,
-				-0.15046653151512146
+				-0.1862785816192627,
+				0.5199692249298096,
+				-0.09801042824983597
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":826,
+			"count":418,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":11,
 			"componentType":5123,
-			"count":1368,
+			"count":726,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":12,
 			"componentType":5126,
-			"count":270,
+			"count":72,
 			"max":[
-				1.45725679397583,
-				0.6869352459907532,
-				0.15433765947818756
+				2.487339735031128,
+				0.8481839895248413,
+				0.08368341624736786
 			],
 			"min":[
-				-0.10602696239948273,
-				0.4226142168045044,
-				-0.15433774888515472
+				1.7907134294509888,
+				0.6662192940711975,
+				-0.0836830884218216
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":13,
 			"componentType":5126,
-			"count":270,
+			"count":72,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":14,
 			"componentType":5123,
-			"count":408,
+			"count":132,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":5376,
+			"byteLength":4680,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":5376,
-			"byteOffset":5376,
+			"byteLength":4680,
+			"byteOffset":4680,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1344,
-			"byteOffset":10752,
+			"byteLength":1308,
+			"byteOffset":9360,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":2688,
-			"byteOffset":12096,
+			"byteLength":8976,
+			"byteOffset":10668,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2688,
-			"byteOffset":14784,
+			"byteLength":8976,
+			"byteOffset":19644,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":792,
-			"byteOffset":17472,
+			"byteLength":2412,
+			"byteOffset":28620,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":2160,
-			"byteOffset":18264,
+			"byteLength":7800,
+			"byteOffset":31032,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2160,
-			"byteOffset":20424,
+			"byteLength":7800,
+			"byteOffset":38832,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":552,
-			"byteOffset":22584,
+			"byteLength":2400,
+			"byteOffset":46632,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":9912,
-			"byteOffset":23136,
+			"byteLength":5016,
+			"byteOffset":49032,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":9912,
-			"byteOffset":33048,
+			"byteLength":5016,
+			"byteOffset":54048,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2736,
-			"byteOffset":42960,
+			"byteLength":1452,
+			"byteOffset":59064,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":3240,
-			"byteOffset":45696,
+			"byteLength":864,
+			"byteOffset":60516,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3240,
-			"byteOffset":48936,
+			"byteLength":864,
+			"byteOffset":61380,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":816,
-			"byteOffset":52176,
+			"byteLength":264,
+			"byteOffset":62244,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":52992,
-			"uri":"Pistol_1.bin"
+			"byteLength":62508,
+			"uri":"AssaultRifle_2.bin"
 		}
 	]
 }

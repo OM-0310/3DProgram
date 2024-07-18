@@ -4,27 +4,37 @@
 class TPSCamera : public CameraBase
 {
 public:
-	TPSCamera				()						{}
-	~TPSCamera				()			override	{}
+						TPSCamera		()						{}
+						~TPSCamera		()			override	{}
 
 	enum class CameraType
 	{
-		FPS,
-		TPS
+		Fps,
+		TpsR,
+		TpsL,
+		AimR,
+		AimL
 	};
 
-	void Init				()			override;
-	void Update				()			override;
+	void				Init			()			override;
+	void				Update			()			override;
 
-	void ChangeFPS			()						{ m_camType = CameraType::FPS; }
-	void ChangeTPS			()						{ m_camType = CameraType::TPS; }
+	void				ChangeFPS		();
+	void				ChangeTPSR		();
+	void				ChangeTPSL		();
+	void				ChangeAimR		();
+	void				ChangeAimL		();
 
-	CameraType GetCameraType()						{ return m_camType; }
+	const CameraType	GetPastCamType	()	const					{ return m_pastCamType; }
+	const CameraType	GetCamType		()	const					{ return m_camType; }
 
 private:
 
-	const Math::Vector3 m_fpsBasePoint = { 0.f, 1.8f, -0.8f };
-	const Math::Vector3 m_tpsBasePoint = { 0.f, 1.8f, 3.f };
+	const Math::Vector3 m_aimRBasePoint = { -1.f,1.8f,2.3f };
+	const Math::Vector3 m_aimLBasePoint	= { 1.f,1.8f,2.3f };
+	const Math::Vector3 m_fpsBasePoint	= { 0.f, 1.8f, -0.8f };
+	const Math::Vector3 m_tpsRBasePoint	= { -0.5f, 1.8f, 3.f };
+	const Math::Vector3 m_tpsLBasePoint	= { 0.5f, 1.8f, 3.f };
 
 	Math::Vector3		m_basePoint;
 
@@ -32,4 +42,5 @@ private:
 	bool				m_tpsFlg;
 
 	CameraType			m_camType;
+	CameraType			m_pastCamType;
 };

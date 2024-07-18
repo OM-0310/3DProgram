@@ -6,11 +6,6 @@ class WeaponBase : public KdGameObject
 {
 public:
 
-	enum class WeaponType
-	{
-		Pistol,
-	};
-
 	WeaponBase						()				{}
 	virtual ~WeaponBase				()	override	{ Release(); }
 
@@ -27,8 +22,6 @@ public:
 		m_wpChara = _spChara;
 	}
 
-	const WeaponType GetWeaponType	() const		{ return m_weponType; }
-
 protected:
 
 	void Release					()				{ m_spModel = nullptr; }
@@ -43,6 +36,4 @@ protected:
 	Math::Vector3					m_localPos	= Math::Vector3::Zero;
 
 	bool							m_holdFlg	= false;
-
-	WeaponType						m_weponType;
 };

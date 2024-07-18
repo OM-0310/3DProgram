@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../WeaponBase.h"
+#include "../WeaponBase/WeaponBase.h"
 
 class Pistol : public WeaponBase
 {

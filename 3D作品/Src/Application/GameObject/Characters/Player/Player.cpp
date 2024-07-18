@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 #include "../../Camera/TPSCamera/TPSCamera.h"
-#include "../../Weapon/WeaponBase.h"
+#include "../../Weapon/WeaponBase/WeaponBase.h"
+#include "../../../Scene/SceneManager.h"
 
 void Player::Init()
 {
@@ -18,6 +19,7 @@ void Player::Init()
 	m_walkFlg		= false;
 	m_dashFlg		= false;
 	m_keyFlg		= false;
+	m_changeKeyFlg	= false;
 
 	CharaBase::Init();
 }
@@ -32,6 +34,9 @@ void Player::Update()
 
 	// 銃構え処理
 	AimProcess();
+
+	// 武器切り替え処理
+	ChanegeWeaponProcess();
 
 	//	キャラクターの回転角度を計算する
 	UpdateRotate(m_moveDir);
@@ -136,24 +141,109 @@ void Player::ChanegeViewPointProcess()
 	const std::shared_ptr<TPSCamera> _spCamere = m_wpCamera.lock();
 
 	// 視点切り替え
-	if (GetAsyncKeyState('F') & 0x8000)
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
-		switch (_spCamere->GetCameraType())
+		if (GetAsyncKeyState('F') & 0x8000)
 		{
-		case TPSCamera::CameraType::FPS:
-			if (!m_keyFlg)
+			switch (_spCamere->GetCamType())
 			{
-				m_keyFlg = true;
-				m_alpha = 1.0f;
-				_spCamere->ChangeTPS();
+			case TPSCamera::CameraType::Fps:
+				if (!m_keyFlg)
+				{
+					m_keyFlg = true;
+					m_alpha = 1.0f;
+					if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsL)
+					{
+						_spCamere->ChangeAimL();
+					}
+					else if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsR)
+					{
+						_spCamere->ChangeAimR();
+					}
+				}
+				break;
+			case TPSCamera::CameraType::TpsL:
+				if (!m_keyFlg)
+				{
+					m_keyFlg = true;
+					m_alpha = 0.0f;
+					_spCamere->ChangeFPS();
+				}
+				break;
+			case TPSCamera::CameraType::TpsR:
+				if (!m_keyFlg)
+				{
+					m_keyFlg = true;
+					m_alpha = 0.0f;
+					_spCamere->ChangeFPS();
+				}
+				break;
+			case TPSCamera::CameraType::AimL:
+				if (!m_keyFlg)
+				{
+					m_keyFlg = true;
+					m_alpha = 0.0f;
+					_spCamere->ChangeFPS();
+				}
+				break;
+			case TPSCamera::CameraType::AimR:
+				if (!m_keyFlg)
+				{
+					m_keyFlg = true;
+					m_alpha = 0.0f;
+					_spCamere->ChangeFPS();
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			m_keyFlg = false;
+		}
+	}
+	else
+	{
+		if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsL)
+		{
+			_spCamere->ChangeTPSL();
+		}
+		else if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsR)
+		{
+			_spCamere->ChangeTPSR();
+		}
+	}
+	if (GetAsyncKeyState('V') & 0x8000)
+	{
+		switch (_spCamere->GetCamType())
+		{
+		case TPSCamera::CameraType::TpsL:
+			if (!m_changeKeyFlg)
+			{
+				m_changeKeyFlg = true;
+				_spCamere->ChangeTPSR();
 			}
 			break;
-		case TPSCamera::CameraType::TPS:
-			if (!m_keyFlg)
+		case TPSCamera::CameraType::TpsR:
+			if (!m_changeKeyFlg)
 			{
-				m_keyFlg = true;
-				m_alpha = 0.0f;
-				_spCamere->ChangeFPS();
+				m_changeKeyFlg = true;
+				_spCamere->ChangeTPSL();
+			}
+			break;
+		case TPSCamera::CameraType::AimL:
+			if (!m_changeKeyFlg)
+			{
+				m_changeKeyFlg = true;
+				_spCamere->ChangeAimR();
+			}
+			break;
+		case TPSCamera::CameraType::AimR:
+			if (!m_changeKeyFlg)
+			{
+				m_changeKeyFlg = true;
+				_spCamere->ChangeAimL();
 			}
 			break;
 		default:
@@ -162,25 +252,46 @@ void Player::ChanegeViewPointProcess()
 	}
 	else
 	{
-		m_keyFlg = false;
+		m_changeKeyFlg = false;
 	}
 }
 //================================================================================================================================
 // 視点切り替え処理・・・ここまで
 //================================================================================================================================
 
-
+//================================================================================================================================
+// 銃構え処理・・・ここから
+//================================================================================================================================
 void Player::AimProcess()
 {
 	std::shared_ptr<WeaponBase> _spWeapon = m_wpWeapon.lock();
+	std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
-		_spWeapon->Hold();
+		if (_spCamera->GetCamType() == TPSCamera::CameraType::TpsR)
+		{
+			_spCamera->ChangeAimR();
+		}
+		else if (_spCamera->GetCamType() == TPSCamera::CameraType::TpsL)
+		{
+			_spCamera->ChangeAimL();
+		}
+		if (_spCamera->GetCamType() == TPSCamera::CameraType::Fps)
+		{
+			_spWeapon->Hold();
+		}
 	}
 	else
 	{
 		_spWeapon->UnHold();
 	}
+}
+//================================================================================================================================
+// 銃構え処理・・・ここまで
+//================================================================================================================================
+
+void Player::ChanegeWeaponProcess()
+{
 }
 
 

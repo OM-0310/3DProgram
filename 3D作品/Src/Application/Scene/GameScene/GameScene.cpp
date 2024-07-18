@@ -7,6 +7,7 @@
 #include "../../GameObject/Terrains/Ground/Ground.h"
 #include "../../GameObject/Characters/Player/Player.h"
 #include "../../GameObject/Weapon/Pistol/Pistol.h"
+#include "../../GameObject/Weapon/AssaultRifle/AssaultRifle.h"
 #include "../../GameObject/Characters/CharaBase.h"
 
 void GameScene::Event()
@@ -79,6 +80,12 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	pistol->Init();
 	m_objList.push_back(pistol);
 
+	// 銃(アサルトライフル)
+	std::shared_ptr<AssaultRifle> assault;
+	assault = std::make_shared<AssaultRifle>();
+	assault->Init();
+	m_objList.push_back(assault);
+
 	//=================================================================
 	// 武器関係・・・ここまで
 	//=================================================================
@@ -98,8 +105,10 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//=================================================================
 
 	player->SetCamera(camera);
-	player->SetWeapon(pistol);
-	pistol->SetChara(player);
+	//player->SetWeapon(pistol);
+	player->SetWeapon(assault);
+	//pistol->SetChara(player);
+	assault->SetChara(player);
 	camera->SetPlayer(player);
 
 	done = true;

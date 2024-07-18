@@ -100,6 +100,12 @@
     <Filter Include="Src\Application\GameObject\Weapon\Pistol">
       <UniqueIdentifier>{e7c03c77-4549-4a83-8626-926307d37587}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\AssaultRifle">
+      <UniqueIdentifier>{cabdeb6d-9084-407c-9fc1-96ab52f27739}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\WeaponBase">
+      <UniqueIdentifier>{bf6486fb-aea0-444d-8fd4-9e4202e7c1a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -288,11 +294,14 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h">
       <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h">
-      <Filter>Src\Application\GameObject\Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol.h">
       <Filter>Src\Application\GameObject\Weapon\Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.h">
+      <Filter>Src\Application\GameObject\Weapon\AssaultRifle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.h">
+      <Filter>Src\Application\GameObject\Weapon\WeaponBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -455,11 +464,14 @@
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp">
       <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp">
-      <Filter>Src\Application\GameObject\Weapon</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol.cpp">
       <Filter>Src\Application\GameObject\Weapon\Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.cpp">
+      <Filter>Src\Application\GameObject\Weapon\AssaultRifle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.cpp">
+      <Filter>Src\Application\GameObject\Weapon\WeaponBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

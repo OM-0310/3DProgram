@@ -1,5 +1,5 @@
 ﻿#include "WeaponBase.h"
-#include "../Characters/CharaBase.h"
+#include "../../Characters/CharaBase.h"
 
 void WeaponBase::Update()
 {
