@@ -87,29 +87,26 @@ void GameScene::Init()
 	// レッスンその1：CカードとRカードをそれぞれ50％の確率で起動時に表示せよ!
 	// レッスンその2：CカードとRカードをそれぞれ99.5%(Cカード) 0.5%(Rカード)の確率で起動時に表示せよ!
 	// レッスンその3：CカードとRカードとSRカードをそれぞれ34%,33%,33%の確率で起動時に起動せよ! 
-	
+	// レッスンその4：CカードとRカードとSRカードをそれぞれ50% 49.5% 0.5%の確率で起動時に表示せよ
+
 	//結果を出力
 	
 	OutputDebugStringA("--------------------------------------\n");
-	int _bunbo = 100;
-	int _rund = KdGetInt(0, _bunbo - 1);
-
-	int _ThusenNum = 10000000;
-	int _TousenNum[3] = { 0,0,0 };
+	int _bunbo			= 1000;
+	int _randNum[3]		= { 500,495,5 };
+	int _ThusenNum		= 10000000;
+	int _TousenNum[3]	= { 0,0,0 };
 	for (int i = 0; i < _ThusenNum; i++)
 	{
 		int _rnd = KdGetInt(0, _bunbo - 1);
-		if (_rnd <= 33)
+		for (int j = 0; j < std::size(_randNum); j++)
 		{
-			_TousenNum[0]++;
-		}
-		else if (_rnd >= 34 && _rnd <= 66)
-		{
-			_TousenNum[1]++;
-		}
-		else
-		{
-			_TousenNum[2]++;
+			_rnd -= _randNum[j];
+			if (_rnd < 0)
+			{
+				_TousenNum[j]++;
+				break;
+			}
 		}
 	}
 	float prob = 0.f;
