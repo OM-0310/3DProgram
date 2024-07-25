@@ -175,6 +175,7 @@
     <ClInclude Include="Src\Application\Object\UI\UIBase.h" />
     <ClInclude Include="Src\Application\Scene\BaseScene\BaseScene.h" />
     <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
+    <ClInclude Include="Src\Application\Scene\LoadScene\LoadScene.h" />
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Src\Framework\Direct3D\KdMaterial.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="Src\Application\Object\UI\UIBase.cpp" />
     <ClCompile Include="Src\Application\Scene\BaseScene\BaseScene.cpp" />
     <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\LoadScene\LoadScene.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\KdMaterial.cpp">

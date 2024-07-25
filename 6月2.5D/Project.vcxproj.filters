@@ -124,6 +124,9 @@
     <Filter Include="Src\Application\Object\UI\Tutorial\Tutorial_ReadyandShot">
       <UniqueIdentifier>{31f932bb-121b-4678-941d-63247f5598ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Scene\LoadScene">
+      <UniqueIdentifier>{54728d9a-7ff2-4d11-9a69-d49e44fbdc30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -339,6 +342,9 @@
     <ClInclude Include="Src\Application\Object\UI\Tutorial\Tutorial_Reload\Tutorial_ReadyandShot.h">
       <Filter>Src\Application\Object\UI\Tutorial\Tutorial_ReadyandShot</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\LoadScene\LoadScene.h">
+      <Filter>Src\Application\Scene\LoadScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -526,6 +532,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Object\UI\Tutorial\Tutorial_Reload\Tutorial_ReadyandShot.cpp">
       <Filter>Src\Application\Object\UI\Tutorial\Tutorial_ReadyandShot</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\LoadScene\LoadScene.cpp">
+      <Filter>Src\Application\Scene\LoadScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
