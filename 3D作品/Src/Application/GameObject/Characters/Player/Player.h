@@ -40,6 +40,12 @@ public:
 			DirectX::XMConvertToRadians(m_degAng.z));
 	}
 
+	enum PlayerType
+	{
+		Idle,
+		Run,
+	};
+
 private:
 
 	void UpdateRotateByMouse();
@@ -69,6 +75,7 @@ private:
 
 	std::weak_ptr<TPSCamera>	m_wpCamera;		// カメラ情報
 	std::weak_ptr<WeaponBase>	m_wpWeapon;		// 武器情報
+	std::shared_ptr<KdAnimator> m_spAnimator;	// アニメーション
 
 	Math::Vector3				m_degAng;		// 角度
 
@@ -82,5 +89,9 @@ private:
 	bool						m_keyFlg;		// キーフラグ
 	bool						m_changeKeyFlg;	// 視点切り替え時用キーフラグ
 
+	bool						m_idleFlg;
+	bool						m_runFlg;
+
+	PlayerType					m_pType;
 	POINT						m_FixMousePos;	// カメラ回転用マウス座標の原点
 };

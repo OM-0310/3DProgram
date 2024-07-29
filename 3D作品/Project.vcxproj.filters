@@ -106,6 +106,9 @@
     <Filter Include="Src\Application\GameObject\Weapon\WeaponBase">
       <UniqueIdentifier>{bf6486fb-aea0-444d-8fd4-9e4202e7c1a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI">
+      <UniqueIdentifier>{b1a0e723-6bca-41d6-b04b-6fc3a14ebb20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -303,6 +306,9 @@
     <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.h">
       <Filter>Src\Application\GameObject\Weapon\WeaponBase</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\UIBase.h">
+      <Filter>Src\Application\GameObject\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -472,6 +478,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.cpp">
       <Filter>Src\Application\GameObject\Weapon\WeaponBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp">
+      <Filter>Src\Application\GameObject\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

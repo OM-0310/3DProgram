@@ -10,7 +10,7 @@ void Player::Init()
 
 	m_pos			= { 0.f,0.f,-1.2f };
 	m_moveDir		= {};
-	m_moveSpeed		= 0.25f;
+	m_moveSpeed		= 0.2f;
 
 	// ↓画面中央座標
 	m_FixMousePos.x = 640;
@@ -21,11 +21,43 @@ void Player::Init()
 	m_keyFlg		= false;
 	m_changeKeyFlg	= false;
 
+	m_idleFlg		= false;
+	m_runFlg		= false;
+
+	m_spAnimator = std::make_shared<KdAnimator>();
+	m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Idle"));
+
+	m_pType = PlayerType::Idle;
+
 	CharaBase::Init();
 }
 
 void Player::Update()
 {
+	const std::shared_ptr<TPSCamera> _spCamere = m_wpCamera.lock();
+
+	switch (m_pType)
+	{
+	case Player::Idle:
+		if (!m_idleFlg)
+		{
+			m_idleFlg = true;
+			m_runFlg = false;
+			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Idle"));
+		}
+		break;
+	case Player::Run:
+		if (!m_runFlg)
+		{
+			m_runFlg = true;
+			m_idleFlg = false;
+			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Run"));
+		}
+		break;
+	default:
+		break;
+	}
+
 	// 移動処理
 	MoveProcess();
 
@@ -42,6 +74,10 @@ void Player::Update()
 	UpdateRotate(m_moveDir);
 	UpdateRotateByMouse();
 
+	if (m_walkFlg)							m_pType = PlayerType::Run;
+	else									m_pType = PlayerType::Idle;
+	if (m_moveDir == Math::Vector3::Zero)	m_walkFlg = false;
+
 	m_moveDir	= m_moveDir.TransformNormal(m_moveDir, GetRotationYMatrix());
 
 	m_moveDir.Normalize();
@@ -53,13 +89,26 @@ void Player::Update()
 
 	m_color		= { 1.f,1.f,1.f,m_alpha };
 
+	if (_spCamere->GetCamType() == TPSCamera::CameraType::TpsL ||
+		_spCamere->GetCamType() == TPSCamera::CameraType::TpsR)
+	{
+		m_mRot = GetRotationYMatrix();
+	}
+	else if (_spCamere->GetCamType() == TPSCamera::CameraType::AimL ||
+			_spCamere->GetCamType() == TPSCamera::CameraType::AimR)
+	{
+		m_mRot = GetRotationMatrix();
+	}
 	m_mTrans	= Math::Matrix::CreateTranslation(m_pos);
-	m_mRot		= GetRotationMatrix();
 	m_mWorld	= m_mRot * m_mTrans;
 }
 
 void Player::PostUpdate()
 {
+	// アニメーションの更新
+	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+	m_spModel->CalcNodeMatrices();
+
 	CharaBase::PostUpdate();
 }
 
@@ -76,58 +125,21 @@ void Player::MoveProcess()
 		m_walkFlg = true;
 		m_moveDir += { 0.f, 0.f, -1.f};
 	}
-	else
-	{
-		if (!m_walkFlg)
-		{
-			if (m_dashFlg)m_dashFlg = false;
-		}
-	}
 	if (GetAsyncKeyState('S') & 0x8000)
 	{
 		m_walkFlg = true;
 		m_moveDir += { 0.f, 0.f, 1.f};
-	}
-	else
-	{
-		if (!m_walkFlg)
-		{
-			if (m_dashFlg)m_dashFlg = false;
-		}
 	}
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
 		m_walkFlg = true;
 		m_moveDir += {1.f, 0.f, 0.f};
 	}
-	else
-	{
-		if (!m_walkFlg)
-		{
-			if (m_dashFlg)m_dashFlg = false;
-		}
-	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
 		m_walkFlg = true;
 		m_moveDir += { -1.f, 0.f, 0.f};
 	}
-	else
-	{
-		if (!m_walkFlg)
-		{
-			if (m_dashFlg)	m_dashFlg = false;
-		}
-	}
-	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
-	{
-		m_dashFlg = true;
-	}
-
-	if (m_moveDir == Math::Vector3::Zero)	m_walkFlg = false;
-
-	if (m_dashFlg)							m_moveSpeed = 0.5f;
-	else									m_moveSpeed = 0.25f;
 }
 //================================================================================================================================
 // 移動処理・・・ここまで
@@ -143,68 +155,69 @@ void Player::ChanegeViewPointProcess()
 	// 視点切り替え
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
-		if (GetAsyncKeyState('F') & 0x8000)
-		{
-			switch (_spCamere->GetCamType())
-			{
-			case TPSCamera::CameraType::Fps:
-				if (!m_keyFlg)
-				{
-					m_keyFlg = true;
-					m_alpha = 1.0f;
-					if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsL)
-					{
-						_spCamere->ChangeAimL();
-					}
-					else if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsR)
-					{
-						_spCamere->ChangeAimR();
-					}
-				}
-				break;
-			case TPSCamera::CameraType::TpsL:
-				if (!m_keyFlg)
-				{
-					m_keyFlg = true;
-					m_alpha = 0.0f;
-					_spCamere->ChangeFPS();
-				}
-				break;
-			case TPSCamera::CameraType::TpsR:
-				if (!m_keyFlg)
-				{
-					m_keyFlg = true;
-					m_alpha = 0.0f;
-					_spCamere->ChangeFPS();
-				}
-				break;
-			case TPSCamera::CameraType::AimL:
-				if (!m_keyFlg)
-				{
-					m_keyFlg = true;
-					m_alpha = 0.0f;
-					_spCamere->ChangeFPS();
-				}
-				break;
-			case TPSCamera::CameraType::AimR:
-				if (!m_keyFlg)
-				{
-					m_keyFlg = true;
-					m_alpha = 0.0f;
-					_spCamere->ChangeFPS();
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		else
-		{
-			m_keyFlg = false;
-		}
+		//if (GetAsyncKeyState('F') & 0x8000)
+		//{
+		//	switch (_spCamere->GetCamType())	// カメラのタイプによって切り替える
+		//	{
+		//	case TPSCamera::CameraType::Fps:
+		//		if (!m_keyFlg)
+		//		{
+		//			m_keyFlg = true;
+		//			m_alpha = 1.0f;
+		//			if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsL)
+		//			{
+		//				_spCamere->ChangeAimL();
+		//			}
+		//			else if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsR)
+		//			{
+		//				_spCamere->ChangeAimR();
+		//			}
+		//		}
+		//		break;
+		//	case TPSCamera::CameraType::TpsL:
+		//		if (!m_keyFlg)
+		//		{
+		//			m_keyFlg = true;
+		//			m_alpha = 0.0f;
+		//			_spCamere->ChangeFPS();
+		//		}
+		//		break;
+		//	case TPSCamera::CameraType::TpsR:
+		//		if (!m_keyFlg)
+		//		{
+		//			m_keyFlg = true;
+		//			m_alpha = 0.0f;
+		//			_spCamere->ChangeFPS();
+		//		}
+		//		break;
+		//	case TPSCamera::CameraType::AimL:
+		//		if (!m_keyFlg)
+		//		{
+		//			m_keyFlg = true;
+		//			m_alpha = 0.0f;
+		//			_spCamere->ChangeFPS();
+		//		}
+		//		break;
+		//	case TPSCamera::CameraType::AimR:
+		//		if (!m_keyFlg)
+		//		{
+		//			m_keyFlg = true;
+		//			m_alpha = 0.0f;
+		//			_spCamere->ChangeFPS();
+		//		}
+		//		break;
+		//	default:
+		//		break;
+		//	}
+		//}
+		//else
+		//{
+		//	m_keyFlg = false;
+		//}
 	}
 	else
 	{
+		m_alpha = 1.f;
 		if (_spCamere->GetPastCamType() == TPSCamera::CameraType::TpsL)
 		{
 			_spCamere->ChangeTPSL();
@@ -214,6 +227,7 @@ void Player::ChanegeViewPointProcess()
 			_spCamere->ChangeTPSR();
 		}
 	}
+
 	if (GetAsyncKeyState('V') & 0x8000)
 	{
 		switch (_spCamere->GetCamType())
@@ -276,10 +290,8 @@ void Player::AimProcess()
 		{
 			_spCamera->ChangeAimL();
 		}
-		if (_spCamera->GetCamType() == TPSCamera::CameraType::Fps)
-		{
-			_spWeapon->Hold();
-		}
+		_spWeapon->Hold();
+		
 	}
 	else
 	{

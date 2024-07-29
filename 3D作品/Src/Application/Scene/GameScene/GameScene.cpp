@@ -105,10 +105,10 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//=================================================================
 
 	player->SetCamera(camera);
-	//player->SetWeapon(pistol);
-	player->SetWeapon(assault);
-	//pistol->SetChara(player);
-	assault->SetChara(player);
+	player->SetWeapon(pistol);
+	//player->SetWeapon(assault);
+	pistol->SetChara(player);
+	//assault->SetChara(player);
 	camera->SetPlayer(player);
 
 	done = true;

@@ -163,6 +163,7 @@
     <ClInclude Include="Src\Application\GameObject\Characters\Player\Player.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\TerrainBase.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\UIBase.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol.h" />
     <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="Src\Application\GameObject\Characters\Player\Player.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\TerrainBase.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol.cpp" />
     <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.cpp" />

@@ -20,9 +20,9 @@ void TPSCamera::Update()
 {
 	switch (m_camType)
 	{
-	case TPSCamera::CameraType::Fps:
-		m_basePoint = m_fpsBasePoint;
-		break;
+	//case TPSCamera::CameraType::Fps:
+	//	m_basePoint = m_fpsBasePoint;
+	//	break;
 	case TPSCamera::CameraType::TpsR:
 		m_basePoint = m_tpsRBasePoint;
 		break;
@@ -56,10 +56,10 @@ void TPSCamera::Update()
 	CameraBase::Update();
 }
 
-void TPSCamera::ChangeFPS()
-{
-	m_camType		= CameraType::Fps;
-}
+//void TPSCamera::ChangeFPS()
+//{
+//	m_camType		= CameraType::Fps;
+//}
 
 void TPSCamera::ChangeTPSR()
 {
