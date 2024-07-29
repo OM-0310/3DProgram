@@ -2,10 +2,13 @@
 
 void VegetableBlock::Init()
 {
-	m_spModel = std::make_shared<KdModelData>();
-	m_spModel->Load("Asset/Models/WoodenBox/Wooden_Box.gltf");
+	if (!m_spModel)
+	{
+		m_spModel = std::make_shared<KdModelData>();
+		m_spModel->Load("Asset/Models/WoodenBox/Wooden_Box.gltf");
+	}
 
-	m_pos = { -5.f,0.1f,5.f };
+	m_pos	= { -5.f,0.1f,5.f };
 
 	// 後で消す
 	m_color = kGreenColor;

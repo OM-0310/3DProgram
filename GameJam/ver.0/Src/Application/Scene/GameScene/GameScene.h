@@ -8,8 +8,11 @@ class GameScene : public BaseScene
 {
 public :
 
-	GameScene() { Init(); }
-	~GameScene() {}
+	GameScene	() { Init(); }
+	~GameScene	() {}
+
+	void ObjectInit(std::atomic<bool>& done);
+	void CameraInit(std::atomic<bool>& done);
 
 	std::weak_ptr<Player> GetPlayer() { return m_wpPlayer; }
 

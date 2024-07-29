@@ -8,11 +8,7 @@
 
 #include "../../GameObject/Food/Meet/Meet.h"
 
-void GameScene::Event()
-{
-}
-
-void GameScene::Init()
+void GameScene::ObjectInit(std::atomic<bool>& done)
 {
 	std::shared_ptr<Player> player;
 	player = std::make_shared<Player>();
@@ -30,12 +26,35 @@ void GameScene::Init()
 	vegeta_B->Init();
 	m_objList.push_back(vegeta_B);
 
+	player->SetOwner(this);
+	player->SetMeetBlock(meet_B);
+	player->SetVegetableBlock(vegeta_B);
+
+	done = true;
+}
+
+void GameScene::CameraInit(std::atomic<bool>& done)
+{
 	std::shared_ptr<TPSCamera> camera;
 	camera = std::make_shared<TPSCamera>();
 	camera->Init();
 	m_objList.push_back(camera);
 
-	player->SetOwner(this);
-	player->SetMeetBlock(meet_B);
-	player->SetVegetableBlock(vegeta_B);
+	done = true;
+}
+
+void GameScene::Event()
+{
+}
+
+void GameScene::Init()
+{
+	std::atomic<bool> objDone;
+	std::thread objTh(&GameScene::ObjectInit, this, std::ref(objDone));
+
+	std::atomic<bool> camDone;
+	std::thread camTh(&GameScene::CameraInit, this, std::ref(camDone));
+
+	objTh.join();
+	camTh.join();
 }

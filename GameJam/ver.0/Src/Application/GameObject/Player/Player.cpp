@@ -9,7 +9,7 @@
 
 void Player::Init()
 {
-	m_spPoly = std::make_shared<KdSquarePolygon>();
+	m_spPoly	= std::make_shared<KdSquarePolygon>();
 	m_spPoly->SetMaterial("Asset/Textures/Player.png");
 
 	m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
@@ -56,7 +56,7 @@ void Player::Update()
 	// 当たり判定をしたいタイプを設定
 	sphere.m_type = KdCollider::TypeGround;
 
-	// デバッグ用
+	// デバッグ用(後で消す)
 	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius);
 
 	// 弾が当たったオブジェクトの情報を格納するリスト
@@ -77,9 +77,9 @@ void Player::Update()
 	{
 		if (maxOverLap < ret.m_overlapDistance)
 		{
-			maxOverLap = ret.m_overlapDistance;
-			hitDir = ret.m_hitDir;
-			ishit = true;
+			maxOverLap	= ret.m_overlapDistance;
+			hitDir		= ret.m_hitDir;
+			ishit		= true;
 		}
 	}
 	if (ishit)
@@ -154,6 +154,7 @@ void Player::MeetGetProcess()
 			// 食材を取得できる範囲内にいるかどうか
 			if (meetVec.Length() < m_getArea)
 			{
+				// 食材を所持しているかどうか
 				if (!m_getFlg)
 				{
 					meet = std::make_shared<Meet>();
@@ -172,6 +173,7 @@ void Player::MeetGetProcess()
 		m_keyFlg = false;
 	}
 
+	// デバッグ用(後で消す)
 	KdCollider::SphereInfo sphereInfo;
 	sphereInfo.m_sphere.Center = spMeet_B->GetPos();
 	sphereInfo.m_sphere.Radius = m_getArea;
@@ -202,6 +204,7 @@ void Player::VegetaGetProcess()
 			// 食材を取得できる範囲内にいるかどうか
 			if (vegetaVec.Length() < m_getArea)
 			{
+				// 食材を所持しているかどうか
 				if (!m_getFlg)
 				{
 					vegeta = std::make_shared<Vegetable>();
@@ -220,6 +223,7 @@ void Player::VegetaGetProcess()
 		m_keyFlg = false;
 	}
 
+	// デバッグ用(後で消す)
 	KdCollider::SphereInfo sphereInfo;
 	sphereInfo.m_sphere.Center = spVegeta_B->GetPos();
 	sphereInfo.m_sphere.Radius = m_getArea;

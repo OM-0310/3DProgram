@@ -6,9 +6,6 @@ void CameraBase::Init()
 	{
 		m_spCamera = std::make_shared<KdCamera>();
 	}
-	// ↓画面中央座標
-	//m_FixMousePos.x = 640;
-	//m_FixMousePos.y = 360;
 }
 
 void CameraBase::Update()

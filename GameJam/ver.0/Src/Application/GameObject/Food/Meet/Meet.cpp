@@ -5,11 +5,14 @@
 
 void Meet::Init()
 {
-	m_spPoly = std::make_shared<KdSquarePolygon>();
-	m_spPoly->SetMaterial("Asset/Textures/Meet.png");
-	m_spPoly->SetScale(0.3f);
+	if (!m_spPoly)
+	{
+		m_spPoly = std::make_shared<KdSquarePolygon>();
+		m_spPoly->SetMaterial("Asset/Textures/Meet.png");
+		m_spPoly->SetScale(0.3f);
 
-	m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
+		m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
+	}
 
 	m_fType = FoodType::Meet;
 
