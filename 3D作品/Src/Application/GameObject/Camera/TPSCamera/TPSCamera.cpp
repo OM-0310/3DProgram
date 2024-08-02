@@ -14,6 +14,8 @@ void TPSCamera::Init()
 
 	m_camType		= CameraType::TpsR;
 	m_pastCamType	= m_camType;
+
+	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 }
 
 void TPSCamera::Update()
@@ -40,18 +42,18 @@ void TPSCamera::Update()
 	}
 
 	// ターゲットの行列(有効な場合利用する)
-	Math::Matrix								_targetMat = Math::Matrix::Identity;
-	const std::shared_ptr<const Player>	_spPlayer = m_wpPlayer.lock();
-	if (_spPlayer)
+	Math::Matrix								targetMat = Math::Matrix::Identity;
+	const std::shared_ptr<const Player>	spPlayer = m_wpPlayer.lock();
+	if (spPlayer)
 	{
-		//_targetMat = Math::Matrix::CreateTranslation(_spTarget->GetPos());
-		_targetMat = _spPlayer->GetRotationMatrix() * Math::Matrix::CreateTranslation(_spPlayer->GetPos());
+		targetMat = Math::Matrix::CreateTranslation(spPlayer->GetPos());
 	}
 
 	// カメラの回転
-	m_mRot		= Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
+	UpdateRotateByMouse();
+	m_mRot		= GetRotationMatrix();
 	m_mLocalPos = Math::Matrix::CreateTranslation(m_basePoint);
-	m_mWorld	= m_mRot * m_mLocalPos * _targetMat;
+	m_mWorld	= (m_mLocalPos * m_mRot) * targetMat;
 
 	CameraBase::Update();
 }

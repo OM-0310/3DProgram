@@ -12,11 +12,7 @@ void Player::Init()
 	m_moveDir		= {};
 	m_moveSpeed		= 0.2f;
 
-	// ↓画面中央座標
-	m_FixMousePos.x = 640;
-	m_FixMousePos.y = 360;
-
-	m_walkFlg		= false;
+	m_moveFlg		= false;
 	m_dashFlg		= false;
 	m_keyFlg		= false;
 	m_changeKeyFlg	= false;
@@ -38,19 +34,30 @@ void Player::Update()
 
 	switch (m_pType)
 	{
-	case Player::Idle:
+	case PlayerType::Idle:
 		if (!m_idleFlg)
 		{
-			m_idleFlg = true;
-			m_runFlg = false;
+			m_idleFlg	= true;
+			m_walkFlg	= false;
+			m_runFlg	= false;
 			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Idle"));
 		}
 		break;
-	case Player::Run:
+	case PlayerType::Walk:
+		if (!m_walkFlg)
+		{
+			m_walkFlg	= true;
+			m_idleFlg	= false;
+			m_runFlg	= false;
+			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Walk"));
+		}
+		break;
+	case PlayerType::Run:
 		if (!m_runFlg)
 		{
-			m_runFlg = true;
-			m_idleFlg = false;
+			m_runFlg	= true;
+			m_idleFlg	= false;
+			m_walkFlg	= false;
 			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Run"));
 		}
 		break;
@@ -70,15 +77,16 @@ void Player::Update()
 	// 武器切り替え処理
 	ChanegeWeaponProcess();
 
-	//	キャラクターの回転角度を計算する
-	UpdateRotate(m_moveDir);
-	UpdateRotateByMouse();
+	if (m_moveDir == Math::Vector3::Zero)
+	{
+		m_pType = PlayerType::Idle;
+		m_moveFlg = false;
+	}
 
-	if (m_walkFlg)							m_pType = PlayerType::Run;
-	else									m_pType = PlayerType::Idle;
-	if (m_moveDir == Math::Vector3::Zero)	m_walkFlg = false;
-
-	m_moveDir	= m_moveDir.TransformNormal(m_moveDir, GetRotationYMatrix());
+	if (_spCamere)
+	{
+		m_moveDir = m_moveDir.TransformNormal(m_moveDir, _spCamere->GetRotationYMatrix());
+	}
 
 	m_moveDir.Normalize();
 
@@ -87,20 +95,22 @@ void Player::Update()
 	m_pos.y		-= m_gravity;
 	m_gravity	+= 0.04f;
 
-	m_color		= { 1.f,1.f,1.f,m_alpha };
+	//	キャラクターの回転角度を計算する
+	UpdateRotate(m_moveDir);
 
 	if (_spCamere->GetCamType() == TPSCamera::CameraType::TpsL ||
 		_spCamere->GetCamType() == TPSCamera::CameraType::TpsR)
 	{
-		m_mRot = GetRotationYMatrix();
+		m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
 	}
 	else if (_spCamere->GetCamType() == TPSCamera::CameraType::AimL ||
 			_spCamere->GetCamType() == TPSCamera::CameraType::AimR)
 	{
-		m_mRot = GetRotationMatrix();
+		//m_mRot = GetRotationYMatrix();
 	}
-	m_mTrans	= Math::Matrix::CreateTranslation(m_pos);
-	m_mWorld	= m_mRot * m_mTrans;
+	m_mAdjustRotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
+	m_mTrans		= Math::Matrix::CreateTranslation(m_pos);
+	m_mWorld		= m_mRot * m_mTrans;
 }
 
 void Player::PostUpdate()
@@ -122,23 +132,67 @@ void Player::MoveProcess()
 	// 移動処理
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
-		m_walkFlg = true;
-		m_moveDir += { 0.f, 0.f, -1.f};
+		m_pType = PlayerType::Run;
+		m_moveFlg = true;
+		m_moveDir += { 0.f, 0.f, 1.f};
+
+		if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+		{
+			m_pType = PlayerType::Walk;
+			m_moveSpeed = 0.05f;
+		}
+		else
+		{
+			m_moveSpeed = 0.2f;
+		}
 	}
 	if (GetAsyncKeyState('S') & 0x8000)
 	{
-		m_walkFlg = true;
-		m_moveDir += { 0.f, 0.f, 1.f};
+		m_pType = PlayerType::Run;
+		m_moveFlg = true;
+		m_moveDir += { 0.f, 0.f, -1.f};
+
+		if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+		{
+			m_pType = PlayerType::Walk;
+			m_moveSpeed = 0.05f;
+		}
+		else
+		{
+			m_moveSpeed = 0.2f;
+		}
 	}
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
-		m_walkFlg = true;
-		m_moveDir += {1.f, 0.f, 0.f};
+		m_pType = PlayerType::Run;
+		m_moveFlg = true;
+		m_moveDir += {-1.f, 0.f, 0.f};
+
+		if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+		{
+			m_pType = PlayerType::Walk;
+			m_moveSpeed = 0.05f;
+		}
+		else
+		{
+			m_moveSpeed = 0.2f;
+		}
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
-		m_walkFlg = true;
-		m_moveDir += { -1.f, 0.f, 0.f};
+		m_pType = PlayerType::Run;
+		m_moveFlg = true;
+		m_moveDir += { 1.f, 0.f, 0.f};
+
+		if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+		{
+			m_pType = PlayerType::Walk;
+			m_moveSpeed = 0.05f;
+		}
+		else
+		{
+			m_moveSpeed = 0.2f;
+		}
 	}
 }
 //================================================================================================================================
@@ -304,27 +358,6 @@ void Player::AimProcess()
 
 void Player::ChanegeWeaponProcess()
 {
-}
-
-
-void Player::UpdateRotateByMouse()
-{
-	// マウスでカメラを回転させる処理
-	POINT _nowPos;
-	GetCursorPos(&_nowPos);
-
-	POINT _mouseMove{};
-	_mouseMove.x = _nowPos.x - m_FixMousePos.x;
-	_mouseMove.y = _nowPos.y - m_FixMousePos.y;
-
-	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
-
-	// 実際にカメラを回転させる処理(0.15はただの補正値)
-	m_degAng.x += _mouseMove.y * 0.15f;
-	m_degAng.y += _mouseMove.x * 0.15f;
-
-	// 回転制御
-	m_degAng.x = std::clamp(m_degAng.x, -45.f, 45.f);
 }
 
 void Player::UpdateRotate(const Math::Vector3& srcMoveVec)

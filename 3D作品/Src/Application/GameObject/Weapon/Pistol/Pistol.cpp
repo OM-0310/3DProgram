@@ -9,7 +9,7 @@ void Pistol::Init()
 	}
 
 	m_localPos	= m_unholdBasePoint;
-//	m_mRot		= Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(90));
+	m_mRot		= Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
 	m_mScale	= Math::Matrix::CreateScale(0.18f);
 }
 

@@ -32,42 +32,12 @@ public:
 		m_wpWeapon = weapon;
 	}
 
-	const Math::Matrix GetRotationMatrix()const
-	{
-		return Math::Matrix::CreateFromYawPitchRoll(
-			DirectX::XMConvertToRadians(m_degAng.y),
-			DirectX::XMConvertToRadians(-m_degAng.x),
-			DirectX::XMConvertToRadians(m_degAng.z));
-	}
-
 	enum PlayerType
 	{
 		Idle,
+		Walk,
 		Run,
 	};
-
-private:
-
-	void UpdateRotateByMouse();
-
-	const Math::Matrix GetRotationYMatrix() const
-	{
-		return Math::Matrix::CreateRotationY(
-			DirectX::XMConvertToRadians(m_degAng.y));
-	}
-
-	const Math::Matrix GetRotationXMatrix() const
-	{
-		return Math::Matrix::CreateRotationX(
-			DirectX::XMConvertToRadians(m_degAng.x));
-	}
-
-	const Math::Matrix GetRotationZMatrix() const
-	{
-		return Math::Matrix::CreateRotationZ(
-			DirectX::XMConvertToRadians(m_degAng.z));
-	}
-
 
 private:
 
@@ -77,6 +47,8 @@ private:
 	std::weak_ptr<WeaponBase>	m_wpWeapon;		// 武器情報
 	std::shared_ptr<KdAnimator> m_spAnimator;	// アニメーション
 
+	Math::Matrix				m_mAdjustRotMat;// 補正回転行列
+
 	Math::Vector3				m_degAng;		// 角度
 
 	Math::Vector3				m_moveDir;		// 移動方向
@@ -84,12 +56,13 @@ private:
 
 	Math::Vector3				m_angle;		// 角度
 
-	bool						m_walkFlg;		// 歩行フラグ
+	bool						m_moveFlg;		// 移動フラグ
 	bool						m_dashFlg;		// 走行フラグ
 	bool						m_keyFlg;		// キーフラグ
 	bool						m_changeKeyFlg;	// 視点切り替え時用キーフラグ
 
 	bool						m_idleFlg;
+	bool						m_walkFlg;
 	bool						m_runFlg;
 
 	PlayerType					m_pType;

@@ -16,6 +16,6 @@ public:
 
 private:
 
-	const Math::Vector3	m_unholdBasePoint	= { 0.f,1.4f,-0.6f };
-	const Math::Vector3 m_holdBasePoint		= { 0.f,1.4f,-0.6f };
+	const Math::Vector3	m_unholdBasePoint	= { 0.f,1.4f,0.6f };
+	const Math::Vector3 m_holdBasePoint		= { 0.f,1.4f,0.6f };
 };

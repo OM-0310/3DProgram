@@ -30,11 +30,11 @@ public:
 
 private:
 
-	const Math::Vector3 m_aimRBasePoint = { -0.5f,1.8f,1.25f };
-	const Math::Vector3 m_aimLBasePoint	= { 0.5f,1.8f,1.25f };
+	const Math::Vector3 m_aimRBasePoint = { 0.5f,1.8f,-1.25f };
+	const Math::Vector3 m_aimLBasePoint	= { -0.5f,1.8f,-1.25f };
 	//const Math::Vector3 m_fpsBasePoint	= { 0.f, 1.7f, -0.8f };
-	const Math::Vector3 m_tpsRBasePoint	= { -0.5f, 1.8f, 2.25f };
-	const Math::Vector3 m_tpsLBasePoint	= { 0.5f, 1.8f, 2.25f };
+	const Math::Vector3 m_tpsRBasePoint	= { 0.5f, 1.8f, -2.25f };
+	const Math::Vector3 m_tpsLBasePoint	= { -0.5f, 1.8f, -2.25f };
 
 	Math::Vector3		m_basePoint;
 
