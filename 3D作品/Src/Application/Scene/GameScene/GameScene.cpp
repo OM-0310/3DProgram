@@ -74,17 +74,17 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	// 武器関係・・・ここから
 	//=================================================================
 
-	// 銃(ピストル)
-	std::shared_ptr<Pistol> pistol;
-	pistol = std::make_shared<Pistol>();
-	pistol->Init();
-	m_objList.push_back(pistol);
+	//// 銃(ピストル)
+	//std::shared_ptr<Pistol> pistol;
+	//pistol = std::make_shared<Pistol>();
+	//pistol->Init();
+	//m_objList.push_back(pistol);
 
-	// 銃(アサルトライフル)
-	std::shared_ptr<AssaultRifle> assault;
-	assault = std::make_shared<AssaultRifle>();
-	assault->Init();
-	m_objList.push_back(assault);
+	//// 銃(アサルトライフル)
+	//std::shared_ptr<AssaultRifle> assault;
+	//assault = std::make_shared<AssaultRifle>();
+	//assault->Init();
+	//m_objList.push_back(assault);
 
 	//=================================================================
 	// 武器関係・・・ここまで
@@ -105,9 +105,9 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//=================================================================
 
 	player->SetCamera(camera);
-	player->SetWeapon(pistol);
+	//player->SetWeapon(pistol);
 	//player->SetWeapon(assault);
-	pistol->SetChara(player);
+	//pistol->SetChara(player);
 	//assault->SetChara(player);
 	camera->SetPlayer(player);
 
