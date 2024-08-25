@@ -25,7 +25,7 @@ public:
 	void ShotProcess			();	// 弾発射処理
 	void ChanegeWeaponProcess	();	// 武器切り替え処理
 
-									// プレイヤー状態フラグ切り替え
+									// プレイヤー状態フラグ切り替え処理
 	void PlayerTypeFlagSwitch	(
 									bool _idleFlg,		bool _walkFlg,	bool _runFlg,		bool _readyFlg,
 									bool _standFlg,		bool _sitFlg,	bool _sitIdleFlg,	bool _sitWalkFlg,
@@ -68,8 +68,6 @@ public:
 
 private:
 
-	void UpdateRotate(const Math::Vector3& srcMoveVec);
-
 	std::weak_ptr<TPSCamera>	m_wpCamera;		// カメラ情報
 	std::weak_ptr<WeaponBase>	m_wpWeapon;		// 武器情報
 	std::shared_ptr<KdAnimator> m_spAnimator;	// アニメーション
@@ -78,8 +76,6 @@ private:
 
 	Math::Vector3				m_moveDir;		// 移動方向
 	float						m_moveSpeed;	// 移動速度
-
-	Math::Vector3				m_angle;		// 角度
 
 	bool						m_moveFlg;		// 移動フラグ
 	bool						m_shotFlg;		// エイムフラグ

@@ -5,7 +5,10 @@
 #include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
 
 #include "../../GameObject/Terrains/Ground/Ground.h"
+
 #include "../../GameObject/Characters/Player/Player.h"
+#include "../../GameObject/Characters/Enemy/Enemy.h"
+
 #include "../../GameObject/Weapon/Pistol/Pistol.h"
 #include "../../GameObject/Weapon/AssaultRifle/AssaultRifle.h"
 #include "../../GameObject/Characters/CharaBase.h"
@@ -46,11 +49,11 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	ground->Init();
 	m_objList.push_back(ground);
 
-	done = true;
-
 	//=================================================================
 	// ステージ関係初期化・・・ここまで
 	//=================================================================
+
+	done = true;
 }
 
 void GameScene::CharaInit(std::atomic<bool>& done)
@@ -65,6 +68,12 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	player->Init();
 	m_objList.push_back(player);
 	m_wpPlayer = player;
+
+	// 敵初期化
+	//std::shared_ptr<Enemy> enemy;
+	//enemy = std::make_shared<Enemy>();
+	//enemy->Init();
+	//m_objList.push_back(enemy);
 
 	//=================================================================
 	// キャラ関係初期化・・・ここまで
@@ -105,6 +114,7 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//=================================================================
 
 	player->SetCamera(camera);
+	//enemy->SetPlayer(player);
 	//player->SetWeapon(pistol);
 	//player->SetWeapon(assault);
 	//pistol->SetChara(player);

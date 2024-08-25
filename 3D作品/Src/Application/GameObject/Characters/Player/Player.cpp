@@ -8,9 +8,9 @@ void Player::Init()
 	m_spModel		= std::make_shared<KdModelWork>();
 	m_spModel->SetModelData("Asset/Models/Characters/Player/Swat.gltf");
 
-	m_pos			= { 0.f,0.f,-1.2f };
-	m_moveDir		= {};
-	m_moveSpeed		= 0.2f;
+	m_pos			= { 0.f,0.f,0.f };
+	m_moveDir		= Math::Vector3::Zero;
+	m_moveSpeed		= 0.f;
 
 	m_moveFlg		= false;
 	m_shotFlg		= false;
@@ -42,6 +42,12 @@ void Player::Init()
 void Player::Update()
 {
 	const std::shared_ptr<TPSCamera> _spCamere = m_wpCamera.lock();
+
+	Math::Matrix _camRotMat;
+	if (_spCamere)
+	{
+		_camRotMat = _spCamere->GetRotationMatrix();
+	}
 
 	// アニメーション切り替え処理
 	ChanegeAnimation();
@@ -83,8 +89,6 @@ void Player::Update()
 				break;
 			case Player::PostureType::Creep:
 				break;
-			default:
-				break;
 			}
 		}
 	}
@@ -118,19 +122,15 @@ void Player::Update()
 	//	キャラクターの回転角度を計算する
 	UpdateRotate(m_moveDir);
 
-	if (_spCamere->GetCamType() == TPSCamera::CameraType::TpsR ||
-		_spCamere->GetCamType() == TPSCamera::CameraType::TpsL ||
-		_spCamere->GetCamType() == TPSCamera::CameraType::SitR ||
-		_spCamere->GetCamType() == TPSCamera::CameraType::SitL)
+	if (!m_shotFlg)
 	{
 		m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
 	}
-	else if (_spCamere->GetCamType() == TPSCamera::CameraType::AimL ||
-			_spCamere->GetCamType() == TPSCamera::CameraType::AimR)
+	else
 	{
-		//m_mRot = GetRotationYMatrix();
+		m_mRot = _camRotMat;
 	}
-	m_mAdjustRotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
+	//m_mAdjustRotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
 	m_mTrans		= Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld		= m_mRot * m_mTrans;
 }
@@ -439,8 +439,6 @@ void Player::ChanegeViewPointProcess()
 				_spCamera->ChangeSitR();
 			}
 			break;
-		default:
-			break;
 		}
 	}
 	else
@@ -484,8 +482,6 @@ void Player::ChanegePostureProcess()
 				case TPSCamera::CameraType::AimL:
 					_spCamera->ChangeSitAimL();
 					break;
-				default:
-					break;
 				}
 				break;
 			case Player::PostureType::Sit:
@@ -505,8 +501,6 @@ void Player::ChanegePostureProcess()
 					break;
 				case TPSCamera::CameraType::SitAimL:
 					_spCamera->ChangeAimL();
-					break;
-				default:
 					break;
 				}
 				break;
@@ -532,8 +526,6 @@ void Player::ChanegePostureProcess()
 				//default:
 				//	break;
 				//}
-				break;
-			default:
 				break;
 			}
 		}
@@ -599,8 +591,6 @@ void Player::ChanegePostureProcess()
 					break;
 				}
 				break;
-			default:
-				break;
 			}
 		}
 	}
@@ -648,7 +638,7 @@ void Player::AimProcess()
 			}
 			break;
 		case Player::PostureType::Sit:
-			//m_pType = PlayerType::Sit_Ready;
+			m_pType = PlayerType::Sit_Ready;
 			if (_spCamera->GetCamType() == TPSCamera::CameraType::SitR)
 			{
 				_spCamera->ChangeSitAimR();
@@ -741,36 +731,3 @@ void Player::PlayerTypeFlagSwitch(
 //================================================================================================================================
 // プレイヤー状態フラグ切り替え・・・ここまで
 //================================================================================================================================
-
-void Player::UpdateRotate(const Math::Vector3& srcMoveVec)
-{
-	// 何も入力がない場合は処理しない
-	if (srcMoveVec.LengthSquared() == 0) return;
-
-	// キャラの正面方向のベクトル		// 社会に出たときはForward()を使用する
-	Math::Vector3 _nowDir = GetMatrix().Backward();
-	_nowDir.Normalize();
-
-	// 移動方向のベクトル
-	Math::Vector3 _targetDir = srcMoveVec;
-	_targetDir.Normalize();
-
-	float _nowAng = atan2(_nowDir.x, _nowDir.z);
-	_nowAng = DirectX::XMConvertToDegrees(_nowAng);
-
-	float _targetAng = atan2(_targetDir.x, _targetDir.z);
-	_targetAng = DirectX::XMConvertToDegrees(_targetAng);
-
-	// 角度の差分を図る
-	float _betweenAng = _targetAng - _nowAng;
-	if (_betweenAng > 180)
-	{
-		_betweenAng -= 360;
-	}
-	else if (_betweenAng < -180)
-	{
-		_betweenAng += 360;
-	}
-	float _rotateAng = std::clamp(_betweenAng, -8.0f, 8.0f);
-	m_angle.y += _rotateAng;
-}

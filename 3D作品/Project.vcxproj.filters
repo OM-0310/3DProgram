@@ -109,6 +109,9 @@
     <Filter Include="Src\Application\GameObject\UI">
       <UniqueIdentifier>{b1a0e723-6bca-41d6-b04b-6fc3a14ebb20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy">
+      <UniqueIdentifier>{52008709-6ced-4e4e-a76c-1e772e6b5e82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -309,6 +312,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\UIBase.h">
       <Filter>Src\Application\GameObject\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -481,6 +487,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp">
       <Filter>Src\Application\GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -69,3 +69,36 @@ void CharaBase::GenerateDepthMapFromLight()
 {
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
+
+void CharaBase::UpdateRotate(const Math::Vector3& srcMoveVec)
+{
+	// 何も入力がない場合は処理しない
+	if (srcMoveVec.LengthSquared() == 0) return;
+
+	// キャラの正面方向のベクトル		// 社会に出たときはForward()を使用する
+	Math::Vector3 _nowDir = GetMatrix().Backward();
+	_nowDir.Normalize();
+
+	// 移動方向のベクトル
+	Math::Vector3 _targetDir = srcMoveVec;
+	_targetDir.Normalize();
+
+	float _nowAng = atan2(_nowDir.x, _nowDir.z);
+	_nowAng = DirectX::XMConvertToDegrees(_nowAng);
+
+	float _targetAng = atan2(_targetDir.x, _targetDir.z);
+	_targetAng = DirectX::XMConvertToDegrees(_targetAng);
+
+	// 角度の差分を図る
+	float _betweenAng = _targetAng - _nowAng;
+	if (_betweenAng > 180)
+	{
+		_betweenAng -= 360;
+	}
+	else if (_betweenAng < -180)
+	{
+		_betweenAng += 360;
+	}
+	float _rotateAng = std::clamp(_betweenAng, -8.0f, 8.0f);
+	m_angle.y += _rotateAng;
+}
