@@ -59,6 +59,11 @@ void Character::DrawLit()
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
+void Character::GenerateDepthMapFromLight()
+{
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+}
+
 void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
 {
 	// 何も入力が無い場合は処理しない

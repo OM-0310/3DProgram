@@ -11,6 +11,7 @@ public:
 	void Update()			override;
 	void PostUpdate()		override;
 	void DrawLit()			override;
+	void GenerateDepthMapFromLight()override;
 
 	void SetCamera(const std::shared_ptr<CameraBase>& camera)
 	{
