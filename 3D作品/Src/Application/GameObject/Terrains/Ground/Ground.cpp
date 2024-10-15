@@ -2,8 +2,8 @@
 
 void Ground::Init()
 {
-	m_spModel	= std::make_shared<KdModelData>();
-	m_spModel->Load("Asset/Models/Terrains/Ground/Ground.gltf");
+	m_spModel	= std::make_shared<KdModelWork>();
+	m_spModel->SetModelData("Asset/Models/Terrains/Ground/Ground.gltf");
 
 	m_pos		= { 0.f,-1.f,10.f };
 
@@ -13,4 +13,9 @@ void Ground::Init()
 
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("Ground", m_spModel, KdCollider::TypeGround);
+}
+
+void Ground::DrawLit()
+{
+	TerrainBase::DrawLit();
 }

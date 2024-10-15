@@ -9,6 +9,7 @@ public:
 	~Ground		()	override	{ Release(); }
 
 	void Init	()	override;
+	void DrawLit()	override;
 
 private:
 };

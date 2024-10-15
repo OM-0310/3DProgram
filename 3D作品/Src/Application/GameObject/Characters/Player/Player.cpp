@@ -1,12 +1,22 @@
 ﻿#include "Player.h"
 #include "../../Camera/TPSCamera/TPSCamera.h"
 #include "../../Weapon/WeaponBase/WeaponBase.h"
+#include "../../UI/Reticle/Reticle.h"
+#include "../../Bullet/Bullet.h"
+
 #include "../../../Scene/SceneManager.h"
 
 void Player::Init()
 {
-	m_spModel		= std::make_shared<KdModelWork>();
-	m_spModel->SetModelData("Asset/Models/Characters/Player/Swat.gltf");
+	if (!m_spModel)
+	{
+		m_spModel = std::make_shared<KdModelWork>();
+		m_spModel->SetModelData("Asset/Models/Characters/Player/Swat.gltf");
+
+		m_spAnimator = std::make_shared<KdAnimator>();
+	}
+
+	ChangeActionState(std::make_shared<ActionIdle>());
 
 	m_pos			= { 0.f,0.f,0.f };
 	m_moveDir		= Math::Vector3::Zero;
@@ -16,123 +26,130 @@ void Player::Init()
 	m_shotFlg		= false;
 	m_keyFlg		= false;
 	m_changeKeyFlg	= false;
-	m_sitKeyFlg		= false;
+	m_posKeyFlg		= false;
 	m_creepKeyFlg	= false;
 
-	m_idleFlg		= false;
-	m_walkFlg		= false;
-	m_runFlg		= false;
-	m_readyFlg		= false;
-	m_sitFlg		= false;
-	m_sitIdleFlg	= false;
-	m_sitWalkFlg	= false;
-	m_sitReadyFlg	= false;
-
+	m_standCnt		= 0;
 	m_sitCnt		= 0;
+	m_shotCnt		= 0;
 
-	m_spAnimator	= std::make_shared<KdAnimator>();
-	m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Idle"));
-
-	m_pType			= PlayerType::Idle;
+	//m_pType			= PlayerType::Idle;
 	m_posType		= PostureType::Stand;
 
 	CharaBase::Init();
+
+	if (m_spModel)
+	{
+		const KdModelWork::Node* pNode = m_spModel->FindNode("PistolDisarmPoint");
+
+		if (pNode)
+		{
+			m_mUnHold = pNode->m_worldTransform * m_mTrans;
+		}
+		else if (!pNode)
+		{
+			assert(0 && "PistolDisarmPoint 指定したノードが見つかりません");
+		}
+	}
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
 
 void Player::Update()
 {
-	const std::shared_ptr<TPSCamera> _spCamere = m_wpCamera.lock();
-
-	Math::Matrix _camRotMat;
-	if (_spCamere)
-	{
-		_camRotMat = _spCamere->GetRotationMatrix();
-	}
-
-	// アニメーション切り替え処理
-	ChanegeAnimation();
-
-	// 移動処理
-	MoveProcess();
-
-	// 体勢切り替え処理
-	ChanegePostureProcess();
+	m_gravity	 += 0.04f;
+	m_mWorld._42 -= m_gravity;
 
 	// 視点切り替え処理
 	ChanegeViewPointProcess();
 
-	// 銃構え処理
-	AimProcess();
-
-	// 武器切り替え処理
-	ChanegeWeaponProcess();
-
-	// 移動方向が0になったらフラグをfalseにする
-	if (m_moveDir == Math::Vector3::Zero)
+	// 各種「状態」に応じた更新処理を実行する
+	if (m_nowState)
 	{
-		m_moveFlg = false;
-	}
-	if (!m_moveFlg)
-	{
-		if (!m_shotFlg)
-		{
-			switch (m_posType)
-			{
-			case Player::PostureType::Stand:
-				m_pType = PlayerType::Idle;
-				break;
-			case Player::PostureType::Sit:
-				if (m_pType != PlayerType::Sit)
-				{
-					m_pType = PlayerType::Sit_Idle;
-				}
-				break;
-			case Player::PostureType::Creep:
-				break;
-			}
-		}
+		m_nowState->Update(*this);
 	}
 
-	if (m_pType == PlayerType::Sit)
-	{
-		m_sitCnt++;
-	}
-	else
-	{
-		m_sitCnt = 0;
-	}
+	Math::Vector3 disarmPos;
+	disarmPos = (m_mUnHold * GetMatrix()).Translation();
 
-	if (m_sitCnt >= 6)
-	{
-		m_pType = PlayerType::Sit_Idle;
-	}
+	KdCollider::SphereInfo sphereInfo;
+	sphereInfo.m_sphere.Center = disarmPos;
+	sphereInfo.m_sphere.Radius = 0.05f;
+	sphereInfo.m_type = KdCollider::TypeDamage;
 
-	if (_spCamere)
-	{
-		m_moveDir = m_moveDir.TransformNormal(m_moveDir, _spCamere->GetRotationYMatrix());
-	}
+	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, kBlueColor);
 
-	m_moveDir.Normalize();
+	UpdateCollision();
 
-	m_pos		+= m_moveDir * m_moveSpeed;
+	//// アニメーション切り替え処理
+	//ChanegeAnimation(m_pType);
 
-	m_pos.y		-= m_gravity;
-	m_gravity	+= 0.04f;
+	//// 移動処理
+	//MoveProcess();
 
-	//	キャラクターの回転角度を計算する
-	UpdateRotate(m_moveDir);
+	//// 回避処理
+	//AvoidProcess();
 
-	if (!m_shotFlg)
-	{
-		m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-	}
-	else
-	{
-		m_mRot = _camRotMat;
-	}
+	//// 体勢切り替え処理
+	//ChanegePostureProcess();
+
+
+	//// 銃構え処理
+	//AimProcess();
+
+	//// 武器切り替え処理
+	//ChanegeWeaponProcess();
+
+	//// 移動方向が0になったらフラグをfalseにする
+	//if (m_moveDir == Math::Vector3::Zero)
+	//{
+	//	m_moveFlg = false;
+	//}
+	//if (!m_moveFlg)
+	//{
+	//	if (!m_shotFlg)
+	//	{
+	//		switch (m_posType)
+	//		{
+	//		case Player::PostureType::Stand:
+	//			m_pType = PlayerType::Idle;
+	//			break;
+	//		case Player::PostureType::Sit:
+	//			if (m_pType != PlayerType::Sit)
+	//			{
+	//				m_pType = PlayerType::Sit_Idle;
+	//			}
+	//			break;
+	//		case Player::PostureType::Creep:
+	//			break;
+	//		}
+	//	}
+	//}
+
+	//if (m_pType == PlayerType::Sit)
+	//{
+	//	m_sitCnt++;
+	//}
+	//else
+	//{
+	//	m_sitCnt = 0;
+	//}
+
+	//if (m_sitCnt >= 6)
+	//{
+	//	m_pType = PlayerType::Sit_Idle;
+	//}
+
+	//if (!m_shotFlg)
+	//{
+	//}
+	//else
+	//{
+	//}
 	//m_mAdjustRotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
-	m_mTrans		= Math::Matrix::CreateTranslation(m_pos);
-	m_mWorld		= m_mRot * m_mTrans;
+
+	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
+	m_mWorld = m_mRot * m_mTrans;
 }
 
 void Player::PostUpdate()
@@ -141,125 +158,543 @@ void Player::PostUpdate()
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
 	m_spModel->CalcNodeMatrices();
 
-	CharaBase::PostUpdate();
+	//CharaBase::PostUpdate();
+}
+
+void Player::UpdateCollision()
+{
+	KdCollider::RayInfo rayInfo;
+	rayInfo.m_pos = m_pos;
+	rayInfo.m_dir = Math::Vector3::Down;
+	rayInfo.m_pos.y -= 0.01f;
+
+	//float enableStepHigh = 0.2f;
+	//rayInfo.m_pos.y += enableStepHigh;
+
+	rayInfo.m_range = m_gravity;
+	rayInfo.m_type = KdCollider::TypeGround;
+
+	std::list<KdCollider::CollisionResult> retRayList;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		obj->Intersects(rayInfo, &retRayList);
+	}
+
+	float maxOverLap = 0;
+	Math::Vector3 hitPos;
+	bool ishit = false;
+	for (auto& ret : retRayList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap = ret.m_overlapDistance;
+			hitPos = ret.m_hitPos;
+			ishit = true;
+		}
+	}
+	if (ishit)
+	{
+		m_pos = hitPos + Math::Vector3(0, 0.01f, 0);
+		m_gravity = 0;
+	}
 }
 
 //================================================================================================================================
 // アニメーション切り替え処理・・・ここから
 //================================================================================================================================
-void Player::ChanegeAnimation()
+void Player::ChanegeAnimation(const std::string& _name)
 {
-	switch (m_pType)
-	{
-	case PlayerType::Idle:
-		if (!m_idleFlg)
-		{
-			PlayerTypeFlagSwitch(true, false, false, false, false, false, false, false, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Idle"));
-		}
-		break;
-	case PlayerType::Walk:
-		if (!m_walkFlg)
-		{
-			PlayerTypeFlagSwitch(false, true, false, false, false, false, false, false, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Walk"));
-		}
-		break;
-	case PlayerType::Run:
-		if (!m_runFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, true, false, false, false, false, false, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Run"));
-		}
-		break;
-	case PlayerType::Ready:
-		if (!m_readyFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, true, false, false, false, false, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Ready"));
-		}
-		break;
-	case PlayerType::Stand:
-		if (!m_standFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, true, false, false, false, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"));
-		}
-		break;
-	case PlayerType::Sit:
-		if (!m_sitFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, true, false, false, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Sit"));
-		}
-		break;
-	case PlayerType::Sit_Idle:
-		if (!m_sitIdleFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, false, true, false, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Sit_Idle"));
-		}
-		break;
-	case PlayerType::Sit_Walk:
-		if (!m_sitWalkFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, false, false, true, false, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Sit_Walk"));
-		}
-		break;
-	case PlayerType::Sit_Ready:
-		if (!m_sitReadyFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, false, false, false, true, false, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Sit_Ready"));
-		}
-		break;
-	case PlayerType::Creep:
-		if (!m_creepFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, false, false, false, false, true, false, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Creep"));
-		}
-		break;
-	case PlayerType::Creep_Idle:
-		if (!m_creepIdleFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, false, false, false, false, false, true, false, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Creep_Idle"));
-		}
-		break;
-	case PlayerType::Creep_Walk:
-		if (!m_creepWalkFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, false, false, false, false, false, false, true, false);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Creep_Walk"));
-		}
-		break;
-	case PlayerType::Creep_Ready:
-		if (!m_creepReadyFlg)
-		{
-			PlayerTypeFlagSwitch(false, false, false, false, false, false, false, false, false, false, false, false, true);
-
-			m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Creep_Ready"));
-		}
-		break;
-	}
+	m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation(_name));
 }
 //================================================================================================================================
 // アニメーション切り替え処理・・・ここまで
 //================================================================================================================================
+
+void Player::StateIdleProc()
+{
+	const std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+
+	m_moveDir = Math::Vector3::Zero;
+
+	// ActionRunに切り替え
+	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;  }
+	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
+	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
+	if (m_moveDir.LengthSquared() > 0)	
+	{
+		ChangeActionState(std::make_shared<ActionRun>()); 
+		return;
+	}
+
+	// ActionSitに切り替え
+	if (GetAsyncKeyState('C') & 0x8000) 
+	{
+		if (!m_posKeyFlg)
+		{
+			m_posKeyFlg = true;
+			ChangeActionState(std::make_shared<ActionSit>());
+			switch (_spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				_spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				_spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		m_posKeyFlg = false;
+	}
+
+	// ActionReadyに切り替え
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		ChangeActionState(std::make_shared<ActionReady>());
+		return;
+	}
+}
+
+void Player::StateWalkProc()
+{
+	const std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+
+	Math::Matrix _camRotMat;
+	if (_spCamera)
+	{
+		_camRotMat = _spCamera->GetRotationMatrix();
+	}
+
+	m_moveSpeed = 0.05f;
+
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+	{
+		m_moveDir = Math::Vector3::Zero;
+
+		if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
+		if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;  }
+		if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
+		if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
+	}
+	else
+	{
+		if (m_moveDir.LengthSquared() == 0)
+		{
+			ChangeActionState(std::make_shared<ActionIdle>());
+			return;
+		}
+		else
+		{
+			ChangeActionState(std::make_shared<ActionRun>());
+			return;
+		}
+	}
+
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!m_posKeyFlg)
+		{
+			m_posKeyFlg = true;
+			ChangeActionState(std::make_shared<ActionSit>());
+			switch (_spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				_spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				_spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		m_posKeyFlg = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		ChangeActionState(std::make_shared<ActionReady>());
+	}
+
+	if (_spCamera)
+	{
+		m_moveDir = m_moveDir.TransformNormal(m_moveDir, _spCamera->GetRotationYMatrix());
+	}
+
+	m_moveDir.Normalize();
+	m_pos += m_moveDir * m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	UpdateRotate(m_moveDir);
+
+	//m_mRot = _camRotMat;
+	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
+}
+
+void Player::StateRunProc()
+{
+	const std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+
+	m_moveSpeed = 0.2f;
+
+	m_moveDir = Math::Vector3::Zero;
+
+	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;	}
+	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
+	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
+	if (m_moveDir.LengthSquared() == 0) 
+	{
+		ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
+
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+	{
+		if (m_posType == PostureType::Stand)
+		{
+			ChangeActionState(std::make_shared<ActionWalk>());
+			return;
+		}
+	}
+
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!m_posKeyFlg)
+		{
+			m_posKeyFlg = true;
+			ChangeActionState(std::make_shared<ActionSit>());
+			switch (_spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				_spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				_spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		m_posKeyFlg = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		ChangeActionState(std::make_shared<ActionReady>());
+	}
+
+	if (_spCamera)
+	{
+		m_moveDir = m_moveDir.TransformNormal(m_moveDir, _spCamera->GetRotationYMatrix());
+	}
+
+	m_moveDir.Normalize();
+	m_pos += m_moveDir * m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	UpdateRotate(m_moveDir);
+
+	//m_mRot = _camRotMat;
+	m_mRot		= Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
+}
+
+void Player::StateReadyProc()
+{
+	const std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+	const std::shared_ptr<Reticle>	_spReticle = m_wpReticle.lock();
+
+	Math::Matrix _camRotMat;
+	if (_spCamera)
+	{
+		_camRotMat = _spCamera->GetRotationMatrix();
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_spReticle->SetActive(true);
+
+		switch (_spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			_spCamera->ChangeAimR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			_spCamera->ChangeAimL();
+			break;
+		}
+
+		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+		{
+			if (!m_shotFlg)
+			{
+				m_shotFlg = true;
+				ChangeActionState(std::make_shared<ActionShot>());
+			}
+		}
+		else
+		{
+			m_shotFlg = false;
+		}
+	}
+	else
+	{
+		_spReticle->SetActive(false);
+
+		switch (_spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			_spCamera->ChangeTPSR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			_spCamera->ChangeTPSL();
+			break;
+		}
+		//_spWeapon->UnHold();
+
+		ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
+
+	m_mRot = _camRotMat;
+}
+
+void Player::StateShotProc()
+{
+	m_shotCnt++;
+
+	KdCollider::RayInfo ray;
+	ray.m_pos	= m_pos;
+	ray.m_dir	= m_mWorld.Backward();
+	ray.m_range = 1000.0f;
+	ray.m_type	= KdCollider::TypeDamage;
+
+	std::list<KdCollider::CollisionResult> retRayList;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		obj->Intersects(ray, &retRayList);
+	}
+
+	float maxOverLap = 0.0f;
+	Math::Vector3 hitPos = {};
+
+	for (auto& ret : retRayList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap	= ret.m_overlapDistance;
+			hitPos		= ret.m_hitPos;
+		}
+	}
+
+	Math::Vector3 bulletDir = hitPos - m_pos;
+
+	if (m_shotCnt == 1)
+	{
+		ShotBullet(m_pos, bulletDir);
+	}
+
+	if (m_shotCnt >= SHOTCNTMAX)
+	{
+		ChangeActionState(std::make_shared<ActionReady>());
+	}
+}
+
+void Player::StateStandProc()
+{
+	m_standCnt++;
+
+	if (m_standCnt >= STANDCNTMAX)
+	{
+		ChangeActionState(std::make_shared<ActionIdle>());
+	}
+}
+
+void Player::StateSitProc()
+{
+	m_sitCnt++;
+	
+	if (m_sitCnt >= SITCNTMAX)
+	{
+		ChangeActionState(std::make_shared<ActionSit_Idle>());
+	}
+}
+
+void Player::StateSitIdleProc()
+{
+	std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+
+	m_moveDir = Math::Vector3::Zero;
+
+	// ActionSit_Runに切り替え
+	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;	}
+	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
+	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
+	if (m_moveDir.LengthSquared() > 0)
+	{
+		ChangeActionState(std::make_shared<ActionSit_Walk>());
+		return;
+	}
+
+	// ActionStandに切り替え
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!m_posKeyFlg)
+		{
+			m_posKeyFlg = true;
+			ChangeActionState(std::make_shared<ActionStand>());
+			switch (_spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::SitL:
+				_spCamera->ChangeTPSL();
+				break;
+			case TPSCamera::CameraType::SitR:
+				_spCamera->ChangeTPSR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		m_posKeyFlg = false;
+	}
+
+	// ActionSit_Readyに切り替え
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		ChangeActionState(std::make_shared<ActionSit_Ready>());
+		return;
+	}
+}
+
+void Player::StateSitWalkProc()
+{
+	const std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+
+	m_moveSpeed = 0.1f;
+
+	m_moveDir = Math::Vector3::Zero;
+
+	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;	}
+	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
+	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
+	if (m_moveDir.LengthSquared() == 0)
+	{
+		ChangeActionState(std::make_shared<ActionSit_Idle>());
+		return;
+	}
+
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!m_posKeyFlg)
+		{
+			m_posKeyFlg = true;
+			ChangeActionState(std::make_shared<ActionStand>());
+			switch (_spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				_spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				_spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		m_posKeyFlg = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		ChangeActionState(std::make_shared<ActionSit_Ready>());
+	}
+
+	if (_spCamera)
+	{
+		m_moveDir = m_moveDir.TransformNormal(m_moveDir, _spCamera->GetRotationYMatrix());
+	}
+
+	m_moveDir.Normalize();
+	m_pos += m_moveDir * m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	UpdateRotate(m_moveDir);
+
+	//m_mRot = _camRotMat;
+	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
+}
+
+void Player::StateSitReadyProc()
+{
+	const std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+	const std::shared_ptr<Reticle>	_spReticle = m_wpReticle.lock();
+
+	Math::Matrix _camRotMat;
+	if (_spCamera)
+	{
+		_camRotMat = _spCamera->GetRotationMatrix();
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_spReticle->SetActive(true);
+
+		switch (_spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::SitR:
+			_spCamera->ChangeSitAimR();
+			break;
+		case TPSCamera::CameraType::SitL:
+			_spCamera->ChangeSitAimL();
+			break;
+		}
+	}
+	else
+	{
+		_spReticle->SetActive(false);
+
+		switch (_spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::SitR:
+			_spCamera->ChangeSitR();
+			break;
+		case TPSCamera::CameraType::SitL:
+			_spCamera->ChangeSitL();
+			break;
+		}
+		//_spWeapon->UnHold();
+
+		ChangeActionState(std::make_shared<ActionSit_Idle>());
+		return;
+	}
+
+	m_mRot = _camRotMat;
+}
+
+void Player::ShotBullet(const Math::Vector3& _pos, const Math::Vector3& _dir)
+{
+	std::shared_ptr<Bullet> bullet;
+	bullet = std::make_shared<Bullet>();
+	bullet->Init();
+	bullet->Shot(_pos, _dir);
+	SceneManager::Instance().AddObject(bullet);
+}
 
 //================================================================================================================================
 // 移動処理・・・ここから
@@ -387,6 +822,23 @@ void Player::MoveProcess()
 //================================================================================================================================
 
 //================================================================================================================================
+// 回避処理・・・ここから
+//================================================================================================================================
+void Player::AvoidProcess()
+{
+	if (m_posType == PostureType::Stand || m_posType == PostureType::Sit)
+	{
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			m_pType = PlayerType::Roll;
+		}
+	}
+}
+//================================================================================================================================
+// 回避処理・・・ここまで
+//================================================================================================================================
+
+//================================================================================================================================
 // 視点切り替え処理・・・ここから
 //================================================================================================================================
 void Player::ChanegeViewPointProcess()
@@ -460,9 +912,9 @@ void Player::ChanegePostureProcess()
 	if (GetAsyncKeyState('C') & 0x8000)
 	{
 		// キーフラグがfalseだったらtrueにする
-		if (!m_sitKeyFlg)
+		if (!m_posKeyFlg)
 		{
-			m_sitKeyFlg = true;
+			m_posKeyFlg = true;
 			switch (m_posType)
 			{
 			case Player::PostureType::Stand:
@@ -532,7 +984,7 @@ void Player::ChanegePostureProcess()
 	}
 	else
 	{
-		m_sitKeyFlg = false;
+		m_posKeyFlg = false;
 	}
 
 	if (GetAsyncKeyState('X') & 0x8000)
@@ -620,14 +1072,15 @@ void Player::AimProcess()
 {
 	//std::shared_ptr<WeaponBase> _spWeapon = m_wpWeapon.lock();
 	const std::shared_ptr<TPSCamera> _spCamera = m_wpCamera.lock();
+	const std::shared_ptr<Reticle>	_spReticle = m_wpReticle.lock();
 
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
 		m_shotFlg	= true;
+		_spReticle->SetActive(true);
 		switch (m_posType)
 		{
 		case Player::PostureType::Stand:
-			m_pType = PlayerType::Ready;
 			if (_spCamera->GetCamType() == TPSCamera::CameraType::TpsR)
 			{
 				_spCamera->ChangeAimR();
@@ -658,6 +1111,7 @@ void Player::AimProcess()
 	else
 	{
 		m_shotFlg	= false;
+		_spReticle->SetActive(false);
 
 		switch (_spCamera->GetPastCamType())
 		{
@@ -705,29 +1159,154 @@ void Player::ChanegeWeaponProcess()
 {
 }
 
-//================================================================================================================================
-// プレイヤー状態フラグ切り替え・・・ここから
-//================================================================================================================================
-void Player::PlayerTypeFlagSwitch(	
-									bool _idleFlg,		bool _walkFlg,	bool _runFlg,		bool _readyFlg,
-									bool _standFlg,		bool _sitFlg,	bool _sitIdleFlg,	bool _sitWalkFlg,	
-									bool _sitReadyFlg,	bool _creepFlg, bool _creepIdleFlg,	bool _creepWalkFlg,	bool _creepReadyFlg
-								 )
+void Player::ChangeActionState(std::shared_ptr<ActionStateBase> _nextState)
 {
-	m_idleFlg		= _idleFlg;
-	m_walkFlg		= _walkFlg;
-	m_runFlg		= _runFlg;
-	m_readyFlg		= _readyFlg;
-	m_standFlg		= _standFlg;
-	m_sitFlg		= _sitFlg;
-	m_sitIdleFlg	= _sitIdleFlg;
-	m_sitWalkFlg	= _sitWalkFlg;
-	m_sitReadyFlg	= _sitReadyFlg;
-	m_creepFlg		= _creepFlg;
-	m_creepIdleFlg	= _creepIdleFlg;
-	m_creepWalkFlg	= _creepWalkFlg;
-	m_creepReadyFlg = _creepReadyFlg;
+	if (m_nowState)m_nowState->Exit(*this);
+	m_nowState = _nextState;
+	m_nowState->Enter(*this);
 }
-//================================================================================================================================
-// プレイヤー状態フラグ切り替え・・・ここまで
-//================================================================================================================================
+
+void Player::ActionIdle::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Idle");
+}
+
+void Player::ActionIdle::Update(Player& _owner)
+{
+	_owner.StateIdleProc();
+}
+
+void Player::ActionIdle::Exit(Player& _owner)
+{
+}
+
+void Player::ActionWalk::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Walk");
+}
+
+void Player::ActionWalk::Update(Player& _owner)
+{
+	_owner.StateWalkProc();
+}
+
+void Player::ActionWalk::Exit(Player& _owner)
+{
+}
+
+void Player::ActionRun::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Run");
+}
+
+void Player::ActionRun::Update(Player& _owner)
+{
+	_owner.StateRunProc();
+}
+
+void Player::ActionRun::Exit(Player& _owner)
+{
+}
+
+void Player::ActionReady::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Ready");
+}
+
+void Player::ActionReady::Update(Player& _owner)
+{
+	_owner.StateReadyProc();
+}
+
+void Player::ActionReady::Exit(Player& _owner)
+{
+}
+
+void Player::ActionShot::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Shot");
+	_owner.m_shotCnt = 0;
+}
+
+void Player::ActionShot::Update(Player& _owner)
+{
+	_owner.StateShotProc();
+}
+
+void Player::ActionShot::Exit(Player& _owner)
+{
+}
+
+void Player::ActionSit::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Sit");
+	_owner.m_sitCnt = 0;
+	_owner.m_posType = PostureType::Sit;
+}
+
+void Player::ActionSit::Update(Player& _owner)
+{
+	_owner.StateSitProc();
+}
+
+void Player::ActionSit::Exit(Player& _owner)
+{
+}
+
+void Player::ActionStand::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Stand");
+	_owner.m_standCnt = 0;
+	_owner.m_posType = PostureType::Stand;
+}
+
+void Player::ActionStand::Update(Player& _owner)
+{
+	_owner.StateStandProc();
+}
+
+void Player::ActionStand::Exit(Player& _owner)
+{
+}
+
+void Player::ActionSit_Idle::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Sit_Idle");
+}
+
+void Player::ActionSit_Idle::Update(Player& _owner)
+{
+	_owner.StateSitIdleProc();
+}
+
+void Player::ActionSit_Idle::Exit(Player& _owner)
+{
+}
+
+void Player::ActionSit_Walk::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Sit_Walk");
+}
+
+void Player::ActionSit_Walk::Update(Player& _owner)
+{
+	_owner.StateSitWalkProc();
+}
+
+void Player::ActionSit_Walk::Exit(Player& _owner)
+{
+}
+
+void Player::ActionSit_Ready::Enter(Player& _owner)
+{
+	_owner.ChanegeAnimation("Sit_Ready");
+}
+
+void Player::ActionSit_Ready::Update(Player& _owner)
+{
+	_owner.StateSitReadyProc();
+}
+
+void Player::ActionSit_Ready::Exit(Player& _owner)
+{
+}

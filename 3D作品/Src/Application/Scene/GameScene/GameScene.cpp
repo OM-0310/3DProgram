@@ -4,7 +4,9 @@
 #include "../../GameObject/Camera/TPSCamera/TPSCamera.h"
 #include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
 
+#include "../../GameObject/Sky/Sky.h"
 #include "../../GameObject/Terrains/Ground/Ground.h"
+#include "../../GameObject/Terrains/Building/Building.h"
 
 #include "../../GameObject/Characters/Player/Player.h"
 #include "../../GameObject/Characters/Enemy/Enemy.h"
@@ -13,12 +15,16 @@
 #include "../../GameObject/Weapon/AssaultRifle/AssaultRifle.h"
 #include "../../GameObject/Characters/CharaBase.h"
 
+#include "../../GameObject/UI/Reticle/Reticle.h"
+
 void GameScene::Event()
 {
 }
 
 void GameScene::Init()
 {
+	ShowCursor(false);
+
 	//=================================================================
 	// マルチスレッド・・・ここから
 	//=================================================================
@@ -43,11 +49,23 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	// ステージ関係初期化・・・ここから
 	//=================================================================
 
+	// 空
+	std::shared_ptr<Sky> sky;
+	sky = std::make_shared<Sky>();
+	sky->Init();
+	m_objList.push_back(sky);
+
 	// 地形　地面初期化
 	std::shared_ptr<Ground> ground;
 	ground = std::make_shared<Ground>();
 	ground->Init();
 	m_objList.push_back(ground);
+
+	// 建物
+	std::shared_ptr<Building> build;
+	build = std::make_shared<Building>();
+	build->Init();
+	m_objList.push_back(build);
 
 	//=================================================================
 	// ステージ関係初期化・・・ここまで
@@ -70,10 +88,10 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	m_wpPlayer = player;
 
 	// 敵初期化
-	//std::shared_ptr<Enemy> enemy;
-	//enemy = std::make_shared<Enemy>();
-	//enemy->Init();
-	//m_objList.push_back(enemy);
+	std::shared_ptr<Enemy> enemy;
+	enemy = std::make_shared<Enemy>();
+	enemy->Init();
+	m_objList.push_back(enemy);
 
 	//=================================================================
 	// キャラ関係初期化・・・ここまで
@@ -112,9 +130,27 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//=================================================================
 	// カメラ初期化・・・ここまで
 	//=================================================================
+	
+	//// UI関連初期化 //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
+
+	//=================================================================
+	// レティクル初期化・・・ここから
+	//=================================================================
+
+	std::shared_ptr<Reticle> reticle;
+	reticle = std::make_shared<Reticle>();
+	reticle->Init();
+	m_objList.push_back(reticle);
+
+	//=================================================================
+	// レティクル初期化・・・ここまで
+	//=================================================================
+
+	//// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //
 
 	player->SetCamera(camera);
-	//enemy->SetPlayer(player);
+	player->SetReticle(reticle);
+	enemy->SetPlayer(player);
 	//player->SetWeapon(pistol);
 	//player->SetWeapon(assault);
 	//pistol->SetChara(player);

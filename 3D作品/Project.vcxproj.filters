@@ -112,6 +112,30 @@
     <Filter Include="Src\Application\GameObject\Characters\Enemy">
       <UniqueIdentifier>{52008709-6ced-4e4e-a76c-1e772e6b5e82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System">
+      <UniqueIdentifier>{7b80a337-8066-4e62-a15e-bf10395ab99a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\Navigation">
+      <UniqueIdentifier>{f8ae1230-27bf-402d-884e-5751530531a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\Navigation\AStarNode">
+      <UniqueIdentifier>{68127d9a-22b0-491a-aadd-ba4902f9ba94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\Navigation\AstarGrid">
+      <UniqueIdentifier>{a20b061a-0e08-4438-a015-4224499cc6ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\Navigation\PathFinding">
+      <UniqueIdentifier>{d99e36c2-b2ee-4d0b-96c4-581bb9b52adf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\Reticle">
+      <UniqueIdentifier>{998b635e-3d42-40be-b323-faba2452b08a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Building">
+      <UniqueIdentifier>{dac35c0d-0c59-4d2e-9d23-fe03eae1cb71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Sky">
+      <UniqueIdentifier>{b3918912-3a2c-4733-874f-c2ab7e49fb93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -315,6 +339,27 @@
     <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy.h">
       <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Bullet\Bullet.h">
+      <Filter>Src\Application\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Navigation\AstarNode\AstarNode.h">
+      <Filter>Src\Application\System\Navigation\AStarNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Navigation\AstarGrid\AstarGrid.h">
+      <Filter>Src\Application\System\Navigation\AstarGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Navigation\PathFinding\PathFinding.h">
+      <Filter>Src\Application\System\Navigation\PathFinding</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h">
+      <Filter>Src\Application\GameObject\UI\Reticle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building.h">
+      <Filter>Src\Application\GameObject\Terrains\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Sky\Sky.h">
+      <Filter>Src\Application\GameObject\Sky</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -490,6 +535,27 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy.cpp">
       <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Bullet\Bullet.cpp">
+      <Filter>Src\Application\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\Navigation\AstarNode\AstarNode.cpp">
+      <Filter>Src\Application\System\Navigation\AStarNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\Navigation\AstarGrid\AstarGrid.cpp">
+      <Filter>Src\Application\System\Navigation\AstarGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\Navigation\PathFinding\PathFinding.cpp">
+      <Filter>Src\Application\System\Navigation\PathFinding</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp">
+      <Filter>Src\Application\GameObject\UI\Reticle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Building</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Sky\Sky.cpp">
+      <Filter>Src\Application\GameObject\Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

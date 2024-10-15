@@ -4,11 +4,14 @@ class TerrainBase : public KdGameObject
 {
 public:
 
-	TerrainBase	()				{}
-	~TerrainBase()	override	{ Release(); }
+	TerrainBase								()				{}
+	virtual ~TerrainBase					()	override	{ Release(); }
 	
-	void Init	()	override;
-	void DrawLit()	override;
+	virtual void Init						()	override;
+	virtual void DrawLit					()	override;
+	virtual void GenerateDepthMapFromLight	()	override;
+
+	void SetModel(const std::shared_ptr<KdModelData>& _spModel) { m_spModel->SetModelData(_spModel); }
 
 protected:
 
@@ -16,8 +19,7 @@ protected:
 
 protected:
 
-	std::shared_ptr<KdModelData>	m_spModel	= nullptr;
-
+	std::shared_ptr<KdModelWork>	m_spModel	= nullptr;
 
 	Math::Matrix					m_mTrans	= Math::Matrix::Identity;
 	Math::Matrix					m_mScale	= Math::Matrix::Identity;

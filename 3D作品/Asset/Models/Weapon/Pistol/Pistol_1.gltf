@@ -8,19 +8,34 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				1
 			]
 		}
 	],
 	"nodes":[
 		{
+			"name":"MuzzlePoint",
+			"scale":[
+				6.666666030883789,
+				6.666666030883789,
+				6.666666030883789
+			],
+			"translation":[
+				1.4558066129684448,
+				0.5725082159042358,
+				0
+			]
+		},
+		{
+			"children":[
+				0
+			],
 			"mesh":0,
 			"name":"Pistol_1",
-			"rotation":[
-				0,
-				-0.7071068286895752,
-				0,
-				0.7071068286895752
+			"scale":[
+				0.15000000596046448,
+				0.15000000596046448,
+				0.15000000596046448
 			]
 		}
 	],
@@ -203,7 +218,7 @@
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":180,
+			"count":182,
 			"max":[
 				1.3724327087402344,
 				0.7536340355873108,
@@ -219,7 +234,7 @@
 		{
 			"bufferView":7,
 			"componentType":5126,
-			"count":180,
+			"count":182,
 			"type":"VEC3"
 		},
 		{
@@ -231,7 +246,7 @@
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":826,
+			"count":895,
 			"max":[
 				1.479757308959961,
 				0.7391843199729919,
@@ -247,7 +262,7 @@
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":826,
+			"count":895,
 			"type":"VEC3"
 		},
 		{
@@ -259,7 +274,7 @@
 		{
 			"bufferView":12,
 			"componentType":5126,
-			"count":270,
+			"count":290,
 			"max":[
 				1.45725679397583,
 				0.6869352459907532,
@@ -275,7 +290,7 @@
 		{
 			"bufferView":13,
 			"componentType":5126,
-			"count":270,
+			"count":290,
 			"type":"VEC3"
 		},
 		{
@@ -324,62 +339,62 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":2160,
+			"byteLength":2184,
 			"byteOffset":18264,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2160,
-			"byteOffset":20424,
+			"byteLength":2184,
+			"byteOffset":20448,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":552,
-			"byteOffset":22584,
+			"byteOffset":22632,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":9912,
-			"byteOffset":23136,
+			"byteLength":10740,
+			"byteOffset":23184,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":9912,
-			"byteOffset":33048,
+			"byteLength":10740,
+			"byteOffset":33924,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2736,
-			"byteOffset":42960,
+			"byteOffset":44664,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":3240,
-			"byteOffset":45696,
+			"byteLength":3480,
+			"byteOffset":47400,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3240,
-			"byteOffset":48936,
+			"byteLength":3480,
+			"byteOffset":50880,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":816,
-			"byteOffset":52176,
+			"byteOffset":54360,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":52992,
+			"byteLength":55176,
 			"uri":"Pistol_1.bin"
 		}
 	]

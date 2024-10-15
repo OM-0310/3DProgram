@@ -8,23 +8,23 @@ void Pistol::Init()
 		m_spModel->SetModelData("Asset/Models/Weapon/Pistol/Pistol_1.gltf");
 	}
 
-	m_localPos	= m_unholdBasePoint;
-	m_mRot		= Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(180));
-	m_mScale	= Math::Matrix::CreateScale(0.18f);
+	if (m_spModel)
+	{
+		const KdModelWork::Node* pNode = m_spModel->FindNode("MuzzlePoint");
+
+		if (pNode)
+		{
+			m_mMuzzle = pNode->m_worldTransform * m_mLocal;
+		}
+		else if (!pNode)
+		{
+			assert(0 && "MuzzlePoint 指定したノードが見つかりません");
+		}
+	}
 }
 
 void Pistol::Update()
 {
-	if (m_holdFlg)
-	{
-		m_localPos = m_holdBasePoint;
-	}
-	else
-	{
-		m_localPos = m_unholdBasePoint;
-	}
-
-	m_mLocal = Math::Matrix::CreateTranslation(m_localPos);
 
 	WeaponBase::Update();
 }
