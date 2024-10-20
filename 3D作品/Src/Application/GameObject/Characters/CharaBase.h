@@ -27,9 +27,7 @@ protected:
 
 	Math::Vector3								m_pos		= Math::Vector3::Zero;		// 座標
 	Math::Vector3								m_angle		= Math::Vector3::Zero;		// 角度
-	Math::Color									m_color		= kWhiteColor;				// 色情報
-
-	int											m_HP		= 0;						// HP
+	Math::Color									m_color		= kWhiteColor;				// 色情報						// HP
 
 	float										m_gravity	= 0.f;						// 重力
 	float										m_alpha		= 1.f;						// アルファ値

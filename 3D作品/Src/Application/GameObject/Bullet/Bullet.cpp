@@ -1,17 +1,22 @@
 ﻿#include "Bullet.h"
 
+#include "../../Scene/SceneManager.h"
+
 void Bullet::Init()
 {
 	if (!m_spModel)
 	{
-		m_spModel	= std::make_shared<KdModelData>();
+		m_spModel = std::make_shared<KdModelData>();
 		m_spModel->Load("Asset/Models/Bullet/Bullet.gltf");
 	}
 
-		m_pos		= {};
-		m_moveDir	= {};
+	m_pos = {};
+	m_moveDir = {};
 
-		m_lifeSpan = 180;
+	m_lifeSpan = 180;
+	m_hitArea = 0.2f;
+
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
 
 void Bullet::Update()
@@ -23,6 +28,37 @@ void Bullet::Update()
 	{
 		m_isExpired = true;
 	}
+
+	//=======================================================
+	// 球判定・・・ここから
+	//=======================================================
+
+	KdCollider::SphereInfo sphere;
+	sphere.m_sphere.Center	= m_pos;
+	sphere.m_sphere.Radius	= m_hitArea;
+	sphere.m_type			= KdCollider::TypeDamage | KdCollider::TypeGround;
+
+	// デバッグ確認用
+	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (obj->Intersects(sphere, nullptr))
+		{
+			if (obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy)
+			{
+				obj->SetHPDec(BULLETPOW);
+
+				OnHit();
+
+				break;
+			}
+		}
+	}
+
+	//=======================================================
+	// 球判定・・・ここまで
+	//=======================================================
 
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mRot * m_mTrans;

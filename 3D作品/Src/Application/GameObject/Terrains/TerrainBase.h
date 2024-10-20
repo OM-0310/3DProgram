@@ -9,7 +9,7 @@ public:
 	
 	virtual void Init						()	override;
 	virtual void DrawLit					()	override;
-	virtual void GenerateDepthMapFromLight	()	override;
+	virtual void GenerateDepthMapFromLight	()	override	{}
 
 	void SetModel(const std::shared_ptr<KdModelData>& _spModel) { m_spModel->SetModelData(_spModel); }
 

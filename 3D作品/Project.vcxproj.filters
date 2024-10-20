@@ -136,6 +136,42 @@
     <Filter Include="Src\Application\GameObject\Sky">
       <UniqueIdentifier>{b3918912-3a2c-4733-874f-c2ab7e49fb93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Building\Building_Main">
+      <UniqueIdentifier>{77b4a881-0325-48c9-a6f0-7fac7d1074be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Building\Building_Roof">
+      <UniqueIdentifier>{5c2cb618-4ff1-4614-b3ef-5ed414bae855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm">
+      <UniqueIdentifier>{b6e915f3-3d4d-4c1a-847f-8e52cbf0f06f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready">
+      <UniqueIdentifier>{5fa487ef-57d6-4f74-9d8c-b3f0acd02e92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\CardKey">
+      <UniqueIdentifier>{77bc27f1-9949-4141-abd0-09bba54665e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\CardKeyUI">
+      <UniqueIdentifier>{9b99203c-6151-4bbf-b709-7137ad67cf59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\CollectCardKeyUI">
+      <UniqueIdentifier>{227538d1-6a73-409a-bea3-8abca7f87e4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Goal">
+      <UniqueIdentifier>{b3995903-5f08-4d66-aff7-45da907c29d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Scene\ResultScene">
+      <UniqueIdentifier>{1f1d78ab-3148-4d59-aca2-68b8c554bcaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmicks">
+      <UniqueIdentifier>{7bb74442-d81a-4052-93c8-f39a01e06414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmicks\Door">
+      <UniqueIdentifier>{e236e1b8-cdcd-4b2d-81a4-32701800159a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\SecretFile">
+      <UniqueIdentifier>{5e9e1dd4-c080-49d4-8194-e51776f71850}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -324,9 +360,6 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h">
       <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol.h">
-      <Filter>Src\Application\GameObject\Weapon\Pistol</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.h">
       <Filter>Src\Application\GameObject\Weapon\AssaultRifle</Filter>
     </ClInclude>
@@ -359,6 +392,36 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Sky\Sky.h">
       <Filter>Src\Application\GameObject\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.h">
+      <Filter>Src\Application\GameObject\Terrains\Building\Building_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.h">
+      <Filter>Src\Application\GameObject\Terrains\Building\Building_Roof</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm\Pistol_Disarm.h">
+      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready\Pistol_Ready.h">
+      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Ready</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\CardKey\CardKey.h">
+      <Filter>Src\Application\GameObject\CardKey</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.h">
+      <Filter>Src\Application\GameObject\UI\CardKeyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Goal\Goal.h">
+      <Filter>Src\Application\GameObject\Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Scene\ResultScene\ResultScene.h">
+      <Filter>Src\Application\Scene\ResultScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmicks\Door\Door.h">
+      <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\SecretFile\SecretFile.h">
+      <Filter>Src\Application\SecretFile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -521,9 +584,6 @@
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp">
       <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Pistol</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.cpp">
       <Filter>Src\Application\GameObject\Weapon\AssaultRifle</Filter>
     </ClCompile>
@@ -556,6 +616,36 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Sky\Sky.cpp">
       <Filter>Src\Application\GameObject\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Building\Building_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Building\Building_Roof</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm\Pistol_Disarm.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready\Pistol_Ready.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Ready</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\CardKey\CardKey.cpp">
+      <Filter>Src\Application\GameObject\CardKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.cpp">
+      <Filter>Src\Application\GameObject\UI\CardKeyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Goal\Goal.cpp">
+      <Filter>Src\Application\GameObject\Goal</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\ResultScene\ResultScene.cpp">
+      <Filter>Src\Application\Scene\ResultScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmicks\Door\Door.cpp">
+      <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\SecretFile\SecretFile.cpp">
+      <Filter>Src\Application\SecretFile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

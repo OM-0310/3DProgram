@@ -19,6 +19,8 @@ protected:
 
 	std::shared_ptr<KdTexture>		m_spTex;	// 画像情報
 	
+	Math::Rectangle					m_rect;		// 描画範囲
+
 	Math::Vector2					m_pos;		// 座標
 
 	Math::Color						m_color;	// 色情報

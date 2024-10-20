@@ -11,6 +11,7 @@ public:
 	void Update	()	override;
 	void DrawLit()	override;
 
+	void OnHit	() { m_isExpired = true; }
 	void Shot	(const Math::Vector3 _pos, const Math::Vector3 _dir);
 
 private:
@@ -23,7 +24,9 @@ private:
 	Math::Vector3					m_pos;
 	Math::Vector3					m_moveDir;
 
+	static const int				BULLETPOW = 1;
 	int								m_lifeSpan;
+	float							m_hitArea;
 
 	const float						m_moveSpeed = 1.0f;
 };

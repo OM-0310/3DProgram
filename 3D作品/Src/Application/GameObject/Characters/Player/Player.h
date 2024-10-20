@@ -2,9 +2,13 @@
 #include "../CharaBase.h"
 
 class TPSCamera;
-class WeaponBase;
-class Pistol;
+class Pistol_Disarm;
+class Pistol_Ready;
 class AssaultRifle;
+class Door;
+class CardKey;
+class Goal;
+class SecretFile;
 class Reticle;
 class PlayerStateBase;
 
@@ -37,6 +41,13 @@ public:
 		Creep		// 匍匐
 	};
 
+	enum class ItemCollectType
+	{
+		NoCollect			= 1 << 0,	// アイテム未保持
+		CardKeyCollect		= 1 << 1,	// アイテム保持
+		SecretFileCollect	= 1 << 2
+	};
+
 	Player						()				{}
 	~Player						()	override	{ Release(); }
 
@@ -66,43 +77,90 @@ public:
 	void ShotProcess			();	// 弾発射処理
 	void ChanegeWeaponProcess	();	// 武器切り替え処理
 
-	void SetCamera				(const std::shared_ptr<TPSCamera>& camera)
+	void SetCamera		(const std::shared_ptr<TPSCamera>& camera)
 	{
 		m_wpCamera = camera;
 	}
 
-	void SetWeapon				(const std::shared_ptr<WeaponBase>& weapon)
+	void SetPistolDisarm(const std::shared_ptr<Pistol_Disarm>& _spPistol_Disarm)
 	{
-		m_wpWeapon = weapon;
+		m_wpPistol_Disarm = _spPistol_Disarm;
 	}
 
-	void SetReticle				(const std::shared_ptr<Reticle>& reticle)
+	void SetPistolReady	(const std::shared_ptr<Pistol_Ready>& _spPistol_Ready)
+	{
+		m_wpPistol_Ready = _spPistol_Ready;
+	}
+
+	void SetAssault		(const std::shared_ptr<AssaultRifle>& _spAssault)
+	{
+		m_wpAssault = _spAssault;
+	}
+
+	void SetCardKey		(const std::shared_ptr<CardKey>& _spCard)
+	{
+		m_wpCard = _spCard;
+	}
+
+	void SetDoor		(const std::shared_ptr<Door>& _spDoor)
+	{
+		m_wpDoor = _spDoor;
+	}
+
+	void SetSecretFile	(const std::shared_ptr<SecretFile>& _spFile)
+	{
+		m_wpFile = _spFile;
+	}
+
+	void SetGoal		(const std::shared_ptr<Goal>& _spGoal)
+	{
+		m_wpGoal = _spGoal;
+	}
+
+	void SetReticle		(const std::shared_ptr<Reticle>& reticle)
 	{
 		m_wpReticle = reticle;
 	}
 
-	PlayerType GetPlayerType() const { return m_pType; }
+	PlayerType GetPlayerType				() const	{ return m_pType; }
+
+	const bool& GetHoldFlg					()			{ return m_holdFlg; }
+	const Math::Matrix& GetRotateMat		()			{ return m_mRot; }
+	const Math::Vector3& GetDisarmPos		()			{ return m_disarmPos; }
+	const Math::Vector3& GetReadyPos		()			{ return m_readyPos; }
+	const ItemCollectType& GetItemCollType	()			{ return m_itemCollType; }
 
 private:
 
-	std::weak_ptr<TPSCamera>	m_wpCamera;		// カメラ情報
-	std::weak_ptr<Reticle>		m_wpReticle;	// レティクル情報
-	std::weak_ptr<WeaponBase>	m_wpWeapon;		// 武器情報
-	std::shared_ptr<KdAnimator> m_spAnimator;	// アニメーション
+	std::weak_ptr<TPSCamera>	m_wpCamera;			// カメラ情報
+	std::weak_ptr<Reticle>		m_wpReticle;		// レティクル情報
+	std::weak_ptr<Pistol_Disarm>m_wpPistol_Disarm;	// ピストル(武装解除時)情報
+	std::weak_ptr<Pistol_Ready>	m_wpPistol_Ready;	// ピストル(武装時)情報
+	std::weak_ptr<AssaultRifle>	m_wpAssault;		// アサルト情報
+	std::weak_ptr<Door>			m_wpDoor;			// ドア情報
+	std::weak_ptr<CardKey>		m_wpCard;			// カードキー情報
+	std::weak_ptr<SecretFile>	m_wpFile;			// 機密データ情報
+	std::weak_ptr<Goal>			m_wpGoal;			// ゴール情報
+	std::shared_ptr<KdAnimator> m_spAnimator;		// アニメーション
 
-	Math::Matrix				m_mAdjustRotMat;// 補正回転行列
+	Math::Matrix				m_mAdjustRotMat;	// 補正回転行列
 	Math::Matrix				m_mHold;
 	Math::Matrix				m_mUnHold;
+	Math::Matrix				m_mLocalDisarm;
+	Math::Matrix				m_mLocalReady;
 
-	Math::Vector3				m_moveDir;		// 移動方向
-	float						m_moveSpeed;	// 移動速度
+	Math::Vector3				m_disarmPos;		// 武器座標(武装解除時)
+	Math::Vector3				m_readyPos;			// 武器座標(武装時)
+	Math::Vector3				m_moveDir;			// 移動方向
+	float						m_moveSpeed;		// 移動速度
 
-	bool						m_moveFlg;		// 移動フラグ
-	bool						m_shotFlg;		// エイムフラグ
-	bool						m_keyFlg;		// キーフラグ
-	bool						m_changeKeyFlg;	// 視点切り替え時用キーフラグ
-	bool						m_posKeyFlg;	// しゃがみキーフラグ
-	bool						m_creepKeyFlg;	// 匍匐キーフラグ
+	bool						m_moveFlg;			// 移動フラグ
+	bool						m_shotKeyFlg;		// エイムフラグ
+	bool						m_holdFlg;			// 銃構えフラグ
+	bool						m_keyFlg;			// キーフラグ
+	bool						m_changeKeyFlg;		// 視点切り替え時用キーフラグ
+	bool						m_posKeyFlg;		// しゃがみキーフラグ
+	bool						m_creepKeyFlg;		// 匍匐キーフラグ
 
 	static const int			STANDCNTMAX = 6;
 	int							m_standCnt;
@@ -111,9 +169,12 @@ private:
 	static const int			SHOTCNTMAX = 12;
 	int							m_shotCnt;
 
+	static const int			MAXHP = 10;
+
 	PlayerType					m_pType;
 	PostureType					m_posType;
-	POINT						m_FixMousePos;	// カメラ回転用マウス座標の原点
+	ItemCollectType				m_itemCollType;
+	POINT						m_FixMousePos;		// カメラ回転用マウス座標の原点
 
 private:
 	// ステートパターン管理系

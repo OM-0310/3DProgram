@@ -3,6 +3,7 @@
 #include"../BaseScene/BaseScene.h"
 
 class Player;
+class Goal;
 class TPSCamera;
 
 class GameScene : public BaseScene
@@ -24,4 +25,5 @@ private:
 
 	std::weak_ptr<Player>	m_wpPlayer;
 	std::weak_ptr<TPSCamera>m_wpTpsCamera;
+	std::weak_ptr<Goal>		m_wpGoal;
 };

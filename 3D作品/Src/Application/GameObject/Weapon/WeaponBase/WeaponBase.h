@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class CharaBase;
+class Player;
 
 class WeaponBase : public KdGameObject
 {
@@ -14,19 +14,16 @@ public:
 	void DrawLit					()	override;
 	void GenerateDepthMapFromLight	()	override;
 
-	virtual void Hold				() = 0;
-	virtual void UnHold				() = 0;
-
-	void SetChara					(std::shared_ptr<CharaBase> _spChara)
+	void SetPlayer					(std::shared_ptr<Player> _spPlayer)
 	{
-		m_wpChara = _spChara;
+		m_wpPlayer = _spPlayer;
 	}
 
 protected:
 
 	void Release					()				{ m_spModel = nullptr; }
 
-	std::weak_ptr<CharaBase>		m_wpChara;
+	std::weak_ptr<Player>			m_wpPlayer;
 	std::shared_ptr<KdModelWork>	m_spModel	= nullptr;
 
 	Math::Matrix					m_mLocal	= Math::Matrix::Identity;
@@ -34,6 +31,8 @@ protected:
 	Math::Matrix					m_mRot		= Math::Matrix::Identity;
 
 	Math::Vector3					m_localPos	= Math::Vector3::Zero;
+	Math::Color						m_color		= kWhiteColor;
 
+	float							m_alpha		= 1.0f;
 	bool							m_holdFlg	= false;
 };

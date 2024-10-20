@@ -14,6 +14,20 @@
 	],
 	"nodes":[
 		{
+			"name":"ReadyPoint",
+			"rotation":[
+				0.00427920650690794,
+				0.7074968814849854,
+				-0.001457321341149509,
+				0.7067020535469055
+			],
+			"translation":[
+				0.0010977750644087791,
+				1.4227416515350342,
+				0.6207492351531982
+			]
+		},
+		{
 			"name":"Head",
 			"rotation":[
 				7.472956697895938e-10,
@@ -29,7 +43,7 @@
 		},
 		{
 			"children":[
-				0
+				1
 			],
 			"name":"Neck",
 			"rotation":[
@@ -45,28 +59,6 @@
 			]
 		},
 		{
-			"name":"ReadyPoint",
-			"rotation":[
-				-0.5809127688407898,
-				-0.7053277492523193,
-				0.028811538591980934,
-				0.40524452924728394
-			],
-			"scale":[
-				1.0000007152557373,
-				1.000000238418579,
-				1.0000008344650269
-			],
-			"translation":[
-				-0.022327039390802383,
-				-0.018315063789486885,
-				-0.06205976754426956
-			]
-		},
-		{
-			"children":[
-				2
-			],
 			"name":"Index4.L",
 			"rotation":[
 				0.0054464517161250114,
@@ -1038,7 +1030,7 @@
 		},
 		{
 			"children":[
-				1,
+				2,
 				25,
 				48
 			],
@@ -1315,6 +1307,9 @@
 			]
 		},
 		{
+			"children":[
+				0
+			],
 			"mesh":0,
 			"name":"Swat_Body",
 			"skin":0
@@ -1332,15 +1327,15 @@
 		{
 			"name":"PistolDisarmPoint",
 			"rotation":[
-				0.5,
-				-0.5000000596046448,
-				0.5,
-				0.5
+				0.39009594917297363,
+				-0.5279984474182129,
+				-0.46627017855644226,
+				0.592988133430481
 			],
 			"translation":[
-				-0.1544417291879654,
-				1.0157077312469482,
-				0.04112232103943825
+				-0.15565045177936554,
+				0.9350830912590027,
+				0.13511313498020172
 			]
 		},
 		{
@@ -1500,42 +1495,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -3739,42 +3734,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -5978,42 +5973,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -8217,42 +8212,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -10456,42 +10451,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -12695,42 +12690,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -14934,42 +14929,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -17173,42 +17168,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -19412,42 +19407,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -21651,42 +21646,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -23890,42 +23885,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -26129,42 +26124,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -28368,42 +28363,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -30607,42 +30602,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -32846,42 +32841,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -35085,42 +35080,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -37324,42 +37319,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -39563,42 +39558,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -41802,42 +41797,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -44041,42 +44036,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -46280,42 +46275,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -48519,42 +48514,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -50794,42 +50789,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -53033,42 +53028,42 @@
 				{
 					"sampler":18,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":19,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":20,
 					"target":{
-						"node":1,
+						"node":2,
 						"path":"scale"
 					}
 				},
 				{
 					"sampler":21,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"translation"
 					}
 				},
 				{
 					"sampler":22,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"rotation"
 					}
 				},
 				{
 					"sampler":23,
 					"target":{
-						"node":0,
+						"node":1,
 						"path":"scale"
 					}
 				},
@@ -55503,8 +55498,8 @@
 				51,
 				50,
 				49,
+				2,
 				1,
-				0,
 				25,
 				24,
 				23,

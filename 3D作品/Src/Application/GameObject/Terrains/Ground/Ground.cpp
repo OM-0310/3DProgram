@@ -12,7 +12,7 @@ void Ground::Init()
 	m_mWorld	= m_mScale * m_mTrans;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Ground", m_spModel, KdCollider::TypeGround);
+	m_pCollider->RegisterCollisionShape("GroundCollision", m_spModel, KdCollider::TypeGround);
 }
 
 void Ground::DrawLit()

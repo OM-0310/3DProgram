@@ -8,24 +8,34 @@
 
 void Enemy::Init()
 {
-	m_spModel		= std::make_shared<KdModelWork>();
-	m_spModel->SetModelData("Asset/Models/Characters/Enemy/Soldier.gltf");
+	if (!m_spModel)
+	{
+		m_spModel = std::make_shared<KdModelWork>();
+		m_spModel->SetModelData("Asset/Models/Characters/Enemy/Soldier.gltf");
+	}
 
 	m_waryFlg		= false;
 	m_discoverFlg	= false;
 	m_chaseFlg		= false;
 
+	m_HP			= MAXHP;
+
 	m_pos			= { 0.f,0.f,1.0f };
 	m_moveDir		= Math::Vector3::Zero;
-	m_moveSpeed		= 0.1f;
+	m_moveSpeed		= 0.05f;
 
 	m_gridWidth		= 10;
 	m_gridHeight	= 10;
+
+	m_objectType	= ObjectType::TypeEnemy;
 
 	//InitializeGrid();
 
 	m_spAnimator	= std::make_shared<KdAnimator>();
 	m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Idle"));
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("EnemyCollision", m_spModel, KdCollider::TypeDamage);
 
 	CharaBase::Init();
 }
@@ -37,6 +47,11 @@ void Enemy::Update()
 	ChaseProc();
 
 	//RouteSearchProc();
+
+	if (m_HP == 0)
+	{
+		m_isExpired = true;
+	}
 
 	m_pos.y -= m_gravity;
 	m_gravity += 0.04f;

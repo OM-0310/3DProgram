@@ -23,15 +23,15 @@ void CharaBase::PostUpdate()
 	//=========================================================
 
 	KdCollider::RayInfo rayInfo;
-	rayInfo.m_pos	= m_pos;
-	rayInfo.m_dir	= Math::Vector3::Down;
-	rayInfo.m_pos.y -= 0.01f;
+	rayInfo.m_pos = m_pos;
+	rayInfo.m_dir = Math::Vector3::Down;
+	rayInfo.m_pos.y += 0.01f;
 
-	//float enableStepHigh = 0.2f;
-	//rayInfo.m_pos.y += enableStepHigh;
+	float enableStepHigh = 0.2f;
+	rayInfo.m_pos.y += enableStepHigh;
 
-	rayInfo.m_range = m_gravity;
-	rayInfo.m_type	= KdCollider::TypeGround;
+	rayInfo.m_range = m_gravity + enableStepHigh;
+	rayInfo.m_type = KdCollider::TypeGround;
 
 	std::list<KdCollider::CollisionResult> retRayList;
 
@@ -40,9 +40,9 @@ void CharaBase::PostUpdate()
 		obj->Intersects(rayInfo, &retRayList);
 	}
 
-	float maxOverLap = 0;	
-	Math::Vector3 hitPos;	
-	bool ishit = false;		
+	float maxOverLap = 0;
+	Math::Vector3 hitPos;
+	bool ishit = false;
 	for (auto& ret : retRayList)
 	{
 		if (maxOverLap < ret.m_overlapDistance)
@@ -54,9 +54,10 @@ void CharaBase::PostUpdate()
 	}
 	if (ishit)
 	{
-		m_pos = hitPos + Math::Vector3(0, 0.01f, 0);
+		m_pos = hitPos + Math::Vector3{ 0.f,-0.01f,0.f };
 		m_gravity = 0;
 	}
+
 	//=========================================================
 	// 当たり判定(レイ判定)・・・ここまで
 	//=========================================================

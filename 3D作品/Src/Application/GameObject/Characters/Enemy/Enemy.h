@@ -25,6 +25,9 @@ public:
 	void MoveAlongPath	();	// 敵を経路に沿って次の位置に移動させる処理
 
 	void SetPlayer		(std::shared_ptr<Player> _spPlayer) { m_wpPlayer = _spPlayer; }
+	void SetHPDec		(const int& _decNum) { m_HP -= _decNum; }
+
+	int GetHP			()	override { return m_HP; }
 
 	enum class StateType
 	{
@@ -52,6 +55,8 @@ private:
 
 	int							m_gridWidth;
 	int							m_gridHeight;
+
+	static const int			MAXHP = 1;
 
 	StateType					m_sType;
 	EnemyType					m_eType;
