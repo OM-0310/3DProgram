@@ -209,7 +209,7 @@ void KdLessonShader::DrawModel(KdModelWork& rModel, const Math::Matrix& mWorld,
 		if (_enableOutLineCheck)
 		{
 			// 裏面をカリング(非表示)にするラスタライザステートをセット
-			KdShaderManager::Instance().ChangeRasterizerState(KdRasterizerState::CullBack);
+			KdShaderManager::Instance().UndoRasterizerState();
 		}
 	}
 
