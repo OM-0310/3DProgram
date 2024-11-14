@@ -2,8 +2,7 @@
 
 void Reticle::Init()
 {
-	m_spTex = std::make_shared<KdTexture>();
-	m_spTex->Load("Asset/Textures/UI/Reticle/Reticle.png");
+	UIBase::SetAsset("Asset/Textures/UI/Reticle/Reticle.png");
 
 	m_pos = Math::Vector2::Zero;
 

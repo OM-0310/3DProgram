@@ -8,11 +8,7 @@
 
 void Enemy::Init()
 {
-	if (!m_spModel)
-	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Characters/Enemy/Soldier.gltf");
-	}
+	CharaBase::SetAsset("Asset/Models/Characters/Enemy/Soldier.gltf");
 
 	m_waryFlg		= false;
 	m_discoverFlg	= false;

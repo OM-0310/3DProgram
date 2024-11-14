@@ -15,7 +15,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void Extinction() { m_isExpired = true; }
+	void Use		() { m_useFlg = true; }
 
 	void SetCardKey(const std::shared_ptr<CardKey>& _spCard)
 	{
@@ -24,5 +24,9 @@ public:
 
 private:
 
-	std::weak_ptr<CardKey> m_wpCard;
+	std::weak_ptr<CardKey>	m_wpCard;
+
+	int						m_lifeSpan;
+
+	bool					m_useFlg;
 };

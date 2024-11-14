@@ -304,7 +304,10 @@ void Application::Execute()
 		//
 		//=========================================
 
-		m_fpsController.Update();
+		m_fpsController.Update();		
+
+		std::string titleBar = "ステルスゲーム fps:" + std::to_string(m_fpsController.m_nowfps);
+		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
 
 	//===================================================================

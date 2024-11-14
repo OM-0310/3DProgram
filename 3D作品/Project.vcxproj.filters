@@ -148,9 +148,6 @@
     <Filter Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready">
       <UniqueIdentifier>{5fa487ef-57d6-4f74-9d8c-b3f0acd02e92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\CardKey">
-      <UniqueIdentifier>{77bc27f1-9949-4141-abd0-09bba54665e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\UI\CardKeyUI">
       <UniqueIdentifier>{9b99203c-6151-4bbf-b709-7137ad67cf59}</UniqueIdentifier>
     </Filter>
@@ -169,8 +166,38 @@
     <Filter Include="Src\Application\GameObject\Gimmicks\Door">
       <UniqueIdentifier>{e236e1b8-cdcd-4b2d-81a4-32701800159a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\SecretFile">
+    <Filter Include="Src\Application\GameObject\Item">
+      <UniqueIdentifier>{698bf66c-e71b-452e-b8ad-934dc5ad1f7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Item\SecretFile">
       <UniqueIdentifier>{5e9e1dd4-c080-49d4-8194-e51776f71850}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Item\CardKey">
+      <UniqueIdentifier>{77bc27f1-9949-4141-abd0-09bba54665e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Gimmicks\LockedDoor">
+      <UniqueIdentifier>{7fd7f023-6a96-4481-bc9c-bd3a0a8d4d2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\SecretFileUI">
+      <UniqueIdentifier>{9438c10f-89df-4bd9-96c6-072faaaeae79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\PadKeyUI">
+      <UniqueIdentifier>{a6456d56-137f-428c-8eb9-480b8fd58552}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Player\Player_Disarm">
+      <UniqueIdentifier>{159d0ad7-f6ea-44cc-910e-af5590db5771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Player\Player_Disarm_Pistol">
+      <UniqueIdentifier>{6e8e69a3-38f3-46f8-b07d-3b31998c1211}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Player\Player_Ready_Pistol">
+      <UniqueIdentifier>{5f55ec43-df29-42af-a446-09a3e657193a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Player\Player_UpperBody">
+      <UniqueIdentifier>{38e0443d-6e27-4dfb-a8d1-a307ca75346d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Player\Player_LowerBody">
+      <UniqueIdentifier>{cb241560-2e5a-4635-8191-58db70ecfc40}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -405,9 +432,6 @@
     <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready\Pistol_Ready.h">
       <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Ready</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\CardKey\CardKey.h">
-      <Filter>Src\Application\GameObject\CardKey</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.h">
       <Filter>Src\Application\GameObject\UI\CardKeyUI</Filter>
     </ClInclude>
@@ -417,11 +441,47 @@
     <ClInclude Include="Src\Application\Scene\ResultScene\ResultScene.h">
       <Filter>Src\Application\Scene\ResultScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Gimmicks\Door\Door.h">
+    <ClInclude Include="Src\Application\GameObject\Gimmicks\Door\Door_1.h">
       <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\SecretFile\SecretFile.h">
-      <Filter>Src\Application\SecretFile</Filter>
+    <ClInclude Include="Src\Application\GameObject\Item\CardKey\CardKey.h">
+      <Filter>Src\Application\GameObject\Item\CardKey</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Item\SecretFile\SecretFile.h">
+      <Filter>Src\Application\GameObject\Item\SecretFile</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Item\ItemBase.h">
+      <Filter>Src\Application\GameObject\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmicks\LockedDoor\LockedDoor.h">
+      <Filter>Src\Application\GameObject\Gimmicks\LockedDoor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmicks\Door\Door_2.h">
+      <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Gimmicks\Door\Door_3.h">
+      <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\SecretFileUI\SecretFileUI.h">
+      <Filter>Src\Application\GameObject\UI\SecretFileUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.h">
+      <Filter>Src\Application\GameObject\UI\PadKeyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_Disarm\Player_Disarm.h">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_Disarm</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_Disarm_Pistol\Player_Disarm_Pistol.h">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_Disarm_Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_Ready_Pistol\Player_Ready_Pistol.h">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_Ready_Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_UpperBody\Player_UpperBody.h">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_UpperBody</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_LowerBody\Player_LowerBody.h">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_LowerBody</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -629,9 +689,6 @@
     <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready\Pistol_Ready.cpp">
       <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Ready</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\CardKey\CardKey.cpp">
-      <Filter>Src\Application\GameObject\CardKey</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.cpp">
       <Filter>Src\Application\GameObject\UI\CardKeyUI</Filter>
     </ClCompile>
@@ -641,11 +698,47 @@
     <ClCompile Include="Src\Application\Scene\ResultScene\ResultScene.cpp">
       <Filter>Src\Application\Scene\ResultScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Gimmicks\Door\Door.cpp">
+    <ClCompile Include="Src\Application\GameObject\Gimmicks\Door\Door_1.cpp">
       <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\SecretFile\SecretFile.cpp">
-      <Filter>Src\Application\SecretFile</Filter>
+    <ClCompile Include="Src\Application\GameObject\Item\CardKey\CardKey.cpp">
+      <Filter>Src\Application\GameObject\Item\CardKey</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Item\SecretFile\SecretFile.cpp">
+      <Filter>Src\Application\GameObject\Item\SecretFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Item\ItemBase.cpp">
+      <Filter>Src\Application\GameObject\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmicks\LockedDoor\LockedDoor.cpp">
+      <Filter>Src\Application\GameObject\Gimmicks\LockedDoor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmicks\Door\Door_2.cpp">
+      <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Gimmicks\Door\Door_3.cpp">
+      <Filter>Src\Application\GameObject\Gimmicks\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\SecretFileUI\SecretFileUI.cpp">
+      <Filter>Src\Application\GameObject\UI\SecretFileUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.cpp">
+      <Filter>Src\Application\GameObject\UI\PadKeyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_Disarm\Player_Disarm.cpp">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_Disarm</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_Disarm_Pistol\Player_Disarm_Pistol.cpp">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_Disarm_Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_Ready_Pistol\Player_Ready_Pistol.cpp">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_Ready_Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_UpperBody\Player_UpperBody.cpp">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_UpperBody</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_LowerBody\Player_LowerBody.cpp">
+      <Filter>Src\Application\GameObject\Characters\Player\Player_LowerBody</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

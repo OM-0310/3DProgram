@@ -1,0 +1,42 @@
+﻿#pragma once
+
+class Player;
+
+class Door_1 : public KdGameObject
+{
+public:
+
+	Door_1							()				{}
+	~Door_1							()	override	{}
+
+	void Init						()	override;
+	void Update						()	override;
+	void DrawLit					()	override;
+	void GenerateDepthMapFromLight	()	override;
+
+	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
+	{
+		m_wpPlayer = _spPlayer;
+	}
+
+private:
+
+	std::shared_ptr<KdModelWork>	m_spModel;
+	std::weak_ptr<Player>			m_wpPlayer;
+
+	Math::Color						m_debugColor;
+
+	Math::Matrix					m_mTrans;
+
+	Math::Vector3					m_pos;
+	Math::Vector3					m_eventPos;
+
+	const float						m_moveMax	= 2.5f;
+	const float						m_moveMin	= -0.9f;
+	const float						m_moveSpeed = 0.1f;
+
+	const float						m_openArea	= 1.4f;
+
+	bool							m_openAbleFlg;
+	bool							m_openFlg;
+};

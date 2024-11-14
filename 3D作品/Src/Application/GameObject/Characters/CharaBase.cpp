@@ -75,6 +75,16 @@ void CharaBase::GenerateDepthMapFromLight()
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
+void CharaBase::SetAsset(std::string _name)
+{
+	if (!m_spModel)
+	{
+		m_spModel = std::make_shared<KdModelWork>();
+		KdAssets::Instance().m_modeldatas.GetData(_name);
+		m_spModel->SetModelData(KdAssets::Instance().m_modeldatas.GetData(_name));
+	}
+}
+
 void CharaBase::UpdateRotate(const Math::Vector3& srcMoveVec)
 {
 	// 何も入力がない場合は処理しない

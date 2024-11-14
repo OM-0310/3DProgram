@@ -14,6 +14,8 @@ public:
 	void DrawLit					()	override;
 	void GenerateDepthMapFromLight	()	override;
 
+	void SetAsset(std::string _name);
+
 	void SetPlayer					(std::shared_ptr<Player> _spPlayer)
 	{
 		m_wpPlayer = _spPlayer;
@@ -33,6 +35,7 @@ protected:
 	Math::Vector3					m_localPos	= Math::Vector3::Zero;
 	Math::Color						m_color		= kWhiteColor;
 
-	float							m_alpha		= 1.0f;
+	float							m_alpha		= 1.f;
+	float							m_angle		= 0.f;
 	bool							m_holdFlg	= false;
 };

@@ -1,13 +1,21 @@
 ﻿#include "Player.h"
 
+#include "Player_UpperBody/Player_UpperBody.h"
+#include "Player_LowerBody/Player_LowerBody.h"
+#include "Player_Disarm/Player_Disarm.h"
+#include "Player_Disarm_Pistol/Player_Disarm_Pistol.h"
+#include "Player_Ready_Pistol/Player_Ready_Pistol.h"
+
 #include "../../Camera/TPSCamera/TPSCamera.h"
 
 #include "../../Weapon/Pistol/Pistol_Disarm/Pistol_Disarm.h"
 #include "../../Weapon/Pistol/Pistol_Ready/Pistol_Ready.h"
 
-#include "../../Gimmicks/Door/Door.h"
-#include "../../CardKey/CardKey.h"
-#include "../../SecretFile/SecretFile.h"
+#include "../../Gimmicks/LockedDoor/LockedDoor.h"
+
+#include "../../Item/CardKey/CardKey.h"
+#include "../../Item/SecretFile/SecretFile.h"
+
 #include "../../Goal/Goal.h"
 
 #include "../../UI/Reticle/Reticle.h"
@@ -17,24 +25,21 @@
 
 void Player::Init()
 {
-	if (!m_spModel)
-	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Characters/Player/Swat.gltf");
+	//CharaBase::SetAsset("Asset/Models/Characters/Player/Player_3.gltf");
 
-		m_spAnimator = std::make_shared<KdAnimator>();
-	}
+	m_spAnimator = std::make_shared<KdAnimator>();
 
 	ChangeActionState(std::make_shared<ActionIdle>());
 
 	m_HP			= MAXHP;
 
-	m_pos			= { 0.f,-0.9f,0.f };
+	m_pos			= { 0.f,-0.9f,-50.0f };
 	m_moveDir		= Math::Vector3::Zero;
 	m_moveSpeed		= 0.f;
 
 	m_moveFlg		= false;
 	m_shotKeyFlg	= false;
+	m_reloadKeyFlg	= false;
 	m_holdFlg		= false;
 	m_keyFlg		= false;
 	m_changeKeyFlg	= false;
@@ -44,41 +49,18 @@ void Player::Init()
 	m_standCnt		= 0;
 	m_sitCnt		= 0;
 	m_shotCnt		= 0;
+	m_reloadCnt		= 0;
 
-	m_mLocalDisarm	= Math::Matrix::CreateTranslation({ 0.03f,0.f,0.2f });
-	m_mLocalReady	= Math::Matrix::CreateTranslation({ -0.62f,0.05f,0.58f });
+	m_mLocalDisarm	= Math::Matrix::CreateTranslation({ 0.f,0.f,0.f });
+	m_mLocalReady	= Math::Matrix::CreateTranslation({ 0.f,0.f,0.f });
 
-	//m_pType			= PlayerType::Idle;
+	m_sType			= SituationType::Idle;
 	m_posType		= PostureType::Stand;
 	m_itemCollType	= ItemCollectType::NoCollect;
 
 	m_objectType	= ObjectType::TypePlayer;
 
 	CharaBase::Init();
-
-	if (m_spModel)
-	{
-		const KdModelWork::Node* pDisarmNode	= m_spModel->FindNode("PistolDisarmPoint");
-		const KdModelWork::Node* pReadyNode		= m_spModel->FindNode("ReadyPoint");
-
-		if (pDisarmNode)
-		{
-			m_mUnHold = pDisarmNode->m_worldTransform * m_mLocalDisarm;
-		}
-		else if (!pDisarmNode)
-		{
-			assert(pDisarmNode && "PistolDisarmPoint 指定したノードが見つかりません");
-		}
-
-		if (pReadyNode)
-		{
-			m_mHold = pReadyNode->m_worldTransform * m_mLocalReady;
-		}
-		else
-		{
-			assert(pReadyNode && "ReadyPoint 指定したノードが見つかりません");
-		}
-	}
 
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("PlayerCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
@@ -88,8 +70,34 @@ void Player::Init()
 
 void Player::Update()
 {
-	m_gravity	+= 0.04f;
-	m_pos.y		-= m_gravity;
+	if (m_spModel)
+	{
+		const KdModelWork::Node* pDisarmNode = m_spModel->FindNode("PistolDisarmPoint");
+		const KdModelWork::Node* pReadyNode = m_spModel->FindNode("ReadyPoint");
+
+		if (pDisarmNode)
+		{
+			m_mUnHold = pDisarmNode->m_worldTransform * m_mWorld;
+		}
+		else if (!pDisarmNode)
+		{
+			assert(pDisarmNode && "PistolDisarmPoint 指定したノードが見つかりません");
+		}
+
+		if (pReadyNode)
+		{
+			m_mHold = pReadyNode->m_worldTransform * m_mWorld;
+		}
+		else
+		{
+			assert(pReadyNode && "ReadyPoint 指定したノードが見つかりません");
+		}
+	}
+
+	Math::Vector3 vec = m_mUnHold.Translation();
+
+	m_gravity += 0.04f;
+	m_pos.y -= m_gravity;
 
 	// 視点切り替え処理
 	ChanegeViewPointProcess();
@@ -103,73 +111,50 @@ void Player::Update()
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mRot * m_mTrans;
 
-	m_disarmPos = (m_mUnHold * m_mWorld).Translation();
+	//m_disarmPos = m_mUnHold.Translation();
 
-	KdCollider::SphereInfo disarmSphereInfo;
-	disarmSphereInfo.m_sphere.Center = m_disarmPos;
-	disarmSphereInfo.m_sphere.Radius = 0.05f;
-	disarmSphereInfo.m_type = KdCollider::TypeDamage;
+	//KdCollider::SphereInfo disarmSphereInfo;
+	//disarmSphereInfo.m_sphere.Center = m_disarmPos;
+	//disarmSphereInfo.m_sphere.Radius = 0.05f;
+	//disarmSphereInfo.m_type = KdCollider::TypeDamage;
 
 	//m_pDebugWire->AddDebugSphere(disarmSphereInfo.m_sphere.Center, disarmSphereInfo.m_sphere.Radius, kBlueColor);
 
-	m_readyPos = (m_mHold * m_mWorld).Translation();
+	//m_readyPos = m_mHold.Translation();
 
-	KdCollider::SphereInfo readySphereInfo;
-	readySphereInfo.m_sphere.Center = m_readyPos;
-	readySphereInfo.m_sphere.Radius = 0.05f;
-	disarmSphereInfo.m_type = KdCollider::TypeDamage;
+	//KdCollider::SphereInfo readySphereInfo;
+	//readySphereInfo.m_sphere.Center = m_readyPos;
+	//readySphereInfo.m_sphere.Radius = 0.05f;
+	//readySphereInfo.m_type = KdCollider::TypeDamage;
+
+	//m_pDebugWire->AddDebugSphere(readySphereInfo.m_sphere.Center, readySphereInfo.m_sphere.Radius, kBlueColor);
 
 	std::shared_ptr<CardKey>	spCard = m_wpCard.lock();
-	std::shared_ptr<Door>		spDoor = m_wpDoor.lock();
+	std::shared_ptr<LockedDoor>	spLockDoor = m_wpLockDoor.lock();
 	std::shared_ptr<SecretFile> spFile = m_wpFile.lock();
 	std::shared_ptr<Goal>		spGoal = m_wpGoal.lock();
-	if (spCard)
+	if (GetAsyncKeyState('E') & 0x8000)
 	{
-		if (GetAsyncKeyState('E') & 0x8000)
+		if (!m_keyFlg)
 		{
-			if (!m_keyFlg)
+			m_keyFlg = true;
+			if (spCard)
 			{
-				m_keyFlg = true;
 				if (spCard->GetCollectFlg())
 				{
 					m_itemCollType = ItemCollectType::CardKeyCollect;
 					spCard->Extinction();
 				}
 			}
-		}
-		else
-		{
-			m_keyFlg = false;
-		}
-	}
-
-	if (spDoor)
-	{
-		if (GetAsyncKeyState('E') & 0x8000)
-		{
-			if (!m_keyFlg)
+			if (spLockDoor)
 			{
-				m_keyFlg = true;
-				if (spDoor->GetOpeAbleFlg())
+				if (spLockDoor->GetOpeAbleFlg())
 				{
-					spDoor->Open();
+					spLockDoor->Open();
 				}
 			}
-		}
-		else
-		{
-			m_keyFlg = false;
-		}
-	}
-
-	if (spFile)
-	{
-
-		if (GetAsyncKeyState('E') & 0x8000)
-		{
-			if (!m_keyFlg)
+			if (spFile)
 			{
-				m_keyFlg = true;
 				if (spFile->GetCollectFlg())
 				{
 					m_itemCollType = ItemCollectType::SecretFileCollect;
@@ -181,10 +166,10 @@ void Player::Update()
 				}
 			}
 		}
-		else
-		{
-			m_keyFlg = false;
-		}
+	}
+	else
+	{
+		m_keyFlg = false;
 	}
 
 	//m_pDebugWire->AddDebugSphere(readySphereInfo.m_sphere.Center, readySphereInfo.m_sphere.Radius, kBlueColor);
@@ -194,8 +179,8 @@ void Player::PostUpdate()
 {
 	UpdateCollision();
 	// アニメーションの更新
-	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
-	m_spModel->CalcNodeMatrices();
+	//m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+	//m_spModel->CalcNodeMatrices();
 
 	//CharaBase::PostUpdate();
 }
@@ -203,7 +188,7 @@ void Player::PostUpdate()
 void Player::UpdateCollision()
 {
 	//==========================================================
-	// レイ判定・・・ここから
+	// レイ判定
 	//==========================================================
 
 	KdCollider::RayInfo rayInfo;
@@ -243,16 +228,12 @@ void Player::UpdateCollision()
 	}
 
 	//==========================================================
-	// レイ判定・・・ここまで
-	//==========================================================
-
-	//==========================================================
-	// 球判定・・・ここから
+	// 球判定
 	//==========================================================
 
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Center	= m_pos + Math::Vector3{ 0.f,0.9f,0.f };
-	sphere.m_sphere.Radius	= 0.25f;
+	sphere.m_sphere.Radius	= 0.3f;
 	sphere.m_type			= KdCollider::TypeGround;
 	// デバッグ用
 	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius);
@@ -284,29 +265,73 @@ void Player::UpdateCollision()
 	}
 	if (isHit)
 	{
-		// Z方向無効
-		hitDir.z = 0;
-
 		hitDir.Normalize();
 
 		m_pos += hitDir * maxOverLap;
 	}
-
-	//==========================================================
-	// 球判定・・・ここまで
-	//==========================================================
 }
 
-//================================================================================================================================
-// アニメーション切り替え処理・・・ここから
-//================================================================================================================================
-void Player::ChanegeAnimation(const std::string& _name)
+void Player::ChangeAnimation(const std::string& _animeName)
 {
-	m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation(_name));
+	std::shared_ptr<Player_UpperBody>		spPlayer_Up = m_wpPlayer_Up.lock();
+	std::shared_ptr<Player_LowerBody>		spPlayer_Low = m_wpPlayer_Low.lock();
+	std::shared_ptr<Player_Disarm>			spPlayer_Disarm = m_wpPlayer_Disarm.lock();
+	std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol = m_wpPlayer_Disarm_Pistol.lock();
+	std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
+	if (spPlayer_Up)
+	{
+		spPlayer_Up->ChangeAnimation(_animeName);
+	}
+	if (spPlayer_Low)
+	{
+		spPlayer_Low->ChangeAnimation(_animeName);
+	}
+	if (spPlayer_Disarm)
+	{
+		spPlayer_Disarm->ChangeAnimation(_animeName);
+	}
+	if (spPlayer_Disarm_Pistol)
+	{
+		spPlayer_Disarm_Pistol->ChangeAnimation(_animeName);
+	}
+	if (spPlayer_Ready_Pistol)
+	{
+		spPlayer_Ready_Pistol->ChangeAnimation(_animeName);
+	}
 }
+
 //================================================================================================================================
-// アニメーション切り替え処理・・・ここまで
+// アニメーション切り替え処理
 //================================================================================================================================
+	void Player::ChangeAnimation(const std::string & _upperBody_Name, const std::string & _lowerBody_Name)
+	{
+		std::shared_ptr<Player_UpperBody>		spPlayer_Up = m_wpPlayer_Up.lock();
+		std::shared_ptr<Player_LowerBody>		spPlayer_Low = m_wpPlayer_Low.lock();
+		std::shared_ptr<Player_Disarm>			spPlayer_Disarm = m_wpPlayer_Disarm.lock();
+		std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol = m_wpPlayer_Disarm_Pistol.lock();
+		std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
+		if (spPlayer_Up)
+		{
+			spPlayer_Up->ChangeAnimation(_upperBody_Name);
+		}
+		if (spPlayer_Low)
+		{
+			spPlayer_Low->ChangeAnimation(_lowerBody_Name);
+		}
+		if (spPlayer_Disarm)
+		{
+			spPlayer_Disarm->ChangeAnimation(_lowerBody_Name);
+		}
+		if (spPlayer_Disarm_Pistol)
+		{
+			spPlayer_Disarm_Pistol->ChangeAnimation(_lowerBody_Name);
+		}
+		if (spPlayer_Ready_Pistol)
+		{
+			spPlayer_Ready_Pistol->ChangeAnimation(_upperBody_Name);
+		}
+		//m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation(_name));
+	}
 
 void Player::StateIdleProc()
 {
@@ -323,6 +348,15 @@ void Player::StateIdleProc()
 	{
 		ChangeActionState(std::make_shared<ActionRun>()); 
 		return;
+	}
+
+	// ActionReloadに切り替え
+	if(GetAsyncKeyState('R') & 0x8000)
+	{
+		if (!m_reloadKeyFlg)
+		{
+			ChangeActionState(std::make_shared<ActionReload>());
+		}
 	}
 
 	// ActionSitに切り替え
@@ -618,6 +652,17 @@ void Player::StateShotProc()
 	}
 }
 
+void Player::StateReloadProc()
+{
+	m_reloadCnt++;
+	if (m_reloadCnt >= RELOADCNTMAX)
+	{
+		ChangeActionState(std::make_shared<ActionIdle>());
+	}
+
+	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
+}
+
 void Player::StateStandProc()
 {
 	m_standCnt++;
@@ -807,149 +852,7 @@ void Player::ShotBullet(const Math::Vector3& _pos, const Math::Vector3& _dir)
 }
 
 //================================================================================================================================
-// 移動処理・・・ここから
-//================================================================================================================================
-void Player::MoveProcess()
-{
-	m_moveDir = Math::Vector3::Zero;
-
-	// 移動処理
-	if (GetAsyncKeyState('W') & 0x8000)
-	{
-		m_moveFlg = true;
-		m_moveDir += { 0.f, 0.f, 1.f};
-
-		switch (m_posType)
-		{
-		case Player::PostureType::Stand:
-
-			m_pType		= PlayerType::Run;
-			m_moveSpeed = 0.2f;
-			if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
-			{
-				m_pType		= PlayerType::Walk;
-				m_moveSpeed = 0.05f;
-			}
-
-			break;
-		case Player::PostureType::Sit:
-
-			m_pType		= PlayerType::Sit_Walk;
-			m_moveSpeed = 0.1f;
-
-			break;
-		case Player::PostureType::Creep:
-			break;
-		}
-	}
-	if (GetAsyncKeyState('S') & 0x8000)
-	{
-		m_moveFlg = true;
-		m_moveDir += { 0.f, 0.f, -1.f};
-
-		switch (m_posType)
-		{
-		case Player::PostureType::Stand:
-
-			m_pType = PlayerType::Run;
-			m_moveSpeed = 0.2f;
-			if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
-			{
-				m_pType = PlayerType::Walk;
-				m_moveSpeed = 0.05f;
-			}
-
-			break;
-		case Player::PostureType::Sit:
-
-			m_pType = PlayerType::Sit_Walk;
-			m_moveSpeed = 0.1f;
-
-			break;
-		case Player::PostureType::Creep:
-			break;
-		}
-	}
-	if (GetAsyncKeyState('A') & 0x8000)
-	{
-		m_moveFlg = true;
-		m_moveDir += {-1.f, 0.f, 0.f};
-
-		switch (m_posType)
-		{
-		case Player::PostureType::Stand:
-
-			m_pType = PlayerType::Run;
-			m_moveSpeed = 0.2f;
-			if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
-			{
-				m_pType = PlayerType::Walk;
-				m_moveSpeed = 0.05f;
-			}
-
-			break;
-		case Player::PostureType::Sit:
-
-			m_pType = PlayerType::Sit_Walk;
-			m_moveSpeed = 0.1f;
-
-			break;
-		case Player::PostureType::Creep:
-			break;
-		}
-	}
-	if (GetAsyncKeyState('D') & 0x8000)
-	{
-		m_moveFlg = true;
-		m_moveDir += { 1.f, 0.f, 0.f};
-
-		switch (m_posType)
-		{
-		case Player::PostureType::Stand:
-
-			m_pType = PlayerType::Run;
-			m_moveSpeed = 0.2f;
-			if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
-			{
-				m_pType = PlayerType::Walk;
-				m_moveSpeed = 0.05f;
-			}
-
-			break;
-		case Player::PostureType::Sit:
-
-			m_pType = PlayerType::Sit_Walk;
-			m_moveSpeed = 0.1f;
-
-			break;
-		case Player::PostureType::Creep:
-			break;
-		}
-	}
-}
-//================================================================================================================================
-// 移動処理・・・ここまで
-//================================================================================================================================
-
-//================================================================================================================================
-// 回避処理・・・ここから
-//================================================================================================================================
-void Player::AvoidProcess()
-{
-	if (m_posType == PostureType::Stand || m_posType == PostureType::Sit)
-	{
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-		{
-			m_pType = PlayerType::Roll;
-		}
-	}
-}
-//================================================================================================================================
-// 回避処理・・・ここまで
-//================================================================================================================================
-
-//================================================================================================================================
-// 視点切り替え処理・・・ここから
+// 視点切り替え処理
 //================================================================================================================================
 void Player::ChanegeViewPointProcess()
 {
@@ -1008,266 +911,6 @@ void Player::ChanegeViewPointProcess()
 		m_changeKeyFlg = false;
 	}
 }
-//================================================================================================================================
-// 視点切り替え処理・・・ここまで
-//================================================================================================================================
-
-//================================================================================================================================
-// 体勢切り替え処理・・・ここから
-//================================================================================================================================
-void Player::ChanegePostureProcess()
-{
-	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		// キーフラグがfalseだったらtrueにする
-		if (!m_posKeyFlg)
-		{
-			m_posKeyFlg = true;
-			switch (m_posType)
-			{
-			case Player::PostureType::Stand:
-				m_posType	= PostureType::Sit;
-				m_pType		= PlayerType::Sit;
-				switch (spCamera->GetCamType())
-				{
-				case TPSCamera::CameraType::TpsR:
-					spCamera->ChangeSitR();
-					break;
-				case TPSCamera::CameraType::TpsL:
-					spCamera->ChangeSitL();
-					break;
-				case TPSCamera::CameraType::AimR:
-					spCamera->ChangeSitAimR();
-					break;
-				case TPSCamera::CameraType::AimL:
-					spCamera->ChangeSitAimL();
-					break;
-				}
-				break;
-			case Player::PostureType::Sit:
-				m_posType = PostureType::Stand;
-				// blender側で実装
-				//m_pType = PlayerType::Stand;
-				switch (spCamera->GetCamType())
-				{
-				case TPSCamera::CameraType::SitR:
-					spCamera->ChangeTPSR();
-					break;
-				case TPSCamera::CameraType::SitL:
-					spCamera->ChangeTPSL();
-					break;
-				case TPSCamera::CameraType::SitAimR:
-					spCamera->ChangeAimR();
-					break;
-				case TPSCamera::CameraType::SitAimL:
-					spCamera->ChangeAimL();
-					break;
-				}
-				break;
-			case Player::PostureType::Creep:
-				m_posType = PostureType::Sit;
-				// blender側で実装
-				//m_pType = PlayerType::Creep;
-				
-				//switch (_spCamera->GetCamType())
-				//{
-				//case TPSCamera::CameraType::CreepR:
-				//	_spCamera->ChangeSitR();
-				//	break;
-				//case TPSCamera::CameraType::CreepL:
-				//	_spCamera->ChangeSitL();
-				//	break;
-				//case TPSCamera::CameraType::CreepAimR:
-				//	_spCamera->ChangeSitAimR();
-				//	break;
-				//case TPSCamera::CameraType::CreepAimL:
-				//	_spCamera->ChangeSitAimL();
-				//	break;
-				//default:
-				//	break;
-				//}
-				break;
-			}
-		}
-	}
-	else
-	{
-		m_posKeyFlg = false;
-	}
-
-	if (GetAsyncKeyState('X') & 0x8000)
-	{
-		// キーフラグがfalseだったらtrueにする
-		if (!m_creepKeyFlg)
-		{
-			m_creepKeyFlg = true;
-			switch (m_posType)
-			{
-			case Player::PostureType::Stand:
-				m_posType = PostureType::Creep;
-				// blender側で実装
-				//m_pType = PlayerType::Creep;
-				switch (spCamera->GetCamType())
-				{
-				case TPSCamera::CameraType::TpsR:
-					break;
-				case TPSCamera::CameraType::TpsL:
-					break;
-				case TPSCamera::CameraType::AimR:
-					break;
-				case TPSCamera::CameraType::AimL:
-					break;
-				}
-				break;
-			case Player::PostureType::Sit:
-				m_posType = PostureType::Creep;
-				// blender側で実装
-				//m_pType = PlayerType::Creep;
-				switch (spCamera->GetCamType())
-				{
-				case TPSCamera::CameraType::SitR:
-					break;
-				case TPSCamera::CameraType::SitL:
-					break;
-				case TPSCamera::CameraType::SitAimR:
-					break;
-				case TPSCamera::CameraType::SitAimL:
-					break;
-				}
-				break;
-			case Player::PostureType::Creep:
-				m_posType = PostureType::Stand;
-				// blender側で実装
-				//m_pType = PlayerType::Stand;
-				switch (spCamera->GetCamType())
-				{
-				case TPSCamera::CameraType::CreepR:
-					break;
-				case TPSCamera::CameraType::CreepL:
-					break;
-				case TPSCamera::CameraType::CreepAimR:
-					break;
-				case TPSCamera::CameraType::CreepAimL:
-					break;
-				}
-				break;
-			}
-		}
-	}
-	else
-	{
-		m_creepKeyFlg = false;
-	}
-
-	// プレイヤーの状態がSitの場合にカウントをプラスする
-	//if (m_pType == PlayerType::Sit)
-	//{
-	//	m_sitCnt++;
-	//}
-	//if (m_sitCnt >= 6)
-	//{
-	//	m_pType = PlayerType::Sit_Idle;
-	//}
-}
-//================================================================================================================================
-// 体勢切り替え処理・・・ここまで
-//================================================================================================================================
-
-//================================================================================================================================
-// 銃構え処理・・・ここから
-//================================================================================================================================
-void Player::AimProcess()
-{
-	//std::shared_ptr<WeaponBase> _spWeapon = m_wpWeapon.lock();
-	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-	const std::shared_ptr<Reticle>	spReticle = m_wpReticle.lock();
-
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		m_shotKeyFlg	= true;
-		spReticle->SetActive(true);
-		switch (m_posType)
-		{
-		case Player::PostureType::Stand:
-			if (spCamera->GetCamType() == TPSCamera::CameraType::TpsR)
-			{
-				spCamera->ChangeAimR();
-			}
-			else if (spCamera->GetCamType() == TPSCamera::CameraType::TpsL)
-			{
-				spCamera->ChangeAimL();
-			}
-			break;
-		case Player::PostureType::Sit:
-			m_pType = PlayerType::Sit_Ready;
-			if (spCamera->GetCamType() == TPSCamera::CameraType::SitR)
-			{
-				spCamera->ChangeSitAimR();
-			}
-			else if (spCamera->GetCamType() == TPSCamera::CameraType::SitL)
-			{
-				spCamera->ChangeSitAimL();
-			}
-			break;
-		case Player::PostureType::Creep:
-			break;
-		default:
-			break;
-		}
-		//_spWeapon->Hold();
-	}
-	else
-	{
-		m_shotKeyFlg	= false;
-		spReticle->SetActive(false);
-
-		switch (spCamera->GetPastCamType())
-		{
-		case TPSCamera::CameraType::TpsR:
-			spCamera->ChangeTPSR();
-			break;
-		case TPSCamera::CameraType::TpsL:
-			spCamera->ChangeTPSL();
-			break;
-		case TPSCamera::CameraType::SitR:
-			spCamera->ChangeSitR();
-			break;
-		case TPSCamera::CameraType::SitL:
-			spCamera->ChangeSitL();
-			break;
-		default:
-			break;
-		}
-		//_spWeapon->UnHold();
-	}
-}
-//================================================================================================================================
-// 銃構え処理・・・ここまで
-//================================================================================================================================
-
-
-//================================================================================================================================
-// 弾発射処理・・・ここから
-//================================================================================================================================
-void Player::ShotProcess()
-{
-	if (m_pType == PlayerType::Ready)
-	{
-		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-		{
-
-		}
-	}
-}
-//================================================================================================================================
-// 弾発射処理・・・ここまで
-//================================================================================================================================
-
-void Player::ChanegeWeaponProcess()
-{
-}
 
 void Player::ChangeActionState(std::shared_ptr<ActionStateBase> _nextState)
 {
@@ -1278,11 +921,10 @@ void Player::ChangeActionState(std::shared_ptr<ActionStateBase> _nextState)
 
 void Player::ActionIdle::Enter(Player& _owner)
 {
-	if (_owner.m_holdFlg)
-	{
-		_owner.m_holdFlg = false;
-	}
-	_owner.ChanegeAnimation("Idle");
+	if (_owner.m_holdFlg)_owner.m_holdFlg = false;
+	if (_owner.m_sType != SituationType::Idle)_owner.m_sType = SituationType::Idle;
+	
+	_owner.ChangeAnimation("Idle");
 }
 
 void Player::ActionIdle::Update(Player& _owner)
@@ -1296,7 +938,7 @@ void Player::ActionIdle::Exit(Player& _owner)
 
 void Player::ActionWalk::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Walk");
+	_owner.ChangeAnimation("Walk");
 }
 
 void Player::ActionWalk::Update(Player& _owner)
@@ -1310,7 +952,7 @@ void Player::ActionWalk::Exit(Player& _owner)
 
 void Player::ActionRun::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Run");
+	_owner.ChangeAnimation("Run");
 }
 
 void Player::ActionRun::Update(Player& _owner)
@@ -1324,7 +966,8 @@ void Player::ActionRun::Exit(Player& _owner)
 
 void Player::ActionReady::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Ready");
+	if (_owner.m_sType != SituationType::Ready)_owner.m_sType = SituationType::Ready;
+	_owner.ChangeAnimation("Ready");
 }
 
 void Player::ActionReady::Update(Player& _owner)
@@ -1342,7 +985,7 @@ void Player::ActionReady::Exit(Player& _owner)
 
 void Player::ActionShot::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Shot");
+	_owner.ChangeAnimation("Shot");
 	_owner.m_shotCnt = 0;
 }
 
@@ -1357,7 +1000,7 @@ void Player::ActionShot::Exit(Player& _owner)
 
 void Player::ActionSit::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Sit");
+	_owner.ChangeAnimation("Sit");
 	_owner.m_sitCnt = 0;
 	_owner.m_posType = PostureType::Sit;
 }
@@ -1373,7 +1016,7 @@ void Player::ActionSit::Exit(Player& _owner)
 
 void Player::ActionStand::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Stand");
+	_owner.ChangeAnimation("Stand");
 	_owner.m_standCnt = 0;
 	_owner.m_posType = PostureType::Stand;
 }
@@ -1389,7 +1032,8 @@ void Player::ActionStand::Exit(Player& _owner)
 
 void Player::ActionSit_Idle::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Sit_Idle");
+	if (_owner.m_sType != SituationType::Idle)_owner.m_sType = SituationType::Idle;
+	_owner.ChangeAnimation("Sit_Idle");
 }
 
 void Player::ActionSit_Idle::Update(Player& _owner)
@@ -1403,7 +1047,7 @@ void Player::ActionSit_Idle::Exit(Player& _owner)
 
 void Player::ActionSit_Walk::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Sit_Walk");
+	_owner.ChangeAnimation("Sit_Walk");
 }
 
 void Player::ActionSit_Walk::Update(Player& _owner)
@@ -1417,7 +1061,8 @@ void Player::ActionSit_Walk::Exit(Player& _owner)
 
 void Player::ActionSit_Ready::Enter(Player& _owner)
 {
-	_owner.ChanegeAnimation("Sit_Ready");
+	if (_owner.m_sType != SituationType::Ready)_owner.m_sType = SituationType::Ready;
+	_owner.ChangeAnimation("Sit_Ready");
 }
 
 void Player::ActionSit_Ready::Update(Player& _owner)
@@ -1426,5 +1071,21 @@ void Player::ActionSit_Ready::Update(Player& _owner)
 }
 
 void Player::ActionSit_Ready::Exit(Player& _owner)
+{
+}
+
+void Player::ActionReload::Enter(Player& _owner)
+{
+	_owner.m_reloadCnt = 0;
+	if (_owner.m_sType != Player::SituationType::Reload)_owner.m_sType = Player::SituationType::Reload;
+	_owner.ChangeAnimation("Reload");
+}
+
+void Player::ActionReload::Update(Player& _owner)
+{
+	_owner.StateReloadProc();
+}
+
+void Player::ActionReload::Exit(Player& _owner)
 {
 }

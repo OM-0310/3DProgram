@@ -11,6 +11,8 @@ public:
 
 	void Init						()	override;
 	void Update						()	override;
+	void DrawLit					()	override;
+	void GenerateDepthMapFromLight	()	override;
 
 	void ShotBullet					();
 

@@ -2,8 +2,12 @@
 
 void Sky::Init()
 {
-	m_spModel = std::make_shared<KdModelWork>();
-	m_spModel->SetModelData("Asset/Models/Sky/sky.gltf");
+	if (!m_spModel)
+	{
+		m_spModel = std::make_shared<KdModelWork>();
+		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Sky/Sky.gltf");
+		m_spModel->SetModelData(KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Sky/Sky.gltf"));
+	}
 
 	m_pos = { 0.0f,0.0f,0.0f };
 

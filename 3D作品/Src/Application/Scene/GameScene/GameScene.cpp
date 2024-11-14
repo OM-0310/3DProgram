@@ -10,22 +10,33 @@
 #include "../../GameObject/Terrains/Building/Building_Main/Building_Main.h"
 #include "../../GameObject/Terrains/Building/Building_Roof/Building_Roof.h"
 
-#include "../../GameObject/Gimmicks/Door/Door.h"
+#include "../../GameObject/Gimmicks/Door/Door_1.h"
+#include "../../GameObject/Gimmicks/Door/Door_2.h"
+#include "../../GameObject/Gimmicks/Door/Door_3.h"
+#include "../../GameObject/Gimmicks/LockedDoor/LockedDoor.h"
 
-#include "../../GameObject/SecretFile/SecretFile.h"
-#include "../../GameObject/CardKey/CardKey.h"
+#include "../../GameObject/Item/SecretFile/SecretFile.h"
+#include "../../GameObject/Item/CardKey/CardKey.h"
 #include "../../GameObject/Goal/Goal.h"
 
 #include "../../GameObject/Characters/Player/Player.h"
+#include "../../GameObject/Characters/Player/Player_UpperBody/Player_UpperBody.h"
+#include "../../GameObject/Characters/Player/Player_LowerBody/Player_LowerBody.h"
+#include "../../GameObject/Characters/Player/Player_Disarm/Player_Disarm.h"
+#include "../../GameObject/Characters/Player/Player_Disarm_Pistol/Player_Disarm_Pistol.h"
+#include "../../GameObject/Characters/Player/Player_Ready_Pistol/Player_Ready_Pistol.h"
+
 #include "../../GameObject/Characters/Enemy/Enemy.h"
 
 #include "../../GameObject/Weapon/Pistol/Pistol_Disarm/Pistol_Disarm.h"
-#include "../../GameObject/Weapon/Pistol/Pistol_Ready/Pistol_Ready.h"
+#include "../../GameObject/Weapon/Pistol/Pistol_Ready/Pistol_Ready.h""
 #include "../../GameObject/Weapon/AssaultRifle/AssaultRifle.h"
 #include "../../GameObject/Characters/CharaBase.h"
 
 #include "../../GameObject/UI/Reticle/Reticle.h"
 #include "../../GameObject/UI/CardKeyUI/CardKeyUI.h"
+#include "../../GameObject/UI/SecretFileUI/SecretFileUI.h"
+#include "../../GameObject/UI/PadKeyUI/PadKeyUI.h"
 
 void GameScene::Event()
 {
@@ -47,7 +58,7 @@ void GameScene::Init()
 	ShowCursor(false);
 
 	//=================================================================
-	// マルチスレッド・・・ここから
+	// マルチスレッド
 	//=================================================================
 
 	std::atomic<bool> stageDone(false);
@@ -58,16 +69,12 @@ void GameScene::Init()
 
 	stageTh.join();
 	charaTh.join();
-
-	//=================================================================
-	// マルチスレッド・・・ここまで
-	//=================================================================
 }
 
 void GameScene::StageInit(std::atomic<bool>& done)
 {
 	//=================================================================
-	// ステージ関係初期化・・・ここから
+	// ステージ関係初期化
 	//=================================================================
 
 	// 空
@@ -99,17 +106,13 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	//build->Init();
 	//m_objList.push_back(build);
 
-	//=================================================================
-	// ステージ関係初期化・・・ここまで
-	//=================================================================
-
 	done = true;
 }
 
 void GameScene::CharaInit(std::atomic<bool>& done)
 {
 	//=================================================================
-	// キャラ関係初期化・・・ここから
+	// キャラ関係初期化
 	//=================================================================
 
 	// プレイヤー初期化
@@ -119,6 +122,34 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	m_objList.push_back(player);
 	m_wpPlayer = player;
 
+	// プレイヤー上半身
+	std::shared_ptr<Player_UpperBody> player_Up;
+	player_Up = std::make_shared<Player_UpperBody>();
+	player_Up->Init();
+	m_objList.push_back(player_Up);
+
+	// プレイヤー下半身
+	std::shared_ptr<Player_LowerBody> player_Low;
+	player_Low = std::make_shared<Player_LowerBody>();
+	player_Low->Init();
+	m_objList.push_back(player_Low);
+
+	// プレイヤー(武装解除状態)初期化
+	std::shared_ptr<Player_Disarm> player_Disarm;
+	player_Disarm = std::make_shared<Player_Disarm>();
+	player_Disarm->Init();
+	m_objList.push_back(player_Disarm);
+
+	std::shared_ptr<Player_Disarm_Pistol> player_Disarm_Pistol;
+	player_Disarm_Pistol = std::make_shared<Player_Disarm_Pistol>();
+	player_Disarm_Pistol->Init();
+	m_objList.push_back(player_Disarm_Pistol);
+
+	std::shared_ptr<Player_Ready_Pistol> player_Ready_Pistol;
+	player_Ready_Pistol = std::make_shared<Player_Ready_Pistol>();
+	player_Ready_Pistol->Init();
+	m_objList.push_back(player_Ready_Pistol);
+
 	// 敵初期化
 	//std::shared_ptr<Enemy> enemy;
 	//enemy = std::make_shared<Enemy>();
@@ -126,23 +157,19 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//m_objList.push_back(enemy);
 
 	//=================================================================
-	// キャラ関係初期化・・・ここまで
-	//=================================================================
-
-	//=================================================================
-	// 武器関係・・・ここから
+	// 武器関係
 	//=================================================================
 
 	// 銃(ピストル)
-	std::shared_ptr<Pistol_Disarm> pistol_Disarm;
-	pistol_Disarm = std::make_shared<Pistol_Disarm>();
-	pistol_Disarm->Init();
-	m_objList.push_back(pistol_Disarm);
+	//std::shared_ptr<Pistol_Disarm> pistol_Disarm;
+	//pistol_Disarm = std::make_shared<Pistol_Disarm>();
+	//pistol_Disarm->Init();
+	//m_objList.push_back(pistol_Disarm);
 
-	std::shared_ptr<Pistol_Ready> pistol_Ready;
-	pistol_Ready = std::make_shared<Pistol_Ready>();
-	pistol_Ready->Init();
-	m_objList.push_back(pistol_Ready);
+	//std::shared_ptr<Pistol_Ready> pistol_Ready;
+	//pistol_Ready = std::make_shared<Pistol_Ready>();
+	//pistol_Ready->Init();
+	//m_objList.push_back(pistol_Ready);
 
 
 	//// 銃(アサルトライフル)
@@ -152,11 +179,7 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//m_objList.push_back(assault);
 
 	//=================================================================
-	// 武器関係・・・ここまで
-	//=================================================================
-
-	//=================================================================
-	// アイテム関係・・・ここから
+	// アイテム関係
 	//=================================================================
 
 	// カードキー初期化
@@ -179,25 +202,33 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	m_wpGoal = goal;
 
 	//=================================================================
-	// アイテム関係・・・ここまで
-	//=================================================================
-
-	//=================================================================
-	// ギミック関係・・・ここから
+	// ギミック関係
 	//=================================================================
 
 	// ドア初期化
-	std::shared_ptr<Door> door;
-	door = std::make_shared<Door>();
-	door->Init();
-	m_objList.push_back(door);
+	std::shared_ptr<Door_1> door_1;
+	door_1 = std::make_shared<Door_1>();
+	door_1->Init();
+	m_objList.push_back(door_1);
 
-	//=================================================================
-	// ギミック関係・・・ここまで
-	//=================================================================
+	std::shared_ptr<Door_2> door_2;
+	door_2 = std::make_shared<Door_2>();
+	door_2->Init();
+	m_objList.push_back(door_2);
+
+	std::shared_ptr<Door_3> door_3;
+	door_3 = std::make_shared<Door_3>();
+	door_3->Init();
+	m_objList.push_back(door_3);
+
+	// 鍵のかかったドア初期化
+	std::shared_ptr<LockedDoor> lockedDoor;
+	lockedDoor = std::make_shared<LockedDoor>();
+	lockedDoor->Init();
+	m_objList.push_back(lockedDoor);
 	
 	//=================================================================
-	// カメラ初期化・・・ここから
+	// カメラ初期化
 	//=================================================================
 
 	// カメラ初期化
@@ -205,15 +236,11 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	camera = std::make_shared<TPSCamera>();
 	camera->Init();
 	m_objList.push_back(camera);
-
-	//=================================================================
-	// カメラ初期化・・・ここまで
-	//=================================================================
 	
 	//// UI関連初期化 //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 
 	//=================================================================
-	// レティクル初期化・・・ここから
+	// レティクル初期化
 	//=================================================================
 
 	std::shared_ptr<Reticle> reticle;
@@ -222,43 +249,63 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	m_objList.push_back(reticle);
 
 	//=================================================================
-	// レティクル初期化・・・ここまで
+	// カードキー取得UI初期化
 	//=================================================================
-
-	//=================================================================
-	// カードキーUI初期化・・・ここから
-	//=================================================================
-
 	std::shared_ptr<CardKeyUI> cardUI;
 	cardUI = std::make_shared<CardKeyUI>();
 	cardUI->Init();
 	m_objList.push_back(cardUI);
 
 	//=================================================================
-	// カードキーUI初期化・・・ここまで
+	// 機密ファイル取得UI初期化
 	//=================================================================
+	std::shared_ptr<SecretFileUI> fileUI;
+	fileUI = std::make_shared<SecretFileUI>();
+	fileUI->Init();
+	m_objList.push_back(fileUI);
+
+	//=================================================================
+	// キーロック解除UI初期化
+	//=================================================================
+	std::shared_ptr<PadKeyUI> keyUI;
+	keyUI = std::make_shared<PadKeyUI>();
+	keyUI->Init();
+	m_objList.push_back(keyUI);
 
 	//// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //
 
 	player->SetCamera(camera);
 	player->SetReticle(reticle);
-	player->SetDoor(door);
+	player->SetDoor(lockedDoor);
 	player->SetCardKey(card);
 	player->SetSecretFile(file);
 	player->SetGoal(goal);
-	player->SetPistolDisarm(pistol_Disarm);
-	player->SetPistolReady(pistol_Ready);
-	//enemy->SetPlayer(player);
+	//player->SetPistolReady(pistol_Ready);
+	player->SetPlayerUpperBody(player_Up);
+	player->SetPlayerLowerBody(player_Low);
+	player->SetPlayerDisarm(player_Disarm);
+	player->SetPlayerDisarmPistol(player_Disarm_Pistol);
+	player->SetPlayerReadyPistol(player_Ready_Pistol);
+	player_Up->SetPlayer(player);
+	player_Low->SetPlayer(player);
+	player_Disarm->SetPlayer(player);
+	player_Disarm_Pistol->SetPlayer(player);
+	player_Ready_Pistol->SetPlayer(player);
 
-	door->SetPlayer(player);
+	door_1->SetPlayer(player);
+	door_2->SetPlayer(player);
+	door_3->SetPlayer(player);
+	lockedDoor->SetPlayer(player);
 	card->SetPlayer(player);
 
 	//player->SetWeapon(assault);
-	pistol_Disarm->SetPlayer(player);
-	pistol_Ready->SetPlayer(player);
+	//pistol_Disarm->SetPlayer(player);
+	//pistol_Ready->SetPlayer(player);
 	//assault->SetChara(player);
 
 	cardUI->SetCardKey(card);
+	fileUI->SetSecretFile(file);
+	keyUI->SetLockedDoor(lockedDoor);
 
 	camera->SetPlayer(player);
 

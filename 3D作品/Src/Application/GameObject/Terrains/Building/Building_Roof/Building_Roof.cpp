@@ -2,11 +2,7 @@
 
 void Building_Roof::Init()
 {
-	if (!m_spModel)
-	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Terrains/Building/Building_Roof/Building_Roof.gltf");
-	}
+	TerrainBase::SetAsset("Asset/Models/Terrains/Building/Building_Roof/Building_Roof.gltf");
 
 	m_pos = { 0.f,-1.f,0.f };
 

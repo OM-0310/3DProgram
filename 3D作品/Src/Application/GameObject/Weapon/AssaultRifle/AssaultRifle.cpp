@@ -2,14 +2,9 @@
 
 void AssaultRifle::Init()
 {
-	if (!m_spModel)
-	{
-		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/Models/Weapon/AssaultRifle/AssaultRifle_2.gltf");
-	}
-
+	WeaponBase::SetAsset("Asset/Models/Weapon/AssaultRifle/AssaultRifle_2.gltf");
+	
 	m_localPos = m_unholdBasePoint;
-	//m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(90));
 	m_mScale = Math::Matrix::CreateScale(0.18f);
 }
 

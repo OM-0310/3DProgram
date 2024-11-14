@@ -1,52 +1,85 @@
 ﻿#include "CardKeyUI.h"
 
-#include "../../CardKey/CardKey.h"
+#include "../../Item/CardKey/CardKey.h"
 
 void CardKeyUI::Init()
 {
-	if (!m_spTex)
-	{
-		m_spTex = std::make_shared<KdTexture>();
-		m_spTex->Load("Asset/Textures/UI/CardKeyUI/CardKeyUI.png");
-	}
+	UIBase::SetAsset("Asset/Textures/UI/CardKeyUI/CardKeyUI.png");
 
-	m_rect = { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
+	m_rect			= { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
 
-	m_pos	= { 0.f, -220.f };
-	m_alpha = 0.f;
+	m_pos			= { 0.f, -220.f };
+	m_alpha			= 0.f;
+	m_alphaSpeed	= 0.1f;
 
-	m_color = { 1.f,1.f,1.f,m_alpha };
+	m_useFlg		= false;
+	m_lifeSpan		= 70;
+
+	m_color			= { 1.f,1.f,1.f,m_alpha };
+
+	m_alphaValue	= AlphaValue::Dec;
 }
 
 void CardKeyUI::Update()
 {
 	std::shared_ptr<CardKey> spCard = m_wpCard.lock();
 
-	if (spCard)
+	if (!m_useFlg)
 	{
-		if (spCard->IsExpired())
+		if (spCard)
+		{
+			if (spCard->IsExpired())
+			{
+				m_useFlg = true;
+			}
+			if (spCard->GetCollectFlg())
+			{
+				m_alpha += m_alphaSpeed;
+			}
+			else
+			{
+				m_alpha -= m_alphaSpeed;
+			}
+
+			if (m_alpha >= 1.f)
+			{
+				m_alpha = 1.f;
+			}
+			if (m_alpha <= 0.f)
+			{
+				m_alpha = 0.f;
+			}
+		}
+	}
+	else
+	{
+		m_lifeSpan--;
+		switch (m_alphaValue)
+		{
+		case AlphaValue::Inc:
+			m_alpha += m_alphaSpeed;
+			if (m_alpha >= 1.f)
+			{
+				m_alphaValue = AlphaValue::Dec;
+				m_alpha = 1.f;
+			}
+			break;
+		case AlphaValue::Dec:
+			m_alpha -= m_alphaSpeed;
+			if (m_alpha <= 0.f)
+			{
+				m_alphaValue = AlphaValue::Inc;
+				m_alpha = 0.f;
+			}
+			break;
+		}
+		if (m_lifeSpan == 0)
 		{
 			m_isExpired = true;
 		}
-		if (spCard->GetCollectFlg())
-		{
-			m_alpha += 0.1f;
-		}
-		else
-		{
-			m_alpha -= 0.1f;
-		}
-
-		if (m_alpha >= 1.f)
-		{
-			m_alpha = 1.f;
-		}
-		if (m_alpha <= 0.f)
-		{
-			m_alpha = 0.f;
-		}
 	}
 	m_color = { 1.f, 1.f, 1.f, m_alpha };
+
 }
 
 void CardKeyUI::DrawSprite()

@@ -42,7 +42,7 @@ void TitleScene::StageInit(std::atomic<bool>& done)
 	//w->SetModelData(m);
 
 	// 建物
-	//m_spBuildingModel	= KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Terrains/Building/Building.gltf");
+	//std::shared_ptr<KdModelData> build = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Terrains/Ground.Ground.gltf");
 
 	//=================================================================
 	// ステージ関係初期化・・・ここまで

@@ -7,7 +7,8 @@ void Bullet::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelData>();
-		m_spModel->Load("Asset/Models/Bullet/Bullet.gltf");
+		KdAssets::Instance().m_modeldatas.GetData("Assset/Models/Bullet/Bullet.gltf");
+		m_spModel = KdAssets::Instance().m_modeldatas.GetData("Assset/Models/Bullet/Bullet.gltf");
 	}
 
 	m_pos = {};
