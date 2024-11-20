@@ -19,10 +19,12 @@ void Player_Ready_Pistol::Update()
 	std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 	if (spPlayer)
 	{
+
 		m_mWorld = spPlayer->GetMatrix();
 
-		if (spPlayer->GetSituationType() == Player::SituationType::Ready ||
-			spPlayer->GetSituationType() == Player::SituationType::Reload)
+		if (spPlayer->GetSituationType() & Player::SituationType::Ready ||
+			spPlayer->GetSituationType() & Player::SituationType::Reload||
+			spPlayer->GetSituationType() & Player::SituationType::Shot)
 		{
 			m_alpha = m_alphaMax;
 		}
@@ -30,6 +32,10 @@ void Player_Ready_Pistol::Update()
 		{
 			m_alpha = m_alphaMin;
 		}
+	}
+	else
+	{
+		assert(!spPlayer);
 	}
 	m_color = { 1.f,1.f,1.f,m_alpha };
 }

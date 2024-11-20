@@ -67,6 +67,7 @@ void Enemy::Update()
 void Enemy::PostUpdate()
 {
 	// アニメーションの更新
+	// 第二引数でアニメーションの速度を設定可能(デフォルトで1.0fに設定されている)
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
 	m_spModel->CalcNodeMatrices();
 

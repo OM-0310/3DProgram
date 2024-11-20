@@ -34,20 +34,20 @@ protected:
 	std::shared_ptr<KdModelData>	m_spModel;			// モデル情報
 	std::weak_ptr<Player>			m_wpPlayer;			// プレイヤー情報
 
-	Math::Matrix					m_mTrans;			// 座標行列
+	Math::Matrix	m_mTrans = Math::Matrix::Identity;	// 座標行列
 
-	Math::Color						m_color;			// 色情報
-	float							m_alpha;			// アルファ値
-	const float						m_alphaMax = 1.0f;	// アルファ最大値 = 1.0f
-	const float						m_alphaMin = 0.0f;	// アルファ最小値 = 0.0f
-	float							m_alphaSpeed;		// アルファ値加減速度
-	bool							m_alphaFlg;			// アルファ値加減速フラグ
+	Math::Color		m_color			= kWhiteColor;	// 色情報
+	float			m_alpha			= 1.f;			// アルファ値
+	const float		m_alphaMax		= 1.f;			// アルファ最大値 = 1.0f
+	const float		m_alphaMin		= 0.f;			// アルファ最小値 = 0.0f
+	float			m_alphaSpeed	= 0.f;			// アルファ値加減速度
+	bool			m_alphaFlg		= false;		// アルファ値加減速フラグ
 
-	Math::Vector3					m_pos;				// 座標
+	Math::Vector3	m_pos = Math::Vector3::Zero;	// 座標
 
-	float							m_collectArea;		// アイテム回収範囲
-	bool							m_collectFlg;		// アイテム回収フラグ
+	float			m_collectArea	= 0.f;			// アイテム回収範囲
+	bool			m_collectFlg	= false;		// アイテム回収フラグ
 
 	// デバッグ用
-	Math::Color						m_debugColor;		// デバッグワイヤー用カラー
+	Math::Color		m_debugColor	= kWhiteColor;	// デバッグワイヤー用カラー
 };

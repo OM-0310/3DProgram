@@ -26,7 +26,7 @@ private:
 
 	std::weak_ptr<CardKey>	m_wpCard;
 
-	int						m_lifeSpan;
+	int						m_lifeSpan	= 0;
 
-	bool					m_useFlg;
+	bool					m_useFlg	= false;
 };

@@ -18,9 +18,9 @@ public:
 
 private:
 
-	Math::Matrix	m_mLocalMuzzle;
+	Math::Matrix	m_mLocalMuzzle	= Math::Matrix::Identity;
 
-	Math::Vector3	m_readyPos;
+	Math::Vector3	m_readyPos		= Math::Vector3::Zero;
 
-	bool			m_shotFlg;
+	bool			m_shotFlg		= false;
 };

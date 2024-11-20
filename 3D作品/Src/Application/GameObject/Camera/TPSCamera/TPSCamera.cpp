@@ -9,9 +9,6 @@ void TPSCamera::Init()
 
 	m_basePoint		= m_tpsRBasePoint;
 
-	m_fpsFlg		= false;
-	m_tpsFlg		= false;
-
 	m_camType		= CameraType::TpsR;
 	m_pastCamType	= m_camType;
 

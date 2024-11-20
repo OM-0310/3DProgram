@@ -12,10 +12,10 @@ public:
 
 private:
 
-	std::shared_ptr<KdModelWork>	m_spModel;
+	std::shared_ptr<KdModelWork>	m_spModel	= nullptr;
 
-	Math::Matrix					m_mTrans;
-	Math::Matrix					m_mScale;
+	Math::Matrix					m_mTrans	= Math::Matrix::Identity;
+	Math::Matrix					m_mScale	= Math::Matrix::Identity;
 
-	Math::Vector3					m_pos;
+	Math::Vector3					m_pos		= Math::Vector3::Zero;
 };

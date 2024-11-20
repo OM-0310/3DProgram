@@ -46,20 +46,20 @@ private:
 	std::shared_ptr<KdAnimator> m_spAnimator;
 	std::weak_ptr<Player>		m_wpPlayer;
 
-	Math::Vector3				m_moveDir;
-	float						m_moveSpeed;
+	Math::Vector3				m_moveDir		= Math::Vector3::Zero;
+	float						m_moveSpeed		= 0.0f;
 
-	bool						m_waryFlg;
-	bool						m_discoverFlg;
-	bool						m_chaseFlg;
+	bool						m_waryFlg		= false;
+	bool						m_discoverFlg	= false;
+	bool						m_chaseFlg		= false;
 
-	int							m_gridWidth;
-	int							m_gridHeight;
+	int							m_gridWidth		= 0;
+	int							m_gridHeight	= 0;
 
 	static const int			MAXHP = 1;
 
-	StateType					m_sType;
-	EnemyType					m_eType;
+	StateType					m_sType			= StateType::Normal;
+	EnemyType					m_eType			= EnemyType::Idle;
 
 	std::shared_ptr<AstarGrid>				m_spGrid; // グリッドのポインタをクラスメンバとして保持
 	std::vector<std::shared_ptr<AstarNode>> m_spPath; // 現在のパスを保持する

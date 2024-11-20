@@ -17,10 +17,10 @@ public:
 
 private:
 
-	Math::Vector3	m_pos;
+	Math::Vector3	m_pos			= Math::Vector3::Zero;
 
-	Math::Color		m_debugColor;
+	Math::Color		m_debugColor	= kWhiteColor;
 
-	bool			m_goalAbleFlg;
-	bool			m_clearFlg;
+	bool			m_goalAbleFlg	= false;
+	bool			m_clearFlg		= false;
 };

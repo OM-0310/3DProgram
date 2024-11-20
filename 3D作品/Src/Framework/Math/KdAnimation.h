@@ -48,25 +48,35 @@ class KdAnimator
 {
 public:
 
-	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& rData, bool isLoop = true)
+	inline void SetAnimation(const std::shared_ptr<KdAnimationData>& _rData, bool _isLoop = true, float _time = 0.0f)
 	{
-		m_spAnimation = rData;
-		m_isLoop = isLoop;
+		m_spAnimation = _rData;
+		m_isLoop = _isLoop;
 
-		m_time = 0.0f;
+		m_time = _time;
 	}
 
 	// アニメーションが終了してる？
 	bool IsAnimationEnd() const
 	{
-		if (m_spAnimation == nullptr) { return true; }
-		if (m_time >= m_spAnimation->m_maxLength) { return true; }
+		if (m_spAnimation == nullptr)
+		{ 
+			return true; 
+		}
+		if (m_time >= m_spAnimation->m_maxLength)
+		{
+			return true; 
+		}
 
 		return false;
 	}
 
 	// アニメーションの更新
 	void AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed = 1.0f);
+
+	// 現在のアニメーションフレームを取得
+	const float& GetTime		() const { return m_time; }
+	const float& GetMaxLength	() const { return m_spAnimation->m_maxLength; }
 
 private:
 

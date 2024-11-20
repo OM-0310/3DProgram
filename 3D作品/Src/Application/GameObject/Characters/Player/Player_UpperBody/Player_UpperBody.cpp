@@ -4,7 +4,7 @@
 
 void Player_UpperBody::Init()
 {
-	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_UpperBody.gltf");
+	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_UpperBody_3.gltf");
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 	ChangeAnimation("Idle");

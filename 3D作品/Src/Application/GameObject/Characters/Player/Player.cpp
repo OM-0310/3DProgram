@@ -27,15 +27,16 @@ void Player::Init()
 {
 	//CharaBase::SetAsset("Asset/Models/Characters/Player/Player_3.gltf");
 
-	m_spAnimator = std::make_shared<KdAnimator>();
+	m_spAnimator	= std::make_shared<KdAnimator>();
+	m_nowAnimeFrm	= 0.0f;
 
 	ChangeActionState(std::make_shared<ActionIdle>());
 
 	m_HP			= MAXHP;
 
-	m_pos			= { 0.f,-0.9f,-50.0f };
+	m_pos			= { 0.0f,-0.9f,-50.0f };
 	m_moveDir		= Math::Vector3::Zero;
-	m_moveSpeed		= 0.f;
+	m_moveSpeed		= 0.0f;
 
 	m_moveFlg		= false;
 	m_shotKeyFlg	= false;
@@ -45,14 +46,6 @@ void Player::Init()
 	m_changeKeyFlg	= false;
 	m_posKeyFlg		= false;
 	m_creepKeyFlg	= false;
-
-	m_standCnt		= 0;
-	m_sitCnt		= 0;
-	m_shotCnt		= 0;
-	m_reloadCnt		= 0;
-
-	m_mLocalDisarm	= Math::Matrix::CreateTranslation({ 0.f,0.f,0.f });
-	m_mLocalReady	= Math::Matrix::CreateTranslation({ 0.f,0.f,0.f });
 
 	m_sType			= SituationType::Idle;
 	m_posType		= PostureType::Stand;
@@ -70,32 +63,6 @@ void Player::Init()
 
 void Player::Update()
 {
-	if (m_spModel)
-	{
-		const KdModelWork::Node* pDisarmNode = m_spModel->FindNode("PistolDisarmPoint");
-		const KdModelWork::Node* pReadyNode = m_spModel->FindNode("ReadyPoint");
-
-		if (pDisarmNode)
-		{
-			m_mUnHold = pDisarmNode->m_worldTransform * m_mWorld;
-		}
-		else if (!pDisarmNode)
-		{
-			assert(pDisarmNode && "PistolDisarmPoint 指定したノードが見つかりません");
-		}
-
-		if (pReadyNode)
-		{
-			m_mHold = pReadyNode->m_worldTransform * m_mWorld;
-		}
-		else
-		{
-			assert(pReadyNode && "ReadyPoint 指定したノードが見つかりません");
-		}
-	}
-
-	Math::Vector3 vec = m_mUnHold.Translation();
-
 	m_gravity += 0.04f;
 	m_pos.y -= m_gravity;
 
@@ -271,575 +238,40 @@ void Player::UpdateCollision()
 	}
 }
 
-void Player::ChangeAnimation(const std::string& _animeName)
-{
-	std::shared_ptr<Player_UpperBody>		spPlayer_Up = m_wpPlayer_Up.lock();
-	std::shared_ptr<Player_LowerBody>		spPlayer_Low = m_wpPlayer_Low.lock();
-	std::shared_ptr<Player_Disarm>			spPlayer_Disarm = m_wpPlayer_Disarm.lock();
-	std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol = m_wpPlayer_Disarm_Pistol.lock();
-	std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
-	if (spPlayer_Up)
-	{
-		spPlayer_Up->ChangeAnimation(_animeName);
-	}
-	if (spPlayer_Low)
-	{
-		spPlayer_Low->ChangeAnimation(_animeName);
-	}
-	if (spPlayer_Disarm)
-	{
-		spPlayer_Disarm->ChangeAnimation(_animeName);
-	}
-	if (spPlayer_Disarm_Pistol)
-	{
-		spPlayer_Disarm_Pistol->ChangeAnimation(_animeName);
-	}
-	if (spPlayer_Ready_Pistol)
-	{
-		spPlayer_Ready_Pistol->ChangeAnimation(_animeName);
-	}
-}
-
 //================================================================================================================================
 // アニメーション切り替え処理
 //================================================================================================================================
-	void Player::ChangeAnimation(const std::string & _upperBody_Name, const std::string & _lowerBody_Name)
-	{
-		std::shared_ptr<Player_UpperBody>		spPlayer_Up = m_wpPlayer_Up.lock();
-		std::shared_ptr<Player_LowerBody>		spPlayer_Low = m_wpPlayer_Low.lock();
-		std::shared_ptr<Player_Disarm>			spPlayer_Disarm = m_wpPlayer_Disarm.lock();
-		std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol = m_wpPlayer_Disarm_Pistol.lock();
-		std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
-		if (spPlayer_Up)
-		{
-			spPlayer_Up->ChangeAnimation(_upperBody_Name);
-		}
-		if (spPlayer_Low)
-		{
-			spPlayer_Low->ChangeAnimation(_lowerBody_Name);
-		}
-		if (spPlayer_Disarm)
-		{
-			spPlayer_Disarm->ChangeAnimation(_lowerBody_Name);
-		}
-		if (spPlayer_Disarm_Pistol)
-		{
-			spPlayer_Disarm_Pistol->ChangeAnimation(_lowerBody_Name);
-		}
-		if (spPlayer_Ready_Pistol)
-		{
-			spPlayer_Ready_Pistol->ChangeAnimation(_upperBody_Name);
-		}
-		//m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation(_name));
-	}
-
-void Player::StateIdleProc()
+void Player::ChangeUpperBodyAnimation(const std::string& _animeName, bool _isLoop, float _time)
 {
-	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-
-	m_moveDir = Math::Vector3::Zero;
-
-	// ActionRunに切り替え
-	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
-	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;  }
-	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
-	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
-	if (m_moveDir.LengthSquared() > 0)	
+	std::shared_ptr<Player_UpperBody>		spPlayer_Up = m_wpPlayer_Up.lock();
+	std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
+	if (spPlayer_Up)
 	{
-		ChangeActionState(std::make_shared<ActionRun>()); 
-		return;
+		spPlayer_Up->ChangeAnimation(_animeName, _isLoop, _time);
 	}
-
-	// ActionReloadに切り替え
-	if(GetAsyncKeyState('R') & 0x8000)
+	if (spPlayer_Ready_Pistol)
 	{
-		if (!m_reloadKeyFlg)
-		{
-			ChangeActionState(std::make_shared<ActionReload>());
-		}
-	}
-
-	// ActionSitに切り替え
-	if (GetAsyncKeyState('C') & 0x8000) 
-	{
-		if (!m_posKeyFlg)
-		{
-			m_posKeyFlg = true;
-			ChangeActionState(std::make_shared<ActionSit>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	else
-	{
-		m_posKeyFlg = false;
-	}
-
-	// ActionReadyに切り替え
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		ChangeActionState(std::make_shared<ActionReady>());
-		return;
-	}
-
-	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-}
-
-void Player::StateWalkProc()
-{
-	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-
-	Math::Matrix camRotMat;
-	if (spCamera)
-	{
-		camRotMat = spCamera->GetRotationMatrix();
-	}
-
-	m_moveSpeed = 0.05f;
-
-	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
-	{
-		m_moveDir = Math::Vector3::Zero;
-
-		if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
-		if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;  }
-		if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
-		if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
-	}
-	else
-	{
-		if (m_moveDir.LengthSquared() == 0)
-		{
-			ChangeActionState(std::make_shared<ActionIdle>());
-			return;
-		}
-		else
-		{
-			ChangeActionState(std::make_shared<ActionRun>());
-			return;
-		}
-	}
-
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		if (!m_posKeyFlg)
-		{
-			m_posKeyFlg = true;
-			ChangeActionState(std::make_shared<ActionSit>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	else
-	{
-		m_posKeyFlg = false;
-	}
-
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		ChangeActionState(std::make_shared<ActionReady>());
-	}
-
-	if (spCamera)
-	{
-		m_moveDir = m_moveDir.TransformNormal(m_moveDir, spCamera->GetRotationYMatrix());
-	}
-
-	m_moveDir.Normalize();
-	m_pos += m_moveDir * m_moveSpeed;
-
-	//	キャラクターの回転角度を計算する
-	UpdateRotate(m_moveDir);
-
-	//m_mRot = _camRotMat;
-	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-}
-
-void Player::StateRunProc()
-{
-	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-
-	m_moveSpeed = 0.12f;
-
-	m_moveDir = Math::Vector3::Zero;
-
-	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
-	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;	}
-	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
-	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
-	if (m_moveDir.LengthSquared() == 0) 
-	{
-		ChangeActionState(std::make_shared<ActionIdle>());
-		return;
-	}
-
-	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
-	{
-		if (m_posType == PostureType::Stand)
-		{
-			ChangeActionState(std::make_shared<ActionWalk>());
-			return;
-		}
-	}
-
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		if (!m_posKeyFlg)
-		{
-			m_posKeyFlg = true;
-			ChangeActionState(std::make_shared<ActionSit>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	else
-	{
-		m_posKeyFlg = false;
-	}
-
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		ChangeActionState(std::make_shared<ActionReady>());
-	}
-
-	if (spCamera)
-	{
-		m_moveDir = m_moveDir.TransformNormal(m_moveDir, spCamera->GetRotationYMatrix());
-	}
-
-	m_moveDir.Normalize();
-	m_pos += m_moveDir * m_moveSpeed;
-
-	//	キャラクターの回転角度を計算する
-	UpdateRotate(m_moveDir);
-
-	//m_mRot = _camRotMat;
-	m_mRot		= Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-}
-
-void Player::StateReadyProc()
-{
-	const std::shared_ptr<TPSCamera>	spCamera	= m_wpCamera.lock();
-	const std::shared_ptr<Reticle>		spReticle	= m_wpReticle.lock();
-	const std::shared_ptr<Pistol_Ready> spPistol	= m_wpPistol_Ready.lock();
-
-	Math::Matrix camRotMat;
-	if (spCamera)
-	{
-		camRotMat = spCamera->GetRotationMatrix();
-	}
-
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		spReticle->SetActive(true);
-
-		switch (spCamera->GetPastCamType())
-		{
-		case TPSCamera::CameraType::TpsR:
-			spCamera->ChangeAimR();
-			break;
-		case TPSCamera::CameraType::TpsL:
-			spCamera->ChangeAimL();
-			break;
-		}
-
-		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
-		{
-			if (!m_shotKeyFlg)
-			{
-				m_shotKeyFlg = true;
-
-				if (spPistol)
-				{
-					spPistol->ShotBullet();
-				}
-				else
-				{
-					assert(spPistol && "情報がありません");
-				}
-			}
-		}
-		else
-		{
-			m_shotKeyFlg = false;
-		}
-	}
-	else
-	{
-		spReticle->SetActive(false);
-
-		switch (spCamera->GetPastCamType())
-		{
-		case TPSCamera::CameraType::TpsR:
-			spCamera->ChangeTPSR();
-			break;
-		case TPSCamera::CameraType::TpsL:
-			spCamera->ChangeTPSL();
-			break;
-		}
-		//_spWeapon->UnHold();
-
-		ChangeActionState(std::make_shared<ActionIdle>());
-		return;
-	}
-
-	m_mRot = camRotMat;
-}
-
-void Player::StateShotProc()
-{
-	m_shotCnt++;
-
-	KdCollider::RayInfo ray;
-	ray.m_pos	= m_pos;
-	ray.m_dir	= m_mWorld.Backward();
-	ray.m_range = 1000.0f;
-	ray.m_type	= KdCollider::TypeDamage;
-
-	std::list<KdCollider::CollisionResult> retRayList;
-
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		obj->Intersects(ray, &retRayList);
-	}
-
-	float maxOverLap = 0.0f;
-	Math::Vector3 hitPos = {};
-
-	for (auto& ret : retRayList)
-	{
-		if (maxOverLap < ret.m_overlapDistance)
-		{
-			maxOverLap	= ret.m_overlapDistance;
-			hitPos		= ret.m_hitPos;
-		}
-	}
-
-	Math::Vector3 bulletDir = hitPos - m_pos;
-
-	if (m_shotCnt == 1)
-	{
-		ShotBullet(m_pos, bulletDir);
-	}
-
-	if (m_shotCnt >= SHOTCNTMAX)
-	{
-		ChangeActionState(std::make_shared<ActionReady>());
+		spPlayer_Ready_Pistol->ChangeAnimation(_animeName, _isLoop, _time);
 	}
 }
 
-void Player::StateReloadProc()
+void Player::ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoop, float _time)
 {
-	m_reloadCnt++;
-	if (m_reloadCnt >= RELOADCNTMAX)
+	std::shared_ptr<Player_LowerBody>		spPlayer_Low = m_wpPlayer_Low.lock();
+	std::shared_ptr<Player_Disarm>			spPlayer_Disarm = m_wpPlayer_Disarm.lock();
+	std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol = m_wpPlayer_Disarm_Pistol.lock();
+	if (spPlayer_Low)
 	{
-		ChangeActionState(std::make_shared<ActionIdle>());
+		spPlayer_Low->ChangeAnimation(_animeName, _isLoop, _time);
 	}
-
-	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-}
-
-void Player::StateStandProc()
-{
-	m_standCnt++;
-
-	if (m_standCnt >= STANDCNTMAX)
+	if (spPlayer_Disarm)
 	{
-		ChangeActionState(std::make_shared<ActionIdle>());
+		spPlayer_Disarm->ChangeAnimation(_animeName, _isLoop, _time);
 	}
-}
-
-void Player::StateSitProc()
-{
-	m_sitCnt++;
-	
-	if (m_sitCnt >= SITCNTMAX)
+	if (spPlayer_Disarm_Pistol)
 	{
-		ChangeActionState(std::make_shared<ActionSit_Idle>());
+		spPlayer_Disarm_Pistol->ChangeAnimation(_animeName, _isLoop, _time);
 	}
-}
-
-void Player::StateSitIdleProc()
-{
-	std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-
-	m_moveDir = Math::Vector3::Zero;
-
-	// ActionSit_Runに切り替え
-	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
-	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;	}
-	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
-	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
-	if (m_moveDir.LengthSquared() > 0)
-	{
-		ChangeActionState(std::make_shared<ActionSit_Walk>());
-		return;
-	}
-
-	// ActionStandに切り替え
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		if (!m_posKeyFlg)
-		{
-			m_posKeyFlg = true;
-			ChangeActionState(std::make_shared<ActionStand>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::SitL:
-				spCamera->ChangeTPSL();
-				break;
-			case TPSCamera::CameraType::SitR:
-				spCamera->ChangeTPSR();
-				break;
-			}
-			return;
-		}
-	}
-	else
-	{
-		m_posKeyFlg = false;
-	}
-
-	// ActionSit_Readyに切り替え
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		ChangeActionState(std::make_shared<ActionSit_Ready>());
-		return;
-	}
-
-	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-}
-
-void Player::StateSitWalkProc()
-{
-	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-
-	m_moveSpeed = 0.08f;
-
-	m_moveDir = Math::Vector3::Zero;
-
-	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir += Math::Vector3::Backward; }
-	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir += Math::Vector3::Forward;	}
-	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir += Math::Vector3::Left;		}
-	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir += Math::Vector3::Right;	}
-	if (m_moveDir.LengthSquared() == 0)
-	{
-		ChangeActionState(std::make_shared<ActionSit_Idle>());
-		return;
-	}
-
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		if (!m_posKeyFlg)
-		{
-			m_posKeyFlg = true;
-			ChangeActionState(std::make_shared<ActionStand>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	else
-	{
-		m_posKeyFlg = false;
-	}
-
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		ChangeActionState(std::make_shared<ActionSit_Ready>());
-	}
-
-	if (spCamera)
-	{
-		m_moveDir = m_moveDir.TransformNormal(m_moveDir, spCamera->GetRotationYMatrix());
-	}
-
-	m_moveDir.Normalize();
-	m_pos += m_moveDir * m_moveSpeed;
-
-	//	キャラクターの回転角度を計算する
-	UpdateRotate(m_moveDir);
-
-	//m_mRot = _camRotMat;
-	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-}
-
-void Player::StateSitReadyProc()
-{
-	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
-	const std::shared_ptr<Reticle>	spReticle = m_wpReticle.lock();
-
-	Math::Matrix camRotMat;
-	if (spCamera)
-	{
-		camRotMat = spCamera->GetRotationMatrix();
-	}
-
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		spReticle->SetActive(true);
-
-		switch (spCamera->GetPastCamType())
-		{
-		case TPSCamera::CameraType::SitR:
-			spCamera->ChangeSitAimR();
-			break;
-		case TPSCamera::CameraType::SitL:
-			spCamera->ChangeSitAimL();
-			break;
-		}
-	}
-	else
-	{
-		spReticle->SetActive(false);
-
-		switch (spCamera->GetPastCamType())
-		{
-		case TPSCamera::CameraType::SitR:
-			spCamera->ChangeSitR();
-			break;
-		case TPSCamera::CameraType::SitL:
-			spCamera->ChangeSitL();
-			break;
-		}
-		//_spWeapon->UnHold();
-
-		ChangeActionState(std::make_shared<ActionSit_Idle>());
-		return;
-	}
-
-	m_mRot = camRotMat;
 }
 
 void Player::ShotBullet(const Math::Vector3& _pos, const Math::Vector3& _dir)
@@ -918,18 +350,93 @@ void Player::ChangeActionState(std::shared_ptr<ActionStateBase> _nextState)
 	m_nowState = _nextState;
 	m_nowState->Enter(*this);
 }
-
+//================================================================================================================================
+// ステートパターン管理系
+//================================================================================================================================
 void Player::ActionIdle::Enter(Player& _owner)
 {
 	if (_owner.m_holdFlg)_owner.m_holdFlg = false;
-	if (_owner.m_sType != SituationType::Idle)_owner.m_sType = SituationType::Idle;
-	
-	_owner.ChangeAnimation("Idle");
+	if (_owner.m_nowAnimeFrm >= 52.5f && _owner.m_nowAnimeFrm <= _owner.m_reloadFrmMax)
+	{
+		if (_owner.m_sType != SituationType::Idle || _owner.m_posType != PostureType::Stand)
+		{
+			_owner.m_posType = PostureType::Stand;
+			_owner.m_sType = SituationType::Idle;
+			_owner.ChangeUpperBodyAnimation("Idle", _owner.m_nowAnimeFrm);
+			_owner.ChangeLowerBodyAnimation("Idle", _owner.m_nowAnimeFrm);
+		}
+	}
+	else
+	{
+		_owner.m_nowAnimeFrm = 0.0f;
+		if (_owner.m_sType != SituationType::Idle || _owner.m_posType != PostureType::Stand)
+		{
+			_owner.m_posType = PostureType::Stand;
+			_owner.m_sType = SituationType::Idle;
+			_owner.ChangeUpperBodyAnimation("Idle");
+			_owner.ChangeLowerBodyAnimation("Idle");
+		}
+	}
 }
 
 void Player::ActionIdle::Update(Player& _owner)
 {
-	_owner.StateIdleProc();
+	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	// ActionRunに切り替え
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward; }
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left; }
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right; }
+	if (_owner.m_moveDir.LengthSquared() > 0)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionRun>());
+		return;
+	}
+
+	// ActionReloadに切り替え
+	if (GetAsyncKeyState('R') & 0x8000)
+	{
+		if (!_owner.m_reloadKeyFlg)
+		{
+			_owner.ChangeActionState(std::make_shared<ActionReload_Idle>());
+		}
+	}
+
+	// ActionSitに切り替え
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!_owner.m_posKeyFlg)
+		{
+			_owner.m_posKeyFlg = true;
+			_owner.ChangeActionState(std::make_shared<ActionSit>());
+			switch (spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		_owner.m_posKeyFlg = false;
+	}
+
+	// ActionReadyに切り替え
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionReady>());
+		return;
+	}
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 }
 
 void Player::ActionIdle::Exit(Player& _owner)
@@ -938,12 +445,91 @@ void Player::ActionIdle::Exit(Player& _owner)
 
 void Player::ActionWalk::Enter(Player& _owner)
 {
-	_owner.ChangeAnimation("Walk");
+	_owner.m_nowAnimeFrm = 0.0f;
+	if (_owner.m_sType != SituationType::Walk)
+	{
+		_owner.m_sType = SituationType::Walk;
+		_owner.ChangeUpperBodyAnimation("Walk");
+		_owner.ChangeLowerBodyAnimation("Walk");
+	}
 }
 
 void Player::ActionWalk::Update(Player& _owner)
 {
-	_owner.StateWalkProc();
+	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+
+	Math::Matrix camRotMat;
+	if (spCamera)
+	{
+		camRotMat = spCamera->GetRotationMatrix();
+	}
+
+	_owner.m_moveSpeed = 0.05f;
+
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+	{
+		_owner.m_moveDir = Math::Vector3::Zero;
+
+		if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward; }
+		if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward; }
+		if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left; }
+		if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right; }
+	}
+	else
+	{
+		if (_owner.m_moveDir.LengthSquared() == 0)
+		{
+			_owner.ChangeActionState(std::make_shared<ActionIdle>());
+			return;
+		}
+		else
+		{
+			_owner.ChangeActionState(std::make_shared<ActionRun>());
+			return;
+		}
+	}
+
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!_owner.m_posKeyFlg)
+		{
+			_owner.m_posKeyFlg = true;
+			_owner.ChangeActionState(std::make_shared<ActionSit>());
+			switch (spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		_owner.m_posKeyFlg = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionReady>());
+	}
+
+	if (spCamera)
+	{
+		_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+	}
+
+	_owner.m_moveDir.Normalize();
+	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	_owner.UpdateRotate(_owner.m_moveDir);
+
+	//m_mRot = _camRotMat;
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 }
 
 void Player::ActionWalk::Exit(Player& _owner)
@@ -952,12 +538,83 @@ void Player::ActionWalk::Exit(Player& _owner)
 
 void Player::ActionRun::Enter(Player& _owner)
 {
-	_owner.ChangeAnimation("Run");
+	if (_owner.m_sType != SituationType::Run)
+	{
+		_owner.m_sType = SituationType::Run;
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Run");
+		_owner.ChangeLowerBodyAnimation("Run");
+	}
 }
 
 void Player::ActionRun::Update(Player& _owner)
 {
-	_owner.StateRunProc();
+	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+
+	_owner.m_moveSpeed = 0.12f;
+
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward; }
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left; }
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right; }
+	if (_owner.m_moveDir.LengthSquared() == 0)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
+
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+	{
+		if (_owner.m_posType == PostureType::Stand)
+		{
+			_owner.ChangeActionState(std::make_shared<ActionWalk>());
+			return;
+		}
+	}
+
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!_owner.m_posKeyFlg)
+		{
+			_owner.m_posKeyFlg = true;
+			_owner.ChangeActionState(std::make_shared<ActionSit>());
+			switch (spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		_owner.m_posKeyFlg = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionReady>());
+	}
+
+	if (spCamera)
+	{
+		_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+	}
+
+	_owner.m_moveDir.Normalize();
+	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	_owner.UpdateRotate(_owner.m_moveDir);
+
+	//m_mRot = _camRotMat;
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 }
 
 void Player::ActionRun::Exit(Player& _owner)
@@ -966,17 +623,71 @@ void Player::ActionRun::Exit(Player& _owner)
 
 void Player::ActionReady::Enter(Player& _owner)
 {
-	if (_owner.m_sType != SituationType::Ready)_owner.m_sType = SituationType::Ready;
-	_owner.ChangeAnimation("Ready");
+	if (_owner.m_sType != SituationType::Ready)
+	{
+		_owner.m_sType = SituationType::Ready;
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Ready");
+		_owner.ChangeLowerBodyAnimation("Ready");
+	}
 }
 
 void Player::ActionReady::Update(Player& _owner)
 {
-	if (!_owner.m_holdFlg)
+	const std::shared_ptr<TPSCamera>	spCamera	= _owner.m_wpCamera.lock();
+	const std::shared_ptr<Reticle>		spReticle	= _owner.m_wpReticle.lock();
+
+	Math::Matrix camRotMat;
+	if (spCamera)
 	{
-		_owner.m_holdFlg = true;
+		camRotMat = spCamera->GetRotationMatrix();
 	}
-	_owner.StateReadyProc();
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		spReticle->SetActive(true);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			spCamera->ChangeAimR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			spCamera->ChangeAimL();
+			break;
+		}
+
+		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+		{
+			if (!_owner.m_shotKeyFlg)
+			{
+				_owner.m_shotKeyFlg = true;
+				_owner.ChangeActionState(std::make_shared<ActionShot>());
+			}
+		}
+		else
+		{
+			_owner.m_shotKeyFlg = false;
+		}
+	}
+	else
+	{
+		spReticle->SetActive(false);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			spCamera->ChangeTPSR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			spCamera->ChangeTPSL();
+			break;
+		}
+		_owner.ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
+
+	_owner.m_mRot = camRotMat;
 }
 
 void Player::ActionReady::Exit(Player& _owner)
@@ -985,29 +696,208 @@ void Player::ActionReady::Exit(Player& _owner)
 
 void Player::ActionShot::Enter(Player& _owner)
 {
-	_owner.ChangeAnimation("Shot");
-	_owner.m_shotCnt = 0;
+	if (_owner.m_sType != SituationType::Shot)
+	{
+		_owner.m_sType = SituationType::Shot;
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Shot", false);
+		_owner.ChangeLowerBodyAnimation("Shot", false);
+	}
 }
 
 void Player::ActionShot::Update(Player& _owner)
 {
-	_owner.StateShotProc();
+	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+
+	KdCollider::RayInfo ray;
+	ray.m_pos	= _owner.m_pos;
+	ray.m_dir	= _owner.m_mWorld.Backward();
+	ray.m_range = 1000.0f;
+	ray.m_type	= KdCollider::TypeDamage;
+
+	std::list<KdCollider::CollisionResult> retRayList;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		obj->Intersects(ray, &retRayList);
+	}
+
+	float maxOverLap = 0.0f;
+	Math::Vector3 hitPos = {};
+
+	for (auto& ret : retRayList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap = ret.m_overlapDistance;
+			hitPos = ret.m_hitPos;
+		}
+	}
+
+	Math::Vector3 bulletDir = hitPos - _owner.m_pos;
+
+	if (_owner.m_nowAnimeFrm >= 2.5f)
+	{
+		_owner.ShotBullet(_owner.m_pos, bulletDir);
+	}
+
+	if (_owner.m_nowAnimeFrm >= _owner.m_shotFrmMax)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionReady>());
+	}
 }
 
 void Player::ActionShot::Exit(Player& _owner)
 {
 }
 
+void Player::ActionReload_Idle::Enter(Player& _owner)
+{
+	if (_owner.m_sType != Player::SituationType::Reload)
+	{
+		_owner.m_sType = Player::SituationType::Reload;
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Reload", false);
+		_owner.ChangeLowerBodyAnimation("Reload", false);
+	}
+	else
+	{
+		if (_owner.m_nowAnimeFrm != 0.0f)
+		{
+			_owner.ChangeUpperBodyAnimation("Reload", false, _owner.m_nowAnimeFrm);
+			_owner.ChangeLowerBodyAnimation("Reload", false, _owner.m_nowAnimeFrm);
+		}
+		else
+		{
+			_owner.m_nowAnimeFrm = 0.0f;
+			_owner.ChangeUpperBodyAnimation("Reload", false);
+			_owner.ChangeLowerBodyAnimation("Reload", false);
+		}
+	}
+}
+
+void Player::ActionReload_Idle::Update(Player& _owner)
+{
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+	// ActionRunに切り替え
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward;	}
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
+	if (_owner.m_moveDir.LengthSquared() > 0)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionReload_Run>());
+		return;
+	}
+
+	// アニメーションフレームが最後まで再生されたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
+	{
+		_owner.m_nowAnimeFrm = _owner.m_reloadFrmMax;
+		_owner.ChangeActionState(std::make_shared<ActionIdle>());
+	}
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+}
+
+void Player::ActionReload_Idle::Exit(Player& _owner)
+{
+}
+
+void Player::ActionReload_Run::Enter(Player& _owner)
+{
+	if (_owner.m_sType != Player::SituationType::Reload)
+	{
+		_owner.m_sType = Player::SituationType::Reload;
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Reload_Run", false);
+		_owner.ChangeLowerBodyAnimation("Reload_Run", false);
+	}
+	else
+	{
+		if (_owner.m_nowAnimeFrm != 0.0f)
+		{
+			_owner.ChangeUpperBodyAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
+			_owner.ChangeLowerBodyAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
+		}
+		else
+		{
+			_owner.m_nowAnimeFrm = 0.0f;
+			_owner.ChangeUpperBodyAnimation("Reload_Run", false);
+			_owner.ChangeLowerBodyAnimation("Reload_Run", false);
+		}
+	}
+}
+
+void Player::ActionReload_Run::Update(Player& _owner)
+{
+	const std::shared_ptr<TPSCamera>	spCamera = _owner.m_wpCamera.lock();
+
+	_owner.m_moveSpeed = 0.12f;
+
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward; }
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left; }
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right; }
+	if (_owner.m_moveDir.LengthSquared() == 0)
+	{
+		// アニメーションフレームが最後まで再生されたら
+		_owner.ChangeActionState(std::make_shared<ActionReload_Idle>());
+		return;
+	}
+
+	// アニメーションフレームが最後まで再生されたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
+	{
+		_owner.m_nowAnimeFrm = _owner.m_reloadFrmMax;
+		_owner.ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
+
+	if (spCamera)
+	{
+		_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+	}
+
+	_owner.m_moveDir.Normalize();
+	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	_owner.UpdateRotate(_owner.m_moveDir);
+
+	//m_mRot = _camRotMat;
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+}
+
+void Player::ActionReload_Run::Exit(Player& _owner)
+{
+}
+
 void Player::ActionSit::Enter(Player& _owner)
 {
-	_owner.ChangeAnimation("Sit");
-	_owner.m_sitCnt = 0;
-	_owner.m_posType = PostureType::Sit;
+	if (_owner.m_posType != PostureType::Sit)
+	{
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Sit", false);
+		_owner.ChangeLowerBodyAnimation("Sit", false);
+	}
 }
 
 void Player::ActionSit::Update(Player& _owner)
 {
-	_owner.StateSitProc();
+	// アニメーションフレームが最後まで再生されたら
+	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+	if (_owner.m_nowAnimeFrm >= _owner.m_sitFrmMax)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionSit_Idle>());
+		return;
+	}
 }
 
 void Player::ActionSit::Exit(Player& _owner)
@@ -1016,14 +906,23 @@ void Player::ActionSit::Exit(Player& _owner)
 
 void Player::ActionStand::Enter(Player& _owner)
 {
-	_owner.ChangeAnimation("Stand");
-	_owner.m_standCnt = 0;
-	_owner.m_posType = PostureType::Stand;
+	if (_owner.m_posType != PostureType::Stand)
+	{
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Stand");
+		_owner.ChangeLowerBodyAnimation("Stand");
+	}
 }
 
 void Player::ActionStand::Update(Player& _owner)
 {
-	_owner.StateStandProc();
+	// アニメーションフレームが最後まで再生されたら
+	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+	if (_owner.m_nowAnimeFrm >= _owner.m_standFrmMax)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
 }
 
 void Player::ActionStand::Exit(Player& _owner)
@@ -1032,13 +931,65 @@ void Player::ActionStand::Exit(Player& _owner)
 
 void Player::ActionSit_Idle::Enter(Player& _owner)
 {
-	if (_owner.m_sType != SituationType::Idle)_owner.m_sType = SituationType::Idle;
-	_owner.ChangeAnimation("Sit_Idle");
+	if (_owner.m_sType != SituationType::Idle || _owner.m_posType != PostureType::Sit)
+	{
+		_owner.m_posType		= PostureType::Sit;
+		_owner.m_sType			= SituationType::Idle;
+		_owner.m_nowAnimeFrm	= 0.0f;
+		_owner.ChangeUpperBodyAnimation("Sit_Idle");
+		_owner.ChangeLowerBodyAnimation("Sit_Idle");
+	}
 }
 
 void Player::ActionSit_Idle::Update(Player& _owner)
 {
-	_owner.StateSitIdleProc();
+	std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	// ActionSit_Runに切り替え
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward; }
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left; }
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right; }
+	if (_owner.m_moveDir.LengthSquared() > 0)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionSit_Walk>());
+		return;
+	}
+
+	// ActionStandに切り替え
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!_owner.m_posKeyFlg)
+		{
+			_owner.m_posKeyFlg = true;
+			_owner.ChangeActionState(std::make_shared<ActionStand>());
+			switch (spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::SitL:
+				spCamera->ChangeTPSL();
+				break;
+			case TPSCamera::CameraType::SitR:
+				spCamera->ChangeTPSR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		_owner.m_posKeyFlg = false;
+	}
+
+	// ActionSit_Readyに切り替え
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionSit_Ready>());
+		return;
+	}
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 }
 
 void Player::ActionSit_Idle::Exit(Player& _owner)
@@ -1047,12 +998,74 @@ void Player::ActionSit_Idle::Exit(Player& _owner)
 
 void Player::ActionSit_Walk::Enter(Player& _owner)
 {
-	_owner.ChangeAnimation("Sit_Walk");
+	if (_owner.m_sType != SituationType::Walk)
+	{
+		_owner.m_sType = SituationType::Walk;
+		_owner.m_nowAnimeFrm = 0.0f;
+		_owner.ChangeUpperBodyAnimation("Sit_Walk");
+		_owner.ChangeLowerBodyAnimation("Sit_Walk");
+	}
 }
 
 void Player::ActionSit_Walk::Update(Player& _owner)
 {
-	_owner.StateSitWalkProc();
+	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+
+	_owner.m_moveSpeed = 0.08f;
+
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward; }
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward; }
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left; }
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right; }
+	if (_owner.m_moveDir.LengthSquared() == 0)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionSit_Idle>());
+		return;
+	}
+
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!_owner.m_posKeyFlg)
+		{
+			_owner.m_posKeyFlg = true;
+			_owner.ChangeActionState(std::make_shared<ActionStand>());
+			switch (spCamera->GetCamType())
+			{
+			case TPSCamera::CameraType::TpsL:
+				spCamera->ChangeSitL();
+				break;
+			case TPSCamera::CameraType::TpsR:
+				spCamera->ChangeSitR();
+				break;
+			}
+			return;
+		}
+	}
+	else
+	{
+		_owner.m_posKeyFlg = false;
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		_owner.ChangeActionState(std::make_shared<ActionSit_Ready>());
+	}
+
+	if (spCamera)
+	{
+		_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+	}
+
+	_owner.m_moveDir.Normalize();
+	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	_owner.UpdateRotate(_owner.m_moveDir);
+
+	//m_mRot = _camRotMat;
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 }
 
 void Player::ActionSit_Walk::Exit(Player& _owner)
@@ -1062,30 +1075,61 @@ void Player::ActionSit_Walk::Exit(Player& _owner)
 void Player::ActionSit_Ready::Enter(Player& _owner)
 {
 	if (_owner.m_sType != SituationType::Ready)_owner.m_sType = SituationType::Ready;
-	_owner.ChangeAnimation("Sit_Ready");
+	_owner.m_nowAnimeFrm = 0.0f;
+	_owner.ChangeUpperBodyAnimation("Sit_Ready");
+	_owner.ChangeLowerBodyAnimation("Sit_Ready");
 }
 
 void Player::ActionSit_Ready::Update(Player& _owner)
 {
-	_owner.StateSitReadyProc();
+	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+	const std::shared_ptr<Reticle>	spReticle = _owner.m_wpReticle.lock();
+
+	Math::Matrix camRotMat;
+	if (spCamera)
+	{
+		camRotMat = spCamera->GetRotationMatrix();
+	}
+
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		spReticle->SetActive(true);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::SitR:
+			spCamera->ChangeSitAimR();
+			break;
+		case TPSCamera::CameraType::SitL:
+			spCamera->ChangeSitAimL();
+			break;
+		}
+	}
+	else
+	{
+		spReticle->SetActive(false);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::SitR:
+			spCamera->ChangeSitR();
+			break;
+		case TPSCamera::CameraType::SitL:
+			spCamera->ChangeSitL();
+			break;
+		}
+		//_spWeapon->UnHold();
+
+		_owner.ChangeActionState(std::make_shared<ActionSit_Idle>());
+		return;
+	}
+
+	_owner.m_mRot = camRotMat;
 }
 
 void Player::ActionSit_Ready::Exit(Player& _owner)
 {
 }
-
-void Player::ActionReload::Enter(Player& _owner)
-{
-	_owner.m_reloadCnt = 0;
-	if (_owner.m_sType != Player::SituationType::Reload)_owner.m_sType = Player::SituationType::Reload;
-	_owner.ChangeAnimation("Reload");
-}
-
-void Player::ActionReload::Update(Player& _owner)
-{
-	_owner.StateReloadProc();
-}
-
-void Player::ActionReload::Exit(Player& _owner)
-{
-}
+//================================================================================================================================
+// ステートパターン管理系
+//================================================================================================================================

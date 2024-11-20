@@ -4,8 +4,8 @@
 class TPSCamera : public CameraBase
 {
 public:
-						TPSCamera		()						{}
-						~TPSCamera		()			override	{}
+	TPSCamera		()				{}
+	~TPSCamera		()	override	{}
 
 	enum class CameraType
 	{
@@ -52,11 +52,8 @@ private:
 	const Math::Vector3 m_sitAimRPoint	= { 0.7f, 1.25f, -0.8f };
 	const Math::Vector3 m_sitAimLPoint	= { -0.7f,1.25f,-0.8f };
 
-	Math::Vector3		m_basePoint;
+	Math::Vector3		m_basePoint		= Math::Vector3::Zero;
 
-	bool				m_fpsFlg;
-	bool				m_tpsFlg;
-
-	CameraType			m_camType;
-	CameraType			m_pastCamType;
+	CameraType			m_camType		= CameraType::TpsL;
+	CameraType			m_pastCamType	= CameraType::TpsL;
 };

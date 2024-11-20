@@ -27,23 +27,23 @@ public:
 
 private:
 
-	std::shared_ptr<KdModelWork>	m_spModel;			// モデル情報
-	std::weak_ptr<Player>			m_wpPlayer;			// プレイヤー情報
+	std::shared_ptr<KdModelWork>	m_spModel		= nullptr;					// モデル情報
+	std::weak_ptr<Player>			m_wpPlayer;									// プレイヤー情報
 
-	Math::Color						m_debugColor;		// デバッグワイヤー用カラー
+	Math::Color						m_debugColor	= kWhiteColor;				// デバッグワイヤー用カラー
 
-	Math::Matrix					m_mTrans;			// 座標行列
+	Math::Matrix					m_mTrans		= Math::Matrix::Identity;	// 座標行列
 
-	Math::Vector3					m_pos;				// 座標
-	Math::Vector3					m_eventPos;			// 座標(円判定用)
+	Math::Vector3					m_pos			= Math::Vector3::Zero;		// 座標
+	Math::Vector3					m_eventPos		= Math::Vector3::Zero;		// 座標(円判定用)
 
-	const float						m_moveMax = 2.5f;	// Y座標のMAX値 = 2.5f
-	const float						m_moveMin = -0.9f;	// Y座標のMin値 = -0.9f
-	const float						m_moveSpeed = 0.1f;	// 移動量
+	const float						m_moveMax		= 2.5f;						// Y座標のMAX値 = 2.5f
+	const float						m_moveMin		= -0.9f;					// Y座標のMin値 = -0.9f
+	const float						m_moveSpeed		= 0.1f;						// 移動量
 
-	const float						m_openArea = 1.4f;	// 扉が開閉するアクティブが起こる範囲
+	const float						m_openArea		= 1.4f;						// 扉が開閉するアクティブが起こる範囲
 
-	bool							m_openAbleFlg;		// 開錠可能フラグ
-	bool							m_openFlg;			// 開錠フラグ
-	bool							m_lockFlg;			// ロックフラグ
+	bool							m_openAbleFlg	= false;					// 開錠可能フラグ
+	bool							m_openFlg		= false;					// 開錠フラグ
+	bool							m_lockFlg		= false;					// ロックフラグ
 };

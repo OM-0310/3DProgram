@@ -15,7 +15,7 @@ public:
 
 private:
 
-	Math::Matrix	m_mlocalRot;
+	Math::Matrix	m_mlocalRot	= Math::Matrix::Identity;
 
-	Math::Vector3	m_disarmPos;
+	Math::Vector3	m_disarmPos	= Math::Vector3::Zero;
 };

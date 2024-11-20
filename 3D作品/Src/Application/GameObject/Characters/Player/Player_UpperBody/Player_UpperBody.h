@@ -15,9 +15,9 @@ public:
 	void Update			()	override;
 	void PostUpdate		()	override;
 
-	void ChangeAnimation(const std::string& _name)
+	void ChangeAnimation(const std::string& _name, bool _isLoop = true, float _time = 0.0f)
 	{
-		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation(_name));
+		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation(_name), _isLoop, _time);
 	}
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)

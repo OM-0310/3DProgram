@@ -18,15 +18,15 @@ private:
 
 	std::shared_ptr<KdModelData>	m_spModel;
 
-	Math::Matrix					m_mRot;
-	Math::Matrix					m_mTrans;
+	Math::Matrix					m_mRot		= Math::Matrix::Identity;
+	Math::Matrix					m_mTrans	= Math::Matrix::Identity;
 
-	Math::Vector3					m_pos;
-	Math::Vector3					m_moveDir;
+	Math::Vector3					m_pos		= Math::Vector3::Zero;
+	Math::Vector3					m_moveDir	= Math::Vector3::Zero;
 
-	static const int				BULLETPOW = 1;
-	int								m_lifeSpan;
-	float							m_hitArea;
+	static const int				BULLETPOW	= 1;
+	int								m_lifeSpan	= 0;
+	float							m_hitArea	= 0.0f;
 
 	const float						m_moveSpeed = 1.0f;
 };
