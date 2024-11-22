@@ -63,38 +63,38 @@ public:
 
 	void ChanegeViewPointProcess();	// 視点切り替え処理
 
-	void SetCamera				(const std::shared_ptr<TPSCamera>& _spCamera) 
-	{ m_wpCamera = _spCamera; }
+	void SetCamera					// カメラ情報セット		
+	(const std::shared_ptr<TPSCamera>& _spCamera) { m_wpCamera = _spCamera; }
 
-	void SetPlayerUpperBody		(std::shared_ptr<Player_UpperBody>& _spPlayer_Up) 
-	{ m_wpPlayer_Up = _spPlayer_Up; }
+	void SetPlayerUpperBody			// プレイヤー上半身情報セット
+	(std::shared_ptr<Player_UpperBody>& _spPlayer_Up) { m_wpPlayer_Up = _spPlayer_Up; }
 
-	void SetPlayerLowerBody(std::shared_ptr<Player_LowerBody>& _spPlayer_Low) 
-	{ m_wpPlayer_Low = _spPlayer_Low; }
+	void SetPlayerLowerBody			// プレイヤー下半身情報セット
+	(std::shared_ptr<Player_LowerBody>& _spPlayer_Low) { m_wpPlayer_Low = _spPlayer_Low; }
 
-	void SetPlayerDisarm		(std::shared_ptr<Player_Disarm>& _spPlayer_Disarm) 
-	{ m_wpPlayer_Disarm = _spPlayer_Disarm; }
+	void SetPlayerDisarm			// 拳銃ホルダー情報セット
+	(std::shared_ptr<Player_Disarm>& _spPlayer_Disarm) { m_wpPlayer_Disarm = _spPlayer_Disarm; }
+		
+	void SetPlayerDisarmPistol		// ホルダーにしまわれている拳銃情報セット
+	(std::shared_ptr<Player_Disarm_Pistol>& _spPlayer_Disarm_Pistol) { m_wpPlayer_Disarm_Pistol = _spPlayer_Disarm_Pistol; }
 
-	void SetPlayerDisarmPistol	(std::shared_ptr<Player_Disarm_Pistol>& _spPlayer_Disarm_Pistol) 
-	{ m_wpPlayer_Disarm_Pistol = _spPlayer_Disarm_Pistol; }
+	void SetPlayerReadyPistol		// 構え時の銃情報セット
+	(const std::shared_ptr<Player_Ready_Pistol>& _spPlayer_Ready_Pistol) { m_wpPlayer_Ready_Pistol = _spPlayer_Ready_Pistol; }
 
-	void SetPlayerReadyPistol	(const std::shared_ptr<Player_Ready_Pistol>& _spPlayer_Ready_Pistol) 
-	{ m_wpPlayer_Ready_Pistol = _spPlayer_Ready_Pistol; }
+	void SetCardKey					// カードキー情報セット
+	(const std::shared_ptr<CardKey>& _spCard) { m_wpCard = _spCard; }
 
-	void SetCardKey				(const std::shared_ptr<CardKey>& _spCard) 
-	{ m_wpCard = _spCard; }
+	void SetDoor					// 鍵のかかったドア情報セット
+	(const std::shared_ptr<LockedDoor>& _spLockDoor) { m_wpLockDoor = _spLockDoor; }
 
-	void SetDoor				(const std::shared_ptr<LockedDoor>& _spLockDoor) 
-	{ m_wpLockDoor = _spLockDoor; }
+	void SetSecretFile				// 機密ファイル情報セット
+	(const std::shared_ptr<SecretFile>& _spFile) { m_wpFile = _spFile; }
 
-	void SetSecretFile			(const std::shared_ptr<SecretFile>& _spFile) 
-	{ m_wpFile = _spFile; }
+	void SetGoal					// ゴール情報セット
+	(const std::shared_ptr<Goal>& _spGoal) { m_wpGoal = _spGoal; }
 
-	void SetGoal				(const std::shared_ptr<Goal>& _spGoal) 
-	{ m_wpGoal = _spGoal; }
-
-	void SetReticle				(const std::shared_ptr<Reticle>& reticle) 
-	{ m_wpReticle = reticle; }
+	void SetReticle					// レティクル情報セット
+	(const std::shared_ptr<Reticle>& reticle) { m_wpReticle = reticle; }
 
 	const bool&				GetHoldFlg			()			{ return m_holdFlg;			}
 	const Math::Matrix&		GetRotateMat		()			{ return m_mRot;			}
@@ -121,10 +121,15 @@ private:
 	float								m_nowAnimeFrm	= 0.0f;		// 現在のアニメーションフレーム
 	float								m_animFrmSpd	= 1.0f;		// アニメーションの1フレーム(blender側では24fpsでのアニメーション実装のため)
 
-	const float							m_reloadFrmMax	= 60.0f;	// リロードアニメーションフレーム最大値
-	const float							m_standFrmMax	= 15.0f;	// 立ち上がりアニメーションフレーム最大値
-	const float							m_sitFrmMax		= 15.0f;	// しゃがみアニメーションフレーム最大値
-	const float							m_shotFrmMax	= 25.0f;	// 銃発射アニメーションフレーム最大値
+	const float							m_reloadFrmMax	= 60.0f;	// リロードフレーム最大値 60.0f
+	const float							m_standFrmMax	= 15.0f;	// 立ち上がりフレーム最大値 15.0f
+	const float							m_sitFrmMax		= 15.0f;	// しゃがみフレーム最大値 15.0f
+	const float							m_shotFrmMax	= 25.0f;	// 銃発砲フレーム最大値 25.0f
+	const float							m_bulletShotFrm = 2.5f;		// 弾発射フレーム 2.5f
+
+	const float							m_walkMoveSpd	= 0.05f;	// 歩行速度 0.05f
+	const float							m_runMoveSpd	= 0.12f;	// 走行速度 0.12f
+	const float							m_sitWalkMoveSpd= 0.08f;	// しゃがみ歩行速度 0.08f
 
 	bool								m_moveFlg		= false;	// 移動フラグ
 	bool								m_shotKeyFlg	= false;	// エイムフラグ
@@ -136,7 +141,7 @@ private:
 	bool								m_creepKeyFlg	= false;	// 匍匐キーフラグ
 	bool								m_animFlg		= false;	// アニメ－ション切り替えフラグ
 
-	static const int					MAXHP			= 100;		// 最大HP
+	static const int					MAXHP			= 100;		// 最大HP 100
 
 	UINT								m_sType			= SituationType::Idle;			// プレイヤーの状態タイプ
 	PostureType							m_posType		= PostureType::Stand;			// プレイヤーの体勢タイプ
@@ -222,6 +227,18 @@ private:
 
 		ActionReload_Idle	()				{}
 		~ActionReload_Idle	()	override	{}
+
+		void Enter	(Player& _owner)	override;
+		void Update	(Player& _owner)	override;
+		void Exit	(Player& _owner)	override;
+	};
+
+	class ActionReload_Walk : public ActionStateBase
+	{
+	public:
+
+		ActionReload_Walk	()				{}
+		~ActionReload_Walk	()	override	{}
 
 		void Enter	(Player& _owner)	override;
 		void Update	(Player& _owner)	override;
