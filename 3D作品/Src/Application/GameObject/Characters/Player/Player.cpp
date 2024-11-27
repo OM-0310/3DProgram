@@ -291,16 +291,6 @@ void Player::ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoo
 	}
 }
 
-// 弾発射処理
-void Player::ShotBullet(const Math::Vector3& _pos, const Math::Vector3& _dir)
-{
-	std::shared_ptr<Bullet> bullet;
-	bullet = std::make_shared<Bullet>();
-	bullet->Init();
-	bullet->Shot(_pos, _dir);
-	SceneManager::Instance().AddObject(bullet);
-}
-
 //================================================================================================================================
 // 視点切り替え処理
 //================================================================================================================================
@@ -491,12 +481,12 @@ void Player::ActionIdle::Update(Player& _owner)
 
 void Player::ActionIdle::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化する
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionWalk::Enter(Player& _owner)
 {
-	// 現在のアニメーションフレームを初期化
-	_owner.m_nowAnimeFrm = 0.0f;
 	// プレイヤーの状態が"歩行状態"でないとき
 	if (_owner.m_sType != SituationType::Walk)
 	{
@@ -547,6 +537,25 @@ void Player::ActionWalk::Update(Player& _owner)
 			_owner.ChangeActionState(std::make_shared<ActionRun>());
 			return;
 		}
+	}
+
+	// "Rキーが押されたとき"
+	if (GetAsyncKeyState('R') & 0x8000)
+	{
+		// リロードキーフラグがfalseのとき
+		if (!_owner.m_reloadKeyFlg)
+		{
+			// リロードキーフラグをtrueにし、ActionReload_Walkに切り替え
+			_owner.m_reloadKeyFlg = true;
+			_owner.ChangeActionState(std::make_shared<ActionReload_Walk>());
+			return;
+		}
+	}
+	// キーフラグが離されたとき
+	else
+	{
+		// リロードキーフラグをfalseにする
+		_owner.m_reloadKeyFlg = false;
 	}
 
 	// "C"キーが押されたとき
@@ -606,6 +615,8 @@ void Player::ActionWalk::Update(Player& _owner)
 
 void Player::ActionWalk::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化する
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionRun::Enter(Player& _owner)
@@ -613,11 +624,9 @@ void Player::ActionRun::Enter(Player& _owner)
 	// プレイヤーの状態が"走行状態"でないとき
 	if (_owner.m_sType != SituationType::Run)
 	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"走行状態に切り替え"
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.m_sType = SituationType::Run;
+		// プレイヤーの状態を"走行状態"に切り替えて、
 		// プレイヤーの上半身と下半身のアニメーションを"Run"に切り替え
+		_owner.m_sType = SituationType::Run;
 		_owner.ChangeUpperBodyAnimation("Run");
 		_owner.ChangeLowerBodyAnimation("Run");
 	}
@@ -737,6 +746,8 @@ void Player::ActionRun::Update(Player& _owner)
 
 void Player::ActionRun::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化する
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionReady::Enter(Player& _owner)
@@ -744,11 +755,9 @@ void Player::ActionReady::Enter(Player& _owner)
 	// プレイヤーの状態が"構え状態"でないとき
 	if (_owner.m_sType != SituationType::Ready)
 	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"構え状態"に切り替え
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.m_sType = SituationType::Ready;
+		// プレイヤーの状態を"構え状態"に切り替えて、
 		// プレイヤーの上半身と下半身のアニメーションを"Ready"に切り替え
+		_owner.m_sType = SituationType::Ready;
 		_owner.ChangeUpperBodyAnimation("Ready");
 		_owner.ChangeLowerBodyAnimation("Ready");
 	}
@@ -829,6 +838,8 @@ void Player::ActionReady::Update(Player& _owner)
 
 void Player::ActionReady::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionShot::Enter(Player& _owner)
@@ -836,11 +847,9 @@ void Player::ActionShot::Enter(Player& _owner)
 	// プレイヤーの状態が"発射状態"でないとき
 	if (_owner.m_sType != SituationType::Shot)
 	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"発射状態"にする
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.m_sType = SituationType::Shot;
+		// プレイヤーの状態を"発射状態"にし、
 		// 上半身と下半身のアニメーションを"Shot"に切り替え
+		_owner.m_sType = SituationType::Shot;
 		_owner.ChangeUpperBodyAnimation("Shot", false);
 		_owner.ChangeLowerBodyAnimation("Shot", false);
 	}
@@ -848,42 +857,15 @@ void Player::ActionShot::Enter(Player& _owner)
 
 void Player::ActionShot::Update(Player& _owner)
 {
+	std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
+
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
-
-	KdCollider::RayInfo ray;
-	ray.m_pos	= _owner.m_pos;
-	ray.m_dir	= _owner.m_mWorld.Backward();
-	ray.m_range = 1000.0f;
-	ray.m_type	= KdCollider::TypeDamage;
-
-	std::list<KdCollider::CollisionResult> retRayList;
-
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		obj->Intersects(ray, &retRayList);
-	}
-
-	float maxOverLap = 0.0f;
-	Math::Vector3 hitPos = {};
-
-	for (auto& ret : retRayList)
-	{
-		if (maxOverLap < ret.m_overlapDistance)
-		{
-			maxOverLap = ret.m_overlapDistance;
-			hitPos = ret.m_hitPos;
-		}
-	}
-
-	// レイ判定で当たった座標と自身の座標を減算し弾の方向を確定する
-	Math::Vector3 bulletDir = hitPos - _owner.m_pos;
 
 	// 現在のアニメーションフレームが弾発射アニメーションフレーム以上のとき
 	if (_owner.m_nowAnimeFrm >= _owner.m_bulletShotFrm)
 	{
-		// 弾を発射する
-		_owner.ShotBullet(_owner.m_pos, bulletDir);
+		spPlayer_Ready_Pistol->ShotBullet(true);
 	}
 
 	// 現在のアニメーションフレームが最後まで再生されたら
@@ -896,6 +878,15 @@ void Player::ActionShot::Update(Player& _owner)
 
 void Player::ActionShot::Exit(Player& _owner)
 {
+	std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
+
+	spPlayer_Ready_Pistol->ShotBullet(false);
+
+	if (_owner.m_nowAnimeFrm >= _owner.m_shotFrmMax)
+	{
+		// 現在のアニメーションフレームを初期化する
+		_owner.m_nowAnimeFrm = 0.0f;
+	}
 }
 
 void Player::ActionReload_Idle::Enter(Player& _owner)
@@ -903,11 +894,9 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 	// プレイヤーの状態が"リロード状態"でないとき
 	if (_owner.m_sType != Player::SituationType::Reload)
 	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"リロード状態"にする
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.m_sType = Player::SituationType::Reload;
+		// プレイヤーの状態を"リロード状態"にし、
 		// 上半身と下半身のアニメーションを"Reload"に切り替え
+		_owner.m_sType = Player::SituationType::Reload;
 		_owner.ChangeUpperBodyAnimation("Reload", false);
 		_owner.ChangeLowerBodyAnimation("Reload", false);
 	}
@@ -955,7 +944,7 @@ void Player::ActionReload_Idle::Update(Player& _owner)
 		return;
 	}
 
-	// 現在のアニメーションフレームが最後まで再生されたら
+	// アニメーションフレームが最後まで再生されていたら
 	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
 	{
 		// アニメーションフレームを設定し、ActionIdleに切り替え
@@ -969,6 +958,8 @@ void Player::ActionReload_Idle::Update(Player& _owner)
 
 void Player::ActionReload_Idle::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化する
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionReload_Walk::Enter(Player& _owner)
@@ -976,11 +967,9 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 	// プレイヤーの状態が"リロード状態"でないとき
 	if (_owner.m_sType != Player::SituationType::Reload)
 	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"リロード状態"にする
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.m_sType = Player::SituationType::Reload;
+		// プレイヤーの状態を"リロード状態"にし、
 		// 上半身と下半身のアニメーションを"Reload_Walk"に切り替え
+		_owner.m_sType = Player::SituationType::Reload;
 		_owner.ChangeUpperBodyAnimation("Reload_Walk", false);
 		_owner.ChangeLowerBodyAnimation("Reload_Walk", false);
 	}
@@ -1144,6 +1133,12 @@ void Player::ActionReload_Walk::Update(Player& _owner)
 
 void Player::ActionReload_Walk::Exit(Player& _owner)
 {
+	// アニメーションフレームが最後まで再生されていたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
+	{
+		// 現在のアニメーションフレームを初期化する
+		_owner.m_nowAnimeFrm = 0.0f;
+	}
 }
 
 void Player::ActionReload_Run::Enter(Player& _owner)
@@ -1151,11 +1146,9 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 	// プレイヤーの状態が"リロード状態"でないとき
 	if (_owner.m_sType != Player::SituationType::Reload)
 	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"リロード状態"にする
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.m_sType = Player::SituationType::Reload;
+		// プレイヤーの状態を"リロード状態"にし、
 		// 上半身と下半身のアニメーションを"Reload_Run"に切り替え
+		_owner.m_sType = Player::SituationType::Reload;
 		_owner.ChangeUpperBodyAnimation("Reload_Run", false);
 		_owner.ChangeLowerBodyAnimation("Reload_Run", false);
 	}
@@ -1163,7 +1156,7 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 	else
 	{
 		// 現在のアニメーションフレームが0.0fでないとき
-		if (_owner.m_nowAnimeFrm != 0.0f)
+		if (_owner.m_nowAnimeFrm <= _owner.m_reloadFrmMax)
 		{
 			// 上半身と下半身のアニメーションを"Reload_Run"に切り替え
 			_owner.ChangeUpperBodyAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
@@ -1172,7 +1165,7 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 		// 0.0fであるとき
 		else
 		{
-			// 現在のアニメーションフレームをしょきかし、
+			// 現在のアニメーションフレームを初期化し、
 			// 上半身と下半身のアニメーションを"Reload_Run"に切り替え
 			_owner.m_nowAnimeFrm = 0.0f;
 			_owner.ChangeUpperBodyAnimation("Reload_Run", false);
@@ -1255,6 +1248,12 @@ void Player::ActionReload_Run::Update(Player& _owner)
 
 void Player::ActionReload_Run::Exit(Player& _owner)
 {
+	// アニメーションフレームが最後まで再生されていたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
+	{
+		// 現在のアニメーションフレームを初期化する
+		_owner.m_nowAnimeFrm = 0.0f;
+	}
 }
 
 void Player::ActionSit::Enter(Player& _owner)
@@ -1286,6 +1285,12 @@ void Player::ActionSit::Update(Player& _owner)
 
 void Player::ActionSit::Exit(Player& _owner)
 {
+	// アニメーションフレームが最後まで再生されていたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_sitFrmMax)
+	{
+		// 現在のアニメーションフレームを初期化する
+		_owner.m_nowAnimeFrm = 0.0f;
+	}
 }
 
 void Player::ActionStand::Enter(Player& _owner)
@@ -1306,7 +1311,7 @@ void Player::ActionStand::Update(Player& _owner)
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
 
-	// アニメーションフレームが最後まで再生されたら
+	// アニメーションフレームが最後まで再生されていたら
 	if (_owner.m_nowAnimeFrm >= _owner.m_standFrmMax)
 	{
 		// ActionIdleに切り替え
@@ -1317,6 +1322,12 @@ void Player::ActionStand::Update(Player& _owner)
 
 void Player::ActionStand::Exit(Player& _owner)
 {
+	// 現在のアニメションフレームが最後まで再生されていたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_standFrmMax)
+	{
+		// 現在のアニメーションフレームを初期化する
+		_owner.m_nowAnimeFrm = 0.0f;
+	}
 }
 
 void Player::ActionSit_Idle::Enter(Player& _owner)
@@ -1402,6 +1413,8 @@ void Player::ActionSit_Idle::Update(Player& _owner)
 
 void Player::ActionSit_Idle::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化する
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionSit_Walk::Enter(Player& _owner)
@@ -1460,11 +1473,11 @@ void Player::ActionSit_Walk::Update(Player& _owner)
 			_owner.ChangeActionState(std::make_shared<ActionStand>());
 			switch (spCamera->GetCamType())
 			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
+			case TPSCamera::CameraType::SitL:
+				spCamera->ChangeTPSL();
 				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
+			case TPSCamera::CameraType::SitR:
+				spCamera->ChangeTPSR();
 				break;
 			}
 			return;
@@ -1506,6 +1519,8 @@ void Player::ActionSit_Walk::Update(Player& _owner)
 
 void Player::ActionSit_Walk::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化する
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionSit_Ready::Enter(Player& _owner)
@@ -1586,6 +1601,8 @@ void Player::ActionSit_Ready::Update(Player& _owner)
 
 void Player::ActionSit_Ready::Exit(Player& _owner)
 {
+	// 現在のアニメーションフレームを初期化する
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 //================================================================================================================================
 // ステートパターン管理系

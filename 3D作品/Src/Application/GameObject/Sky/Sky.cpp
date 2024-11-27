@@ -11,6 +11,8 @@ void Sky::Init()
 
 	m_pos = { 0.0f,0.0f,0.0f };
 
+	m_objectType = KdGameObject::ObjectType::TypeObstacles;
+
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mScale = Math::Matrix::CreateScale(100.0f);
 	m_mWorld = m_mScale * m_mTrans;

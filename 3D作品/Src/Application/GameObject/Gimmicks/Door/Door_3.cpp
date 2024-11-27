@@ -21,6 +21,8 @@ void Door_3::Init()
 	m_openAbleFlg = false;
 	m_openFlg = false;
 
+	m_objectType = KdGameObject::ObjectType::TypeObstacles;
+
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("DoorCollsion", m_spModel, KdCollider::TypeGround);
 

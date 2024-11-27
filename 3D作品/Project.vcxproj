@@ -177,10 +177,13 @@
     <ClInclude Include="Src\Application\GameObject\Item\ItemBase.h" />
     <ClInclude Include="Src\Application\GameObject\Item\SecretFile\SecretFile.h" />
     <ClInclude Include="Src\Application\GameObject\Sky\Sky.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrains\ArmoredCar\ArmoredCar.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\TerrainBase.h" />
     <ClInclude Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.h" />
@@ -266,10 +269,13 @@
     <ClCompile Include="Src\Application\GameObject\Item\ItemBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Item\SecretFile\SecretFile.cpp" />
     <ClCompile Include="Src\Application\GameObject\Sky\Sky.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrains\ArmoredCar\ArmoredCar.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\TerrainBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.cpp" />

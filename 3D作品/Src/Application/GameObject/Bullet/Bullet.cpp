@@ -14,7 +14,7 @@ void Bullet::Init()
 	m_pos = {};
 	m_moveDir = {};
 
-	m_lifeSpan = 180;
+	m_lifeSpan = 900;
 	m_hitArea = 0.2f;
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -40,7 +40,7 @@ void Bullet::Update()
 	sphere.m_type			= KdCollider::TypeDamage | KdCollider::TypeGround;
 
 	// デバッグ確認用
-	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
+	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
 
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
@@ -48,9 +48,16 @@ void Bullet::Update()
 		{
 			if (obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy)
 			{
-				obj->SetHPDec(BULLETPOW);
+				//obj->SetHPDec(BULLETPOW);
+				obj->ClassDestruction();
 
-				OnHit();
+				ClassDestruction();
+
+				break;
+			}
+			else if (obj->GetObjectType() == KdGameObject::ObjectType::TypeObstacles)
+			{
+				ClassDestruction();
 
 				break;
 			}

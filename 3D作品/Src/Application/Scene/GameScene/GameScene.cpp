@@ -5,10 +5,13 @@
 #include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
 
 #include "../../GameObject/Sky/Sky.h"
+#include "../../GameObject/Terrains/Ground/Ground_UP/Ground_UP.h"
+#include "../../GameObject/Terrains/Ground/Ground_Bottom/Ground_Bottom.h"
 #include "../../GameObject/Terrains/Ground/Ground.h"
 #include "../../GameObject/Terrains/Building/Building.h"
 #include "../../GameObject/Terrains/Building/Building_Main/Building_Main.h"
 #include "../../GameObject/Terrains/Building/Building_Roof/Building_Roof.h"
+#include "../../GameObject/Terrains/ArmoredCar/ArmoredCar.h"
 
 #include "../../GameObject/Gimmicks/Door/Door_1.h"
 #include "../../GameObject/Gimmicks/Door/Door_2.h"
@@ -83,10 +86,20 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	m_objList.push_back(sky);
 
 	// 地形　地面初期化
-	std::shared_ptr<Ground> ground;
-	ground = std::make_shared<Ground>();
-	ground->Init();
-	m_objList.push_back(ground);
+	std::shared_ptr<Ground_UP> ground_Up;
+	ground_Up = std::make_shared<Ground_UP>();
+	ground_Up->Init();
+	m_objList.push_back(ground_Up);
+
+	std::shared_ptr<Ground_Bottom> ground_Bottom;
+	ground_Bottom = std::make_shared<Ground_Bottom>();
+	ground_Bottom->Init();
+	m_objList.push_back(ground_Bottom);
+
+	//std::shared_ptr<Ground> ground;
+	//ground = std::make_shared<Ground>();
+	//ground->Init();
+	//m_objList.push_back(ground);
 
 	// 建物　メイン
 	std::shared_ptr<Building_Main> build_main;
@@ -99,6 +112,12 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	build_roof = std::make_shared<Building_Roof>();
 	build_roof->Init();
 	m_objList.push_back(build_roof);
+
+	// 装甲車&戦車
+	std::shared_ptr<ArmoredCar> car;
+	car = std::make_shared<ArmoredCar>();
+	car->Init();
+	m_objList.push_back(car);
 
 	//std::shared_ptr<Building> build;
 	//build = std::make_shared<Building>();
@@ -150,10 +169,10 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	m_objList.push_back(player_Ready_Pistol);
 
 	// 敵初期化
-	//std::shared_ptr<Enemy> enemy;
-	//enemy = std::make_shared<Enemy>();
-	//enemy->Init();
-	//m_objList.push_back(enemy);
+	std::shared_ptr<Enemy> enemy;
+	enemy = std::make_shared<Enemy>();
+	enemy->Init();
+	m_objList.push_back(enemy);
 
 	//=================================================================
 	// 武器関係

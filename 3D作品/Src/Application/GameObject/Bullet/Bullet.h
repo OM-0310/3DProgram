@@ -11,7 +11,6 @@ public:
 	void Update	()	override;
 	void DrawLit()	override;
 
-	void OnHit	() { m_isExpired = true; }
 	void Shot	(const Math::Vector3 _pos, const Math::Vector3 _dir);
 
 private:

@@ -6,11 +6,12 @@ class KdGameObject : public std::enable_shared_from_this<KdGameObject>
 public:
 
 	// オブジェクトのタイプ
-	enum ObjectType
+	enum class ObjectType
 	{
 		None,
 		TypePlayer,
 		TypeEnemy,
+		TypeObstacles
 	};
 
 	// どのような描画を行うのかを設定するTypeID：Bitフラグで複数指定可能
@@ -58,6 +59,8 @@ public:
 
 	const Math::Matrix& GetMatrix() const { return m_mWorld; }
 
+	void ClassDestruction() { m_isExpired = true; }
+
 	virtual bool IsExpired() const { return m_isExpired; }
 
 	virtual bool IsVisible()	const { return false; }
@@ -73,11 +76,11 @@ public:
 
 	UINT GetDrawType() const { return m_drawType; }
 
-	bool Intersects(const KdCollider::SphereInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
-	bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>* pResults);
-	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>* pResults);
+	bool Intersects(const KdCollider::SphereInfo& targetShape, std::list<KdCollider::CollisionResult>	* pResults);
+	bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>		* pResults);
+	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>		* pResults);
 
-	UINT GetObjectType() const { return m_objectType; }
+	const ObjectType& GetObjectType() const { return m_objectType; }
 
 protected:
 
@@ -105,5 +108,5 @@ protected:
 	int	m_HP = 0;
 
 	// オブジェクトタイプ
-	UINT m_objectType = None;
+	ObjectType m_objectType = KdGameObject::ObjectType::None;
 };

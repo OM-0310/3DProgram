@@ -199,6 +199,15 @@
     <Filter Include="Src\Application\GameObject\Characters\Player\Player_LowerBody">
       <UniqueIdentifier>{cb241560-2e5a-4635-8191-58db70ecfc40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\ArmoredCar">
+      <UniqueIdentifier>{4949158f-4bb4-4588-9f2a-07714bf6def0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Ground\Ground_UP">
+      <UniqueIdentifier>{fbc4b43e-491a-4e85-a971-22160c419f28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom">
+      <UniqueIdentifier>{0f42faf6-74ef-4a3a-ac49-9e0bfabde2ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -483,6 +492,15 @@
     <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_LowerBody\Player_LowerBody.h">
       <Filter>Src\Application\GameObject\Characters\Player\Player_LowerBody</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\ArmoredCar\ArmoredCar.h">
+      <Filter>Src\Application\GameObject\Terrains\ArmoredCar</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.h">
+      <Filter>Src\Application\GameObject\Terrains\Ground\Ground_Bottom</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.h">
+      <Filter>Src\Application\GameObject\Terrains\Ground\Ground_UP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -739,6 +757,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_LowerBody\Player_LowerBody.cpp">
       <Filter>Src\Application\GameObject\Characters\Player\Player_LowerBody</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\ArmoredCar\ArmoredCar.cpp">
+      <Filter>Src\Application\GameObject\Terrains\ArmoredCar</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Ground\Ground_Bottom</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Ground\Ground_UP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

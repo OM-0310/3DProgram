@@ -10,6 +10,8 @@ void Ground::Init()
 	m_mTrans	= Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld	= m_mScale * m_mTrans;
 
+	m_objectType = KdGameObject::ObjectType::TypeObstacles;
+
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("GroundCollision", m_spModel, KdCollider::TypeGround);
 }

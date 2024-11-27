@@ -9,6 +9,8 @@ void Building_Roof::Init()
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mTrans;
 
+	m_objectType = KdGameObject::ObjectType::TypeObstacles;
+
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("BuildRoofCollision", m_spModel, KdCollider::TypeGround);
 }

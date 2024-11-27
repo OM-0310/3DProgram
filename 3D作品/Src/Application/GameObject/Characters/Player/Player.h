@@ -59,8 +59,6 @@ public:
 	void ChangeUpperBodyAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);// 上半身
 	void ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);// 下半身
 
-	void ShotBullet		(const Math::Vector3& _pos, const Math::Vector3& _dir);
-
 	void ChanegeViewPointProcess();	// 視点切り替え処理
 
 	void SetCamera					// カメラ情報セット		
