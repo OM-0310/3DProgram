@@ -6,11 +6,12 @@ class ArmoredCar : public TerrainBase
 {
 public:
 
-	ArmoredCar	()				{}
-	~ArmoredCar	()	override	{ Release(); }
+	ArmoredCar						()				{}
+	~ArmoredCar						()	override	{ Release(); }
 
-	void Init	()	override;
-	void DrawLit()	override;
+	void Init						()	override;
+	void DrawLit					()	override;
+	void GenerateDepthMapFromLight	()	override;
 
 private:
 };

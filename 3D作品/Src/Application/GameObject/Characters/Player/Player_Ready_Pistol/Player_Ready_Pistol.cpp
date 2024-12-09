@@ -26,6 +26,11 @@ void Player_Ready_Pistol::Init()
 
 	m_alpha = m_alphaMin;
 
+	m_objectType = KdGameObject::ObjectType::TypePlayer;
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("Player_Ready_PistolCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
+
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
 

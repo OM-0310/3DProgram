@@ -41,9 +41,9 @@ public:
 
 	enum class ItemCollectType
 	{
-		NoCollect			= 1 << 0,	// アイテム未保持
-		CardKeyCollect		= 1 << 1,	// カードキー保持
-		SecretFileCollect	= 1 << 2	// 機密ファイル保持
+		NoCollect,			// アイテム未保持
+		CardKeyCollect,		// カードキー保持
+		SecretFileCollect	// 機密ファイル保持
 	};
 
 	Player						()				{}
@@ -154,9 +154,9 @@ private:
 
 		virtual ~ActionStateBase()			{}
 
-		virtual void Enter	(Player& _owner){}
-		virtual void Update	(Player& _owner){}
-		virtual void Exit	(Player& _owner){}
+		virtual void Enter	(Player& _owner) { (void)_owner; }
+		virtual void Update	(Player& _owner) { (void)_owner; }
+		virtual void Exit	(Player& _owner) { (void)_owner; }
 	};
 
 	class ActionIdle : public ActionStateBase

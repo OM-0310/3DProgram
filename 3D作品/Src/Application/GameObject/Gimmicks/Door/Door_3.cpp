@@ -1,7 +1,5 @@
 ﻿#include "Door_3.h"
 
-#include "../../Characters/Player/Player.h"
-
 #include "../../../Scene/SceneManager.h"
 
 void Door_3::Init()
@@ -31,8 +29,6 @@ void Door_3::Init()
 
 void Door_3::Update()
 {
-	std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
-
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Center = m_eventPos;
 	sphere.m_sphere.Radius = m_openArea;

@@ -50,18 +50,20 @@ void Player::Init()
 	m_posType		= PostureType::Stand;
 	m_itemCollType	= ItemCollectType::NoCollect;
 
-	m_objectType	= ObjectType::TypePlayer;
+	m_objectType	= KdGameObject::ObjectType::TypePlayer;
 
 	CharaBase::Init();
-
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("PlayerCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
 
 void Player::Update()
 {
+	std::shared_ptr<CardKey>	spCard = m_wpCard.lock();
+	std::shared_ptr<LockedDoor>	spLockDoor = m_wpLockDoor.lock();
+	std::shared_ptr<SecretFile> spFile = m_wpFile.lock();
+	std::shared_ptr<Goal>		spGoal = m_wpGoal.lock();
+
 	m_gravity += 0.04f;
 	m_pos.y -= m_gravity;
 
@@ -76,29 +78,6 @@ void Player::Update()
 
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mRot * m_mTrans;
-
-	//m_disarmPos = m_mUnHold.Translation();
-
-	//KdCollider::SphereInfo disarmSphereInfo;
-	//disarmSphereInfo.m_sphere.Center = m_disarmPos;
-	//disarmSphereInfo.m_sphere.Radius = 0.05f;
-	//disarmSphereInfo.m_type = KdCollider::TypeDamage;
-
-	//m_pDebugWire->AddDebugSphere(disarmSphereInfo.m_sphere.Center, disarmSphereInfo.m_sphere.Radius, kBlueColor);
-
-	//m_readyPos = m_mHold.Translation();
-
-	//KdCollider::SphereInfo readySphereInfo;
-	//readySphereInfo.m_sphere.Center = m_readyPos;
-	//readySphereInfo.m_sphere.Radius = 0.05f;
-	//readySphereInfo.m_type = KdCollider::TypeDamage;
-
-	//m_pDebugWire->AddDebugSphere(readySphereInfo.m_sphere.Center, readySphereInfo.m_sphere.Radius, kBlueColor);
-
-	std::shared_ptr<CardKey>	spCard = m_wpCard.lock();
-	std::shared_ptr<LockedDoor>	spLockDoor = m_wpLockDoor.lock();
-	std::shared_ptr<SecretFile> spFile = m_wpFile.lock();
-	std::shared_ptr<Goal>		spGoal = m_wpGoal.lock();
 
 	// Eキーが押されたとき
 	if (GetAsyncKeyState('E') & 0x8000)

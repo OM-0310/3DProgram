@@ -19,6 +19,7 @@ private:
 	void Init		() override;
 
 	void StageInit	(std::atomic<bool>& done);
+	void GrassInit	(std::atomic<bool>& done);
 	void CharaInit	(std::atomic<bool>& done);
 
 private:

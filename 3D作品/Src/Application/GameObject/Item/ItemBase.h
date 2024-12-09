@@ -22,17 +22,11 @@ public:
 
 	void SetAsset(std::string _name);
 
-	void SetPlayer(std::shared_ptr<Player> _spPlayer)
-	{
-		m_wpPlayer = _spPlayer;
-	}
-
 	const bool& GetCollectFlg				() { return m_collectFlg; }
 
 protected:
 
 	std::shared_ptr<KdModelData>	m_spModel;			// モデル情報
-	std::weak_ptr<Player>			m_wpPlayer;			// プレイヤー情報
 
 	Math::Matrix	m_mTrans = Math::Matrix::Identity;	// 座標行列
 

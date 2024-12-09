@@ -14,7 +14,7 @@ void Sky::Init()
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
-	m_mScale = Math::Matrix::CreateScale(100.0f);
+	m_mScale = Math::Matrix::CreateScale(10.0f);
 	m_mWorld = m_mScale * m_mTrans;
 
 	m_pCollider = std::make_unique<KdCollider>();
@@ -23,5 +23,6 @@ void Sky::Init()
 
 void Sky::DrawUnLit()
 {
+	KdShaderManager::Instance().m_StandardShader.SetUVTiling({ 5,5 });
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }

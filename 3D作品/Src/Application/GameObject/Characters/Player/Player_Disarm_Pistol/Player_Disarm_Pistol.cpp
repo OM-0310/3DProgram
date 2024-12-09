@@ -12,6 +12,11 @@ void Player_Disarm_Pistol::Init()
 	m_pos = { 0.f,-0.9f,-50.0f };
 
 	m_alpha = m_alphaMax;
+
+	m_objectType = KdGameObject::ObjectType::TypePlayer;
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("Player_Disarm_PistolCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
 }
 
 void Player_Disarm_Pistol::Update()
@@ -21,8 +26,8 @@ void Player_Disarm_Pistol::Update()
 	{
 		m_mWorld = spPlayer->GetMatrix();
 
-		if (spPlayer->GetSituationType() == Player::SituationType::Ready ||
-			spPlayer->GetSituationType() == Player::SituationType::Reload)
+		if (spPlayer->GetSituationType() & Player::SituationType::Ready ||
+			spPlayer->GetSituationType() & Player::SituationType::Reload)
 		{
 			m_alpha = m_alphaMin;
 		}

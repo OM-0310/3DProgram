@@ -162,6 +162,10 @@
     <ClInclude Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Characters\CharaBase.h" />
     <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy.h" />
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun\Enemy_Gun.h" />
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine\Enemy_Gun_NoMagazine.h" />
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine\Enemy_Magazine.h" />
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.h" />
     <ClInclude Include="Src\Application\GameObject\Characters\Player\Player.h" />
     <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_Disarm\Player_Disarm.h" />
     <ClInclude Include="Src\Application\GameObject\Characters\Player\Player_Disarm_Pistol\Player_Disarm_Pistol.h" />
@@ -181,9 +185,11 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrains\Grass\Grass.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrains\RockWall\RockWall.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\TerrainBase.h" />
     <ClInclude Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.h" />
@@ -254,6 +260,10 @@
     <ClCompile Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Characters\CharaBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun\Enemy_Gun.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine\Enemy_Gun_NoMagazine.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine\Enemy_Magazine.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.cpp" />
     <ClCompile Include="Src\Application\GameObject\Characters\Player\Player.cpp" />
     <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_Disarm\Player_Disarm.cpp" />
     <ClCompile Include="Src\Application\GameObject\Characters\Player\Player_Disarm_Pistol\Player_Disarm_Pistol.cpp" />
@@ -273,9 +283,11 @@
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrains\Grass\Grass.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrains\RockWall\RockWall.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\TerrainBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.cpp" />

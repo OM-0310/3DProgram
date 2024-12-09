@@ -25,7 +25,7 @@ void SecretFile::Init()
 
 void SecretFile::Update()
 {
-	UpdateCollision();
+	ItemBase::UpdateCollision();
 
 	Flickering(m_alphaSpeed);
 }

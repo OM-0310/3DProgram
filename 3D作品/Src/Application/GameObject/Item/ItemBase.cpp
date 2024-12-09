@@ -51,19 +51,16 @@ void ItemBase::UpdateCollision()
 			// ヒットフラグがtrueであれば
 			if (isHit)
 			{
-				// アイテム回収フラグをtrueにしループを抜ける
+				// アイテム回収フラグをtrueにする
 				m_collectFlg = true;
 				m_debugColor = kGreenColor;
-				break;
 			}
 			// falseであれば
 			else
 			{
-				// アイテム回収フラグをfalseにしループを抜ける
+				// アイテム回収フラグをfalseにする
 				m_collectFlg = false;
 				m_debugColor = kRedColor;
-
-				break;
 			}
 		}
 	}

@@ -15,5 +15,6 @@ private :
 	void Init() override;
 
 	void StageInit(std::atomic<bool>& done);
+	void CharaInit(std::atomic<bool>& done);
 
 };

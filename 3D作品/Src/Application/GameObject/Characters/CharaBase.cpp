@@ -72,7 +72,7 @@ void CharaBase::DrawLit()
 void CharaBase::GenerateDepthMapFromLight()
 {
 	if (!m_spModel)return;
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, m_color);
 }
 
 void CharaBase::SetAsset(std::string _name)

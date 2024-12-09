@@ -208,6 +208,24 @@
     <Filter Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom">
       <UniqueIdentifier>{0f42faf6-74ef-4a3a-ac49-9e0bfabde2ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Grass">
+      <UniqueIdentifier>{fbb6c0a2-733a-4ec6-a417-481fc20d2720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\RockWall">
+      <UniqueIdentifier>{278b7bdc-1cb2-47bc-8909-42589e47d3ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun">
+      <UniqueIdentifier>{91373d35-2680-4cd6-b22f-554bde5aebba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine">
+      <UniqueIdentifier>{45517c89-668b-4a44-b810-56c3b01b6473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine">
+      <UniqueIdentifier>{f6718afb-d665-42d8-a52a-fef152ec4dcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main">
+      <UniqueIdentifier>{216b20dd-c8f3-4be1-a692-ac665d51a360}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -501,6 +519,24 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.h">
       <Filter>Src\Application\GameObject\Terrains\Ground\Ground_UP</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Grass\Grass.h">
+      <Filter>Src\Application\GameObject\Terrains\Grass</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\RockWall\RockWall.h">
+      <Filter>Src\Application\GameObject\Terrains\RockWall</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun\Enemy_Gun.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine\Enemy_Gun_NoMagazine.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine\Enemy_Magazine.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Magazine</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -766,6 +802,24 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_UP\Ground_UP.cpp">
       <Filter>Src\Application\GameObject\Terrains\Ground\Ground_UP</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Grass\Grass.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Grass</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\RockWall\RockWall.cpp">
+      <Filter>Src\Application\GameObject\Terrains\RockWall</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun\Enemy_Gun.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine\Enemy_Gun_NoMagazine.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine\Enemy_Magazine.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Magazine</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

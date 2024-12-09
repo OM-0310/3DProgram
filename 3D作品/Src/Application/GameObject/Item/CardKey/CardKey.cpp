@@ -1,7 +1,5 @@
 ﻿#include "CardKey.h"
 
-#include "../../Characters/Player/Player.h"
-
 #include "../../../Scene/SceneManager.h"
 
 void CardKey::Init()
@@ -27,7 +25,7 @@ void CardKey::Init()
 
 void CardKey::Update()
 {
-	UpdateCollision();
+	ItemBase::UpdateCollision();
 
 	Flickering(m_alphaSpeed);
 }

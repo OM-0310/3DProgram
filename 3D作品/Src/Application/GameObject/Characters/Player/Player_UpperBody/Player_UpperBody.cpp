@@ -10,6 +10,11 @@ void Player_UpperBody::Init()
 	ChangeAnimation("Idle");
 
 	m_pos = { 0.f,-0.9f,-50.0f };
+
+	m_objectType = KdGameObject::ObjectType::TypePlayer;
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("Player_UpperBodyCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
 }
 
 void Player_UpperBody::Update()

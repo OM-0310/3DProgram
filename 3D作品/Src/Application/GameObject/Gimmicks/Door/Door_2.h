@@ -14,15 +14,9 @@ public:
 	void DrawLit					()	override;
 	void GenerateDepthMapFromLight	()	override;
 
-	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
-	{
-		m_wpPlayer = _spPlayer;
-	}
-
 private:
 
 	std::shared_ptr<KdModelWork>	m_spModel;
-	std::weak_ptr<Player>			m_wpPlayer;
 
 	Math::Color						m_debugColor	= kWhiteColor;
 

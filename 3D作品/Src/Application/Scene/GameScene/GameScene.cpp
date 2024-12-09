@@ -7,11 +7,13 @@
 #include "../../GameObject/Sky/Sky.h"
 #include "../../GameObject/Terrains/Ground/Ground_UP/Ground_UP.h"
 #include "../../GameObject/Terrains/Ground/Ground_Bottom/Ground_Bottom.h"
+#include "../../GameObject/Terrains/RockWall/RockWall.h"
 #include "../../GameObject/Terrains/Ground/Ground.h"
 #include "../../GameObject/Terrains/Building/Building.h"
 #include "../../GameObject/Terrains/Building/Building_Main/Building_Main.h"
 #include "../../GameObject/Terrains/Building/Building_Roof/Building_Roof.h"
 #include "../../GameObject/Terrains/ArmoredCar/ArmoredCar.h"
+#include "../../GameObject/Terrains/Grass/Grass.h"
 
 #include "../../GameObject/Gimmicks/Door/Door_1.h"
 #include "../../GameObject/Gimmicks/Door/Door_2.h"
@@ -30,6 +32,10 @@
 #include "../../GameObject/Characters/Player/Player_Ready_Pistol/Player_Ready_Pistol.h"
 
 #include "../../GameObject/Characters/Enemy/Enemy.h"
+#include "../../GameObject/Characters/Enemy/Enemy_Main/Enemy_Main.h"
+#include "../../GameObject/Characters/Enemy/Enemy_Gun/Enemy_Gun.h"
+#include "../../GameObject/Characters/Enemy/Enemy_Gun_NoMagazine/Enemy_Gun_NoMagazine.h"
+#include "../../GameObject/Characters/Enemy/Enemy_Magazine/Enemy_Magazine.h"
 
 #include "../../GameObject/Weapon/Pistol/Pistol_Disarm/Pistol_Disarm.h"
 #include "../../GameObject/Weapon/AssaultRifle/AssaultRifle.h"
@@ -69,7 +75,11 @@ void GameScene::Init()
 	std::atomic<bool> charaDone(false);
 	std::thread charaTh(&GameScene::CharaInit, this, std::ref(charaDone));
 
+	std::atomic<bool> grassDone(false);
+	std::thread grassTh(&GameScene::GrassInit, this, std::ref(grassDone));
+
 	stageTh.join();
+	grassTh.join();
 	charaTh.join();
 }
 
@@ -95,6 +105,11 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	ground_Bottom = std::make_shared<Ground_Bottom>();
 	ground_Bottom->Init();
 	m_objList.push_back(ground_Bottom);
+
+	std::shared_ptr<RockWall> rock;
+	rock = std::make_shared<RockWall>();
+	rock->Init();
+	m_objList.push_back(rock);
 
 	//std::shared_ptr<Ground> ground;
 	//ground = std::make_shared<Ground>();
@@ -123,6 +138,24 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	//build = std::make_shared<Building>();
 	//build->Init();
 	//m_objList.push_back(build);
+
+	done = true;
+}
+
+void GameScene::GrassInit(std::atomic<bool>& done)
+{
+	//=================================================================
+	// 草初期化
+	//=================================================================
+
+	std::shared_ptr<Grass> grass;
+	for (int i = 0; i < 4; i++)
+	{
+		grass = std::make_shared<Grass>();
+		grass->Init();
+		grass->SetPos({ 0.0f,-1.0f,-30.0f * i });
+		m_objList.push_back(grass);
+	}
 
 	done = true;
 }
@@ -173,6 +206,30 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	enemy = std::make_shared<Enemy>();
 	enemy->Init();
 	m_objList.push_back(enemy);
+
+	// 敵メイン部分初期化
+	std::shared_ptr<Enemy_Main> enemy_Main;
+	enemy_Main = std::make_shared<Enemy_Main>();
+	enemy_Main->Init();
+	m_objList.push_back(enemy_Main);
+
+	// 敵銃(マガジンあり)
+	std::shared_ptr<Enemy_Gun> enemy_Gun;
+	enemy_Gun = std::make_shared<Enemy_Gun>();
+	enemy_Gun->Init();
+	m_objList.push_back(enemy_Gun);
+
+	// 敵銃(マガジン無し)
+	std::shared_ptr<Enemy_Gun_NoMagazine> enemy_Gun_NoMagazine;
+	enemy_Gun_NoMagazine = std::make_shared<Enemy_Gun_NoMagazine>();
+	enemy_Gun_NoMagazine->Init();
+	m_objList.push_back(enemy_Gun_NoMagazine);
+
+	// 敵マガジン本体
+	std::shared_ptr<Enemy_Magazine> enemy_Magazine;
+	enemy_Magazine = std::make_shared<Enemy_Magazine>();
+	enemy_Magazine->Init();
+	m_objList.push_back(enemy_Magazine);
 
 	//=================================================================
 	// 武器関係
@@ -310,11 +367,16 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	player_Disarm_Pistol->SetPlayer(player);
 	player_Ready_Pistol->SetPlayer(player);
 
-	door_1->SetPlayer(player);
-	door_2->SetPlayer(player);
-	door_3->SetPlayer(player);
+	enemy->SetEnemy_Main(enemy_Main);
+	enemy->SetEnemy_Gun(enemy_Gun);
+	enemy->SetEnemy_Gun_NoMagazine(enemy_Gun_NoMagazine);
+	enemy->SetEnemy_Magazine(enemy_Magazine);
+	enemy_Main->SetEnemy(enemy);
+	enemy_Gun->SetEnemy(enemy);
+	enemy_Gun_NoMagazine->SetEnemy(enemy);
+	enemy_Magazine->SetEnemy(enemy);
+
 	lockedDoor->SetPlayer(player);
-	card->SetPlayer(player);
 
 	//player->SetWeapon(assault);
 	//pistol_Disarm->SetPlayer(player);

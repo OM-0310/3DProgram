@@ -68,7 +68,6 @@ void LockedDoor::Update()
 						// 開錠可能フラグをtrueしてループを抜ける
 						m_openAbleFlg = true;
 						m_debugColor = kGreenColor;
-						break;
 					}
 					// そうでなければ
 					else
@@ -79,7 +78,6 @@ void LockedDoor::Update()
 							// 開錠可能フラグをtrueしてループを抜ける
 							m_openAbleFlg = true;
 							m_debugColor = kGreenColor;
-							break;
 
 						}
 						// falseであれば
@@ -87,7 +85,6 @@ void LockedDoor::Update()
 						{
 							// 開錠可能フラグをfalseしてループを抜ける
 							m_openAbleFlg = false;
-							break;
 						}
 					}
 				}
@@ -98,7 +95,6 @@ void LockedDoor::Update()
 				// 開錠可能フラグをfalseにしてループを抜ける
 				m_openAbleFlg = false;
 				m_debugColor = kRedColor;
-				break;
 			}
 		}
 	}

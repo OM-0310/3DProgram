@@ -19,3 +19,8 @@ void ArmoredCar::DrawLit()
 {
 	TerrainBase::DrawLit();
 }
+
+void ArmoredCar::GenerateDepthMapFromLight()
+{
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+}
