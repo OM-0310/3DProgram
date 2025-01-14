@@ -1,5 +1,7 @@
 ﻿#include "CameraBase.h"
 
+#include "../../Scene/SceneManager.h"
+
 void CameraBase::Init()
 {
 	if (!m_spCamera)

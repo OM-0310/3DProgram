@@ -16,16 +16,36 @@ void Enemy_Gun_NoMagazine::Init()
 
 void Enemy_Gun_NoMagazine::Update()
 {
-	std::shared_ptr<Enemy> spEnemy = m_wpEnemy.lock();
+	const std::shared_ptr<Enemy> spEnemy = m_wpEnemy.lock();
 
 	if (spEnemy)
 	{
 		m_mWorld = spEnemy->GetMatrix();
+
+		if (spEnemy->GetDissolveFlg())
+		{
+			m_isExpired = true;
+		}
 	}
+
 	m_color = { 1.f,1.f,1.f,m_alpha };
 }
 
 void Enemy_Gun_NoMagazine::PostUpdate()
 {
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+}
+
+void Enemy_Gun_NoMagazine::DrawLit()
+{
+	if (!m_spModel)return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, m_color);
+}
+
+void Enemy_Gun_NoMagazine::GenerateDepthMapFromLight()
+{
+	if (!m_spModel)return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, m_color);
 }

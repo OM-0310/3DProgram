@@ -12,7 +12,7 @@ void ArmoredCar::Init()
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("ArmoredCarCollision", m_spModel, KdCollider::TypeGround);
+	m_pCollider->RegisterCollisionShape("ArmoredCarCollision", m_spModel, KdCollider::TypeGround | KdCollider::TypeBump);
 }
 
 void ArmoredCar::DrawLit()

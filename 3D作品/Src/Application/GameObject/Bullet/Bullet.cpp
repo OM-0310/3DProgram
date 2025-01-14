@@ -7,15 +7,18 @@ void Bullet::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelData>();
-		KdAssets::Instance().m_modeldatas.GetData("Assset/Models/Bullet/Bullet.gltf");
-		m_spModel = KdAssets::Instance().m_modeldatas.GetData("Assset/Models/Bullet/Bullet.gltf");
+		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Bullet/Bullet.gltf");
+		m_spModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Bullet/Bullet.gltf");
 	}
+
+	m_tPoly.SetMaterial("Asset/Texture/Orbit/Orbit.png");
+	m_tPoly.SetLength(100);
+	//m_tPoly.
 
 	m_pos = {};
 	m_moveDir = {};
 
-	m_lifeSpan = 900;
-	m_hitArea = 0.2f;
+	m_lifeSpan = 300;
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
@@ -37,30 +40,23 @@ void Bullet::Update()
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Center	= m_pos;
 	sphere.m_sphere.Radius	= m_hitArea;
-	sphere.m_type			= KdCollider::TypeDamage | KdCollider::TypeGround;
+	sphere.m_type			= KdCollider::TypeDamage;
 
 	// デバッグ確認用
 	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
 
+	bool hit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
-		if (obj->Intersects(sphere, nullptr))
+		hit = obj->Intersects(sphere, nullptr);
+
+		if (hit)
 		{
-			if (obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy)
-			{
-				//obj->SetHPDec(BULLETPOW);
-				obj->ClassDestruction();
+			obj->SetHPDec(BULLETPOW);
 
-				ClassDestruction();
+			ClassDestruction();
 
-				break;
-			}
-			else if (obj->GetObjectType() == KdGameObject::ObjectType::TypeObstacles)
-			{
-				ClassDestruction();
-
-				break;
-			}
+			break;
 		}
 	}
 
@@ -70,12 +66,17 @@ void Bullet::Update()
 
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mRot * m_mTrans;
+
+	// トレイルポリゴンに頂点追加
+	m_tPoly.AddPoint(m_mWorld);
 }
 
 void Bullet::DrawLit()
 {
 	if (!m_spModel)return;
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(m_tPoly);
 }
 
 void Bullet::Shot(const Math::Vector3 _pos, const Math::Vector3 _dir)

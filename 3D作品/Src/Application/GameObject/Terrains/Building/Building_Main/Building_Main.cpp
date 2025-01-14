@@ -12,7 +12,7 @@ void Building_Main::Init()
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("BuildMainCollision", m_spModel, KdCollider::TypeGround);
+	m_pCollider->RegisterCollisionShape("BuildMainCollision", m_spModel, KdCollider::TypeGround | KdCollider::TypeBump);
 }
 
 void Building_Main::DrawLit()

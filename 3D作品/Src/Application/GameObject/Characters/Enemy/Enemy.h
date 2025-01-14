@@ -24,10 +24,7 @@ public:
 
 	void SearchProc		();	// 索敵処理
 	void ChaseProc		();	// 追跡処理
-	void RouteSearchProc(); // 経路探索処理
-
-	void InitializeGrid	();	// グリッドの初期化処理
-	void MoveAlongPath	();	// 敵を経路に沿って次の位
+	void Death			(const bool _deathFlg); // 死亡処理
 
 	void ChangeAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);	// アニメーション切り替え処理置に移動させる処理
 
@@ -41,50 +38,67 @@ public:
 	{ m_wpEnemy_Magazine = _spEnemy_Magazine; }
 	void SetPlayer				(const std::shared_ptr<Player>& _spPlayer) 
 	{ m_wpPlayer = _spPlayer; }
-	void SetHPDec				(const int& _decNum) 
-	{ m_HP -= _decNum; }
 
-	int GetHP			()	override { return m_HP; }
-
-	enum class StateType
-	{
-		Normal,				// 通常
-		Wary,				// 警戒
-		Discover			// 発見
-	};
+	const bool GetDissolveFlg() { return m_dissolveFlg; }
 
 	enum class SituationType
 	{
 		Idle	= 1 << 0,	// 停止状態
 		Walk	= 1 << 1,	// 歩行状態
-		Run		= 1 << 2,	// 走行状態
-		Ready	= 1 << 3,	// 構え状態
-		Shot	= 1 << 4,	// 発射状態
-		Reload	= 1 << 5	// リロード状態
+		Discover= 1 << 2,	// 発見状態
+		Run		= 1 << 3,	// 走行状態
+		Ready	= 1 << 4,	// 構え状態
+		Shot	= 1 << 5,	// 発射状態
+		Reload	= 1 << 6,	// リロード状態
+		Death	= 1 << 7	// 死亡状態
 	};
 
 private:
 
-	std::shared_ptr<KdAnimator>			m_spAnimator;
-	std::weak_ptr<Enemy_Main>			m_wpEnemy_Main;
-	std::weak_ptr<Enemy_Gun>			m_wpEnemy_Gun;
-	std::weak_ptr<Enemy_Gun_NoMagazine>	m_wpEnemy_Gun_NoMagazine;
-	std::weak_ptr<Enemy_Magazine>		m_wpEnemy_Magazine;
-	std::weak_ptr<Player>				m_wpPlayer;
+	std::weak_ptr<Enemy_Main>			m_wpEnemy_Main;					// 敵(本体)情報
+	std::weak_ptr<Enemy_Gun>			m_wpEnemy_Gun;					// 敵(銃)情報
+	std::weak_ptr<Enemy_Gun_NoMagazine>	m_wpEnemy_Gun_NoMagazine;		// 敵(銃マガジン無し)情報
+	std::weak_ptr<Enemy_Magazine>		m_wpEnemy_Magazine;				// 敵(マガジン)情報
+	std::weak_ptr<Player>				m_wpPlayer;						// プレイヤー情報
 
-	Math::Vector3				m_moveDir		= Math::Vector3::Zero;
-	float						m_moveSpeed		= 0.0f;
+	std::shared_ptr<KdAnimator>	m_spAnimator;							// アニメーション管理系
+	float						m_nowAnimeFrm	= 0.0f;					// 現在のアニメーションフレーム
+	const float					m_zeroAnimFrm	= 0.0f;					// アニメーション初期化用変数
+	const float					m_dscovrAnimFrm = 36.0f;				// 発見アニメーションフレーム 36.0f
+	const float					m_shotAnimFrm	= 4.0f;					// 弾発射アニメーションフレーム 4.0f
+	const float					m_reloadAnimFrm = 90.0f;				// リロードアニメーションフレーム 90.0f
+	const float					m_deathAnimFrm	= 52.0f;				// 死亡アニメーションフレーム
+	const float					m_animFrmSpd	= 1.0f;					// アニメーションの1フレーム
 
-	bool						m_waryFlg		= false;
-	bool						m_discoverFlg	= false;
-	bool						m_chaseFlg		= false;
+	float						m_dissolveCnt	= 0.0f;					// ディゾルブカウント
+	const float					m_dissolveMax	= 1.0f;					// ディゾルブカウントのMAX値
+	const float					m_dissolveSpd	= 0.1f;					// ディゾルブ速度
+	bool						m_dissolveFlg	= false;				// ディゾルブフラグ
 
-	int							m_gridWidth		= 0;
-	int							m_gridHeight	= 0;
+	Math::Vector3				m_moveDir		= Math::Vector3::Zero;	// 移動方向
+	const float					m_arrivalZPos	= 27.0;					// 目的地Z座標
+	float						m_moveSpeed		= 0.0f;					// 移動速度
 
-	static const int			MAXHP = 1;
+	const float					m_zeroMoveSpd	= 0.0f;					// 停止時移動速度 0.0f
+	const float					m_walkMoveSpd	= 0.03f;				// 歩行時移動速度 0.03f
+	const float					m_runMoveSpd	= 0.07f;				// 走行時移動速度 0.07f
 
-	StateType					m_sType			= StateType::Normal;
+	const float					m_viewRange		= 0.1f;					// 視野範囲
+	const float					m_waryArea		= 12.0f;				// 警戒範囲
+	const float					m_discoverArea	= 9.0f;					// 発見範囲
+	const float					m_shotArea		= 8.0f;					// 弾発射範囲
+
+	bool						m_dirFlg		= false;				// 方向フラグ
+	bool						m_waryFlg		= false;				// 警戒フラグ
+	bool						m_lostFlg		= false;				// 失踪フラグ
+	bool						m_findFlg		= false;				// 発見フラグ
+	bool						m_deathFlg		= false;				// 死亡フラグ
+
+	int							m_actionCnt		= 0;					// アクションカウント
+
+	const int					m_maxShotWait	= 2;					// 発射待機時間MAX値
+	int							m_shotWait		= 0;					// 発射待機時間
+
 	SituationType				m_sitType		= SituationType::Idle;
 
 	std::shared_ptr<AstarGrid>				m_spGrid; // グリッドのポインタをクラスメンバとして保持
@@ -112,7 +126,6 @@ private:
 
 		void Enter	(Enemy& _owner)	override;
 		void Update	(Enemy& _owner)	override;
-		void Exit	(Enemy& _owner)	override;
 	};
 
 	class ActionWalk : public ActionStateBase
@@ -124,7 +137,17 @@ private:
 
 		void Enter	(Enemy& _owner)	override;
 		void Update	(Enemy& _owner)	override;
-		void Exit	(Enemy& _owner)	override;
+	};
+
+	class ActionDiscover : public ActionStateBase
+	{
+	public:
+
+		ActionDiscover	()				{}
+		~ActionDiscover	()	override	{}
+
+		void Enter	(Enemy& _owner)	override;
+		void Update	(Enemy& _owner)	override;
 	};
 
 	class ActionRun : public ActionStateBase
@@ -135,8 +158,7 @@ private:
 		~ActionRun	()	override	{}
 
 		void Enter	(Enemy& _owner)	override;
-		void Update	(Enemy& _owner)	override;
-		void Exit	(Enemy& _owner)	override;
+		void Update(Enemy& _owner)	override;
 	};
 
 	class ActionReady : public ActionStateBase
@@ -148,7 +170,6 @@ private:
 
 		void Enter	(Enemy& _owner)	override;
 		void Update	(Enemy& _owner)	override;
-		void Exit	(Enemy& _owner)	override;
 	};
 
 	class ActionShot : public ActionStateBase
@@ -160,7 +181,6 @@ private:
 
 		void Enter	(Enemy& _owner)	override;
 		void Update	(Enemy& _owner)	override;
-		void Exit	(Enemy& _owner)	override;
 	};
 
 	class ActionReload : public ActionStateBase
@@ -172,7 +192,17 @@ private:
 
 		void Enter	(Enemy& _owner)	override;
 		void Update	(Enemy& _owner)	override;
-		void Exit	(Enemy& _owner)	override;
+	};
+
+	class ActionDeath : public ActionStateBase
+	{
+	public:
+
+		ActionDeath		()				{}
+		~ActionDeath	()	override	{}
+
+		void Enter	(Enemy& _owner)	override;
+		void Update	(Enemy& _owner)	override;
 	};
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> _nextState);

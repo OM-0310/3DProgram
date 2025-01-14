@@ -42,6 +42,10 @@ public:
 	// ワールド座標(3D座標)をスクリーン座標(2D座標)に変換する
 	void ConvertWorldToScreenDetail(const Math::Vector3& pos, Math::Vector3& result);
 
+	// 視錐台カリングを実行する関数
+	void PerformFrustumCulling(const std::vector<Math::Vector3>& objectPositions,
+		std::vector<Math::Vector3>& visibleObjects);
+
 protected:
 
 	// カメラ行列：3Dワールド空間上のカメラの行列情報
@@ -57,4 +61,8 @@ protected:
 	float m_focusDistance = 0.0f;
 	float m_focusForeRange = 0.0f;
 	float m_focusBackRange = 2000.0f;
+
+	Math::Plane m_frustumPlanes[6]; // 視錐台の6つの平面
+
+	void UpdateFrustum(); // 視錐台の平面を更新
 };

@@ -19,7 +19,7 @@ void TitleScene::Event()
 
 void TitleScene::Init()
 {
-	ShowCursor(false);
+	//ShowCursor(false);
 
 	std::atomic<bool> stageDone(false);
 	std::thread stageTh(&TitleScene::StageInit, this, std::ref(stageDone));

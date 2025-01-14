@@ -32,7 +32,7 @@ void LockedDoor::Init()
 
 void LockedDoor::Update()
 {
-	std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 
 	//// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 	// 扉の開閉処理(円判定を用いて実装)										//
@@ -45,7 +45,7 @@ void LockedDoor::Update()
 
 
 	// デバッグ用
-	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
+	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
 
 	bool isHit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())

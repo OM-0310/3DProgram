@@ -17,6 +17,7 @@ public:
 	void DrawUnLit		()	override;
 
 	void ShotBullet(const bool rayFlg);
+	void Reload() { m_nowBullet = m_magazineSize; }
 
 	void ChangeAnimation(const std::string& _name, bool _isLoop = true, float _time = 0.0f)
 	{
@@ -36,7 +37,8 @@ private:
 	Math::Matrix	m_localMuzzleMat = Math::Matrix::Identity;	// 親から銃口へのローカル行列
 
 	const int		m_magazineSize	= 10;		// マガジンサイズ 10
-	int				m_bulletNum		= 0;		// 装弾数
+	const int		m_magazineEmpty = 0;		// 残弾 空
+	int				m_nowBullet		= 0;		// 装弾数
 
 	const float		m_shotWaitMax	= 25.0f;
 	float			m_shotWait		= 0.0f;

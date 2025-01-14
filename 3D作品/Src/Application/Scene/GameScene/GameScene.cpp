@@ -70,20 +70,25 @@ void GameScene::Init()
 	//=================================================================
 
 	std::atomic<bool> stageDone(false);
-	std::thread stageTh(&GameScene::StageInit, this, std::ref(stageDone));
+	std::mutex mtx;
+	std::condition_variable cv;
+	std::thread stageTh(&GameScene::StageInit, this, std::ref(stageDone), std::ref(cv), std::ref(mtx));
 
 	std::atomic<bool> charaDone(false);
-	std::thread charaTh(&GameScene::CharaInit, this, std::ref(charaDone));
+	std::thread charaTh(&GameScene::CharaInit, this, std::ref(charaDone), std::ref(stageDone), std::ref(cv), std::ref(mtx));
 
 	std::atomic<bool> grassDone(false);
-	std::thread grassTh(&GameScene::GrassInit, this, std::ref(grassDone));
+	std::thread grassTh(&GameScene::GrassInit, this, std::ref(grassDone), std::ref(stageDone), std::ref(cv), std::ref(mtx));
 
 	stageTh.join();
 	grassTh.join();
 	charaTh.join();
 }
 
-void GameScene::StageInit(std::atomic<bool>& done)
+void GameScene::StageInit(
+	std::atomic<bool>& done,
+	std::condition_variable& cv,
+	std::mutex& mtx)
 {
 	//=================================================================
 	// ステージ関係初期化
@@ -134,34 +139,57 @@ void GameScene::StageInit(std::atomic<bool>& done)
 	car->Init();
 	m_objList.push_back(car);
 
-	//std::shared_ptr<Building> build;
-	//build = std::make_shared<Building>();
-	//build->Init();
-	//m_objList.push_back(build);
+	std::shared_ptr<Building> build;
+	build = std::make_shared<Building>();
+	build->Init();
+	m_objList.push_back(build);
 
-	done = true;
+	{
+		// 初期化完了を通知
+		std::lock_guard<std::mutex> lock(mtx);
+		done = true;
+	}
+
+	// 待機中のスレッドに通知
+	cv.notify_all();
 }
 
-void GameScene::GrassInit(std::atomic<bool>& done)
+void GameScene::GrassInit(
+	std::atomic<bool>& done,	std::atomic<bool>& stageDone,
+	std::condition_variable& cv,std::mutex& mtx)
 {
+	// ステージ初期化完了を待つ
+	{
+		std::unique_lock<std::mutex> lock(mtx);
+		cv.wait(lock, [&stageDone]() {return stageDone.load(); });
+	}
+
 	//=================================================================
 	// 草初期化
 	//=================================================================
 
-	std::shared_ptr<Grass> grass;
-	for (int i = 0; i < 4; i++)
-	{
-		grass = std::make_shared<Grass>();
-		grass->Init();
-		grass->SetPos({ 0.0f,-1.0f,-30.0f * i });
-		m_objList.push_back(grass);
-	}
+	//std::shared_ptr<Grass> grass;
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	grass = std::make_shared<Grass>();
+	//	grass->Init();
+	//	grass->SetPos({ 0.0f,-1.0f,-30.0f * i });
+	//	m_objList.push_back(grass);
+	//}
 
 	done = true;
 }
 
-void GameScene::CharaInit(std::atomic<bool>& done)
+void GameScene::CharaInit(
+	std::atomic<bool>& done,		std::atomic<bool>& stageDone,
+	std::condition_variable& cv,	std::mutex& mtx)
 {
+	// ステージ初期化完了を待つ
+	{
+		std::unique_lock<std::mutex> lock(mtx);
+		cv.wait(lock, [&stageDone]() {return stageDone.load(); });
+	}
+
 	//=================================================================
 	// キャラ関係初期化
 	//=================================================================
@@ -317,7 +345,6 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	//=================================================================
 	// レティクル初期化
 	//=================================================================
-
 	std::shared_ptr<Reticle> reticle;
 	reticle = std::make_shared<Reticle>();
 	reticle->Init();
@@ -367,6 +394,7 @@ void GameScene::CharaInit(std::atomic<bool>& done)
 	player_Disarm_Pistol->SetPlayer(player);
 	player_Ready_Pistol->SetPlayer(player);
 
+	enemy->SetPlayer(player);
 	enemy->SetEnemy_Main(enemy_Main);
 	enemy->SetEnemy_Gun(enemy_Gun);
 	enemy->SetEnemy_Gun_NoMagazine(enemy_Gun_NoMagazine);

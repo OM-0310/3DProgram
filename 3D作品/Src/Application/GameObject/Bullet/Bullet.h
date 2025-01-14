@@ -25,7 +25,9 @@ private:
 
 	static const int				BULLETPOW	= 1;
 	int								m_lifeSpan	= 0;
-	float							m_hitArea	= 0.0f;
+	const float						m_hitArea	= 0.2f;
 
-	const float						m_moveSpeed = 1.0f;
+	const float						m_moveSpeed = 2.0f;
+
+	KdTrailPolygon					m_tPoly;
 };

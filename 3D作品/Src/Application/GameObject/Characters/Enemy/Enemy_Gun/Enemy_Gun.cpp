@@ -2,6 +2,8 @@
 
 #include "../Enemy.h"
 
+#include "../../../../main.h"
+
 void Enemy_Gun::Init()
 {
 	CharaBase::SetAsset("Asset/Models/Characters/Enemy/Enemy_Gun/Enemy_Gun.gltf");
@@ -11,21 +13,43 @@ void Enemy_Gun::Init()
 
 	m_pos = { 0.f,0.f,1.0f };
 
+	m_nowBullet = m_magazineSize;
+
 	m_alpha = m_alphaMax;
 }
 
 void Enemy_Gun::Update()
 {
-	std::shared_ptr<Enemy> spEnemy = m_wpEnemy.lock();
+	const std::shared_ptr<Enemy> spEnemy = m_wpEnemy.lock();
 
 	if (spEnemy)
 	{
 		m_mWorld = spEnemy->GetMatrix();
+
+		if (spEnemy->GetDissolveFlg())
+		{
+			m_isExpired = true;
+		}
 	}
+
 	m_color = { 1.f,1.f,1.f,m_alpha };
 }
 
 void Enemy_Gun::PostUpdate()
 {
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+}
+
+void Enemy_Gun::DrawLit()
+{
+	if (!m_spModel)return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, m_color);
+}
+
+void Enemy_Gun::GenerateDepthMapFromLight()
+{
+	if (!m_spModel)return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, m_color);
 }

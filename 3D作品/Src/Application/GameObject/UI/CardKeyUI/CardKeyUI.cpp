@@ -22,7 +22,7 @@ void CardKeyUI::Init()
 
 void CardKeyUI::Update()
 {
-	std::shared_ptr<CardKey> spCard = m_wpCard.lock();
+	const std::shared_ptr<CardKey> spCard = m_wpCard.lock();
 
 	if (!m_useFlg)
 	{

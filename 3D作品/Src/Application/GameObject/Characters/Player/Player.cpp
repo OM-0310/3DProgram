@@ -25,8 +25,6 @@
 
 void Player::Init()
 {
-	//CharaBase::SetAsset("Asset/Models/Characters/Player/Player_3.gltf");
-
 	m_spAnimator	= std::make_shared<KdAnimator>();
 	m_nowAnimeFrm	= 0.0f;
 
@@ -54,15 +52,15 @@ void Player::Init()
 
 	CharaBase::Init();
 
-	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+	m_pDebugWire	= std::make_unique<KdDebugWireFrame>();
 }
 
 void Player::Update()
 {
-	std::shared_ptr<CardKey>	spCard = m_wpCard.lock();
-	std::shared_ptr<LockedDoor>	spLockDoor = m_wpLockDoor.lock();
-	std::shared_ptr<SecretFile> spFile = m_wpFile.lock();
-	std::shared_ptr<Goal>		spGoal = m_wpGoal.lock();
+	const std::shared_ptr<CardKey>		spCard		= m_wpCard.lock();
+	const std::shared_ptr<LockedDoor>	spLockDoor	= m_wpLockDoor.lock();
+	const std::shared_ptr<SecretFile>	spFile		= m_wpFile.lock();
+	const std::shared_ptr<Goal>			spGoal		= m_wpGoal.lock();
 
 	m_gravity += 0.04f;
 	m_pos.y -= m_gravity;
@@ -238,8 +236,8 @@ void Player::UpdateCollision()
 // プレイヤー上半身のアニメーション切り替え処理
 void Player::ChangeUpperBodyAnimation(const std::string& _animeName, bool _isLoop, float _time)
 {
-	std::shared_ptr<Player_UpperBody>		spPlayer_Up = m_wpPlayer_Up.lock();
-	std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Player_UpperBody>		spPlayer_Up				= m_wpPlayer_Up.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol	= m_wpPlayer_Ready_Pistol.lock();
 	if (spPlayer_Up)
 	{
 		spPlayer_Up->ChangeAnimation(_animeName, _isLoop, _time);
@@ -253,9 +251,9 @@ void Player::ChangeUpperBodyAnimation(const std::string& _animeName, bool _isLoo
 // プレイヤー下半身のアニメーション切り替え処理
 void Player::ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoop, float _time)
 {
-	std::shared_ptr<Player_LowerBody>		spPlayer_Low = m_wpPlayer_Low.lock();
-	std::shared_ptr<Player_Disarm>			spPlayer_Disarm = m_wpPlayer_Disarm.lock();
-	std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol = m_wpPlayer_Disarm_Pistol.lock();
+	const std::shared_ptr<Player_LowerBody>		spPlayer_Low			= m_wpPlayer_Low.lock();
+	const std::shared_ptr<Player_Disarm>		spPlayer_Disarm			= m_wpPlayer_Disarm.lock();
+	const std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol	= m_wpPlayer_Disarm_Pistol.lock();
 	if (spPlayer_Low)
 	{
 		spPlayer_Low->ChangeAnimation(_animeName, _isLoop, _time);
@@ -836,7 +834,7 @@ void Player::ActionShot::Enter(Player& _owner)
 
 void Player::ActionShot::Update(Player& _owner)
 {
-	std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
 
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
@@ -857,7 +855,7 @@ void Player::ActionShot::Update(Player& _owner)
 
 void Player::ActionShot::Exit(Player& _owner)
 {
-	std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
 
 	spPlayer_Ready_Pistol->ShotBullet(false);
 
@@ -903,6 +901,8 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 
 void Player::ActionReload_Idle::Update(Player& _owner)
 {
+	const std::shared_ptr<Player_Ready_Pistol> spReady_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
+
 	// 移動方向を初期化
 	_owner.m_moveDir = Math::Vector3::Zero;
 
@@ -926,6 +926,13 @@ void Player::ActionReload_Idle::Update(Player& _owner)
 	// アニメーションフレームが最後まで再生されていたら
 	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
 	{
+		// 銃の情報があるとき
+		if (spReady_Pistol)
+		{
+			// 銃をリロード
+			spReady_Pistol->Reload();
+		}
+
 		// アニメーションフレームを設定し、ActionIdleに切り替え
 		_owner.m_nowAnimeFrm = _owner.m_reloadFrmMax;
 		_owner.ChangeActionState(std::make_shared<ActionIdle>());
@@ -976,8 +983,8 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 
 void Player::ActionReload_Walk::Update(Player& _owner)
 {
-	// カメラ情報セット
-	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
 
 	// 現在のアニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
@@ -1010,6 +1017,13 @@ void Player::ActionReload_Walk::Update(Player& _owner)
 			// 現在のアニメーションフレームが最後まで再生されたら
 			if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
 			{
+				// 銃の情報があるとき
+				if (spReady_Pistol)
+				{
+					// 銃をリロード
+					spReady_Pistol->Reload();
+				}
+
 				// ActionIdleに切り替え
 				_owner.ChangeActionState(std::make_shared<ActionIdle>());
 				return;
@@ -1028,6 +1042,13 @@ void Player::ActionReload_Walk::Update(Player& _owner)
 			// 現在のアニメーションフレームが最後まで再生されたら
 			if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
 			{
+				// 銃の情報があるとき
+				if (spReady_Pistol)
+				{
+					// 銃をリロード
+					spReady_Pistol->Reload();
+				}
+
 				// ActionRunに切り替え
 				_owner.ChangeActionState(std::make_shared<ActionRun>());
 				return;
@@ -1048,6 +1069,13 @@ void Player::ActionReload_Walk::Update(Player& _owner)
 		// 移動方向のベクトルの長さが0より大きいとき
 		if (_owner.m_moveDir.LengthSquared() > 0)
 		{
+			// 銃の情報があるとき
+			if (spReady_Pistol)
+			{
+				// 銃をリロード
+				spReady_Pistol->Reload();
+			}
+
 			//ActionWalkに切り替え
 			_owner.ChangeActionState(std::make_shared<ActionWalk>());
 			return;
@@ -1081,13 +1109,6 @@ void Player::ActionReload_Walk::Update(Player& _owner)
 	{
 		// 姿勢状態切り替えフラグをfalseにする
 		_owner.m_posKeyFlg = false;
-	}
-
-	// 右クリックされたとき
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		// ActionReadyに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionReady>());
 	}
 
 	// カメラ情報があるとき
@@ -1155,8 +1176,8 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 
 void Player::ActionReload_Run::Update(Player& _owner)
 {
-	// カメラ情報取得
-	const std::shared_ptr<TPSCamera>	spCamera = _owner.m_wpCamera.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
 
 	// 現在の移動速度が走行速度と同じでないとき
 	if (_owner.m_moveSpeed != _owner.m_runMoveSpd)
@@ -1199,6 +1220,13 @@ void Player::ActionReload_Run::Update(Player& _owner)
 	// 現在のアニメーションフレームが最後まで再生されたら
 	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
 	{
+		// 銃の情報があるとき
+		if (spReady_Pistol)
+		{
+			// 銃をリロード
+			spReady_Pistol->Reload();
+		}
+
 		// ActionIdleに切り替え
 		_owner.m_nowAnimeFrm = _owner.m_reloadFrmMax;
 		_owner.ChangeActionState(std::make_shared<ActionIdle>());

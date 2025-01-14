@@ -24,7 +24,7 @@ void PadKeyUI::Init()
 void PadKeyUI::Update()
 {
 
-	std::shared_ptr<LockedDoor> spLockedDoor = m_wpLockedDoor.lock();
+	const std::shared_ptr<LockedDoor> spLockedDoor = m_wpLockedDoor.lock();
 
 	if (!m_useFlg)
 	{

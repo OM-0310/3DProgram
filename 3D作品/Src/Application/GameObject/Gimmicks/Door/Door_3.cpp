@@ -22,7 +22,7 @@ void Door_3::Init()
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("DoorCollsion", m_spModel, KdCollider::TypeGround);
+	m_pCollider->RegisterCollisionShape("DoorCollsion", m_spModel, KdCollider::TypeGround | KdCollider::TypeBump);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
@@ -35,7 +35,7 @@ void Door_3::Update()
 	sphere.m_type = KdCollider::TypeEvent;
 
 	// デバッグ用
-	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
+	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
 
 	bool isHit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())

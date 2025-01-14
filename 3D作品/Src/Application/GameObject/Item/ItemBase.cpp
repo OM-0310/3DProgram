@@ -37,7 +37,7 @@ void ItemBase::UpdateCollision()
 	sphere.m_type = KdCollider::TypeEvent;
 
 	// デバッグ用
-	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
+	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
 
 	bool isHit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())

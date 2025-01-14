@@ -15,14 +15,14 @@ void Player_Ready_Pistol::Init()
 
 	m_pos			= { 0.f,-0.9f,-50.0f };
 
-	m_bulletNum		= m_magazineSize;
+	m_nowBullet		= m_magazineSize;
 
 	m_shotWait		= 0.0f;
 
 	m_shotFlg		= false;
 	m_rayBulletFlg	= false;
 
-	m_localMuzzleMat = Math::Matrix::CreateTranslation({-0.3f,1.5f,1.8f});
+	m_localMuzzleMat = Math::Matrix::CreateTranslation({0.698f,1.75f,0.1f});
 
 	m_alpha = m_alphaMin;
 
@@ -37,7 +37,7 @@ void Player_Ready_Pistol::Init()
 void Player_Ready_Pistol::Update()
 {
 	// プレイヤー情報取得
-	std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 
 	Math::Matrix parentMat;
 
@@ -71,8 +71,10 @@ void Player_Ready_Pistol::Update()
 		KdCollider::RayInfo rayInfo;
 		rayInfo.m_pos = muzzlePos;
 		rayInfo.m_dir = parentMat.Backward();
-		rayInfo.m_range = 100.f;
+		rayInfo.m_range = 1000.f;
 		rayInfo.m_type = KdCollider::TypeDamage | KdCollider::TypeGround;
+
+		m_pDebugWire->AddDebugLine(rayInfo.m_pos, rayInfo.m_dir, rayInfo.m_range, kBlueColor);
 
 		std::list<KdCollider::CollisionResult> retRayList;
 
@@ -96,22 +98,26 @@ void Player_Ready_Pistol::Update()
 			}
 		}
 
-		if (m_rayBulletFlg)
+		if (m_nowBullet >= m_magazineEmpty)
 		{
-			if (hit)
+			if (m_rayBulletFlg)
 			{
-				if (m_shotWait <= 0.0f)
+				if (hit)
 				{
-					m_shotWait = m_shotWaitMax;
+					if (m_shotWait <= 0.0f)
+					{
+						m_nowBullet--;
+						m_shotWait = m_shotWaitMax;
 
-					// レイの着弾地点を利用して弾を飛ばすベクトルを算出
-					Math::Vector3 bulletDir = hitPos - muzzlePos;
+						// レイの着弾地点を利用して弾を飛ばすベクトルを算出
+						Math::Vector3 bulletDir = hitPos - muzzlePos;
 
-					// 発射
-					std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
-					bullet->Init();
-					bullet->Shot(muzzlePos, bulletDir);
-					SceneManager::Instance().AddObject(bullet);
+						// 発射
+						std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
+						bullet->Init();
+						bullet->Shot(muzzlePos, bulletDir);
+						SceneManager::Instance().AddObject(bullet);
+					}
 				}
 			}
 		}

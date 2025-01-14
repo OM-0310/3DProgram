@@ -19,7 +19,7 @@ void Player_LowerBody::Init()
 
 void Player_LowerBody::Update()
 {
-	std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 	if (spPlayer)
 	{
 		m_mWorld = spPlayer->GetMatrix();

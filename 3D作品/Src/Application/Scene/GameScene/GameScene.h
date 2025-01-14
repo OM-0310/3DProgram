@@ -18,9 +18,9 @@ private:
 	void Event		() override;
 	void Init		() override;
 
-	void StageInit	(std::atomic<bool>& done);
-	void GrassInit	(std::atomic<bool>& done);
-	void CharaInit	(std::atomic<bool>& done);
+	void StageInit	(std::atomic<bool>& done, std::condition_variable& cv, std::mutex& mtx);
+	void GrassInit	(std::atomic<bool>& done, std::atomic<bool>& stageDone, std::condition_variable& cv, std::mutex& mtx);
+	void CharaInit	(std::atomic<bool>& done, std::atomic<bool>& stageDone, std::condition_variable& cv, std::mutex& mtx);
 
 private:
 

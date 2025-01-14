@@ -21,7 +21,7 @@ void Player_Disarm_Pistol::Init()
 
 void Player_Disarm_Pistol::Update()
 {
-	std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 	if (spPlayer)
 	{
 		m_mWorld = spPlayer->GetMatrix();

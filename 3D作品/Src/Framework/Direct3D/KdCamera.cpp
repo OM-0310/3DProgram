@@ -125,3 +125,59 @@ void KdCamera::ConvertWorldToScreenDetail(const Math::Vector3& pos, Math::Vector
 	result.y = localPos.y * (vp.height * 0.5f);
 	result.z = wvp._44;
 }
+
+void KdCamera::PerformFrustumCulling(const std::vector<Math::Vector3>& objectPositions, std::vector<Math::Vector3>& visibleObjects)
+{
+	visibleObjects.clear();
+
+	for (const auto& pos : objectPositions)
+	{
+		bool inside = true;
+
+		for (const auto& plane : m_frustumPlanes)
+		{
+			// 平面と点の関係を計算
+			if (plane.DotCoordinate(pos) < 0)
+			{
+				inside = false;
+				break;
+			}
+		}
+
+		if (inside)
+		{
+			visibleObjects.push_back(pos);
+		}
+	}
+}
+
+void KdCamera::UpdateFrustum()
+{
+	// ビュー・プロジェクション行列を計算
+	Math::Matrix viewProj = m_mView * m_mProj;
+
+	// 視錐台の6つの平面を定義
+	m_frustumPlanes[0] = Math::Plane(
+		viewProj._14 + viewProj._11, viewProj._24 + viewProj._21,
+		viewProj._34 + viewProj._31, viewProj._44 + viewProj._41); // 左
+	m_frustumPlanes[1] = Math::Plane(
+		viewProj._14 - viewProj._11, viewProj._24 - viewProj._21,
+		viewProj._34 - viewProj._31, viewProj._44 - viewProj._41); // 右
+	m_frustumPlanes[2] = Math::Plane(
+		viewProj._14 - viewProj._12, viewProj._24 - viewProj._22,
+		viewProj._34 - viewProj._32, viewProj._44 - viewProj._42); // 上
+	m_frustumPlanes[3] = Math::Plane(
+		viewProj._14 + viewProj._12, viewProj._24 + viewProj._22,
+		viewProj._34 + viewProj._32, viewProj._44 + viewProj._42); // 下
+	m_frustumPlanes[4] = Math::Plane(
+		viewProj._13, viewProj._23, viewProj._33, viewProj._43);                                   // 近い
+	m_frustumPlanes[5] = Math::Plane(
+		viewProj._14 - viewProj._13, viewProj._24 - viewProj._23,
+		viewProj._34 - viewProj._33, viewProj._44 - viewProj._43); // 遠い
+
+	// 各平面を正規化
+	for (auto& plane : m_frustumPlanes)
+	{
+		plane.Normalize();
+	}
+}
