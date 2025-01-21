@@ -5,6 +5,8 @@
 #include "Enemy_Gun_NoMagazine/Enemy_Gun_NoMagazine.h"
 #include "Enemy_Magazine/Enemy_Magazine.h"
 
+#include "../../EnemyBullet/EnemyBullet.h"
+
 #include "../Player/Player.h"
 
 #include "../../../Scene/SceneManager.h"
@@ -15,6 +17,8 @@ void Enemy::Init()
 	m_spAnimator	= std::make_shared<KdAnimator>();
 	ChangeActionState(std::make_shared<ActionIdle>());
 	ChangeAnimation("Idle");
+
+	m_mMuzzle		= Math::Matrix::CreateTranslation(m_muzzlePos);
 
 	m_dirFlg		= false;
 	m_waryFlg		= false;
@@ -49,21 +53,21 @@ void Enemy::Update()
 	sphere1.m_sphere.Radius = m_discoverArea;
 	sphere1.m_type = KdCollider::TypeBump;
 
-	m_pDebugWire->AddDebugSphere(sphere1.m_sphere.Center, sphere1.m_sphere.Radius, kRedColor);
+	//m_pDebugWire->AddDebugSphere(sphere1.m_sphere.Center, sphere1.m_sphere.Radius, kRedColor);
 
 	KdCollider::SphereInfo sphere2;
 	sphere2.m_sphere.Center = m_pos;
 	sphere2.m_sphere.Radius = m_waryArea;
 	sphere2.m_type = KdCollider::TypeBump;
 
-	m_pDebugWire->AddDebugSphere(sphere2.m_sphere.Center, sphere2.m_sphere.Radius, { 1.0f,1.0f,0.0f });
+	//m_pDebugWire->AddDebugSphere(sphere2.m_sphere.Center, sphere2.m_sphere.Radius, { 1.0f,1.0f,0.0f });
 
 	KdCollider::SphereInfo sphere3;
 	sphere3.m_sphere.Center = m_pos;
 	sphere3.m_sphere.Radius = m_shotArea;
 	sphere3.m_type = KdCollider::TypeBump;
 
-	m_pDebugWire->AddDebugSphere(sphere3.m_sphere.Center, sphere3.m_sphere.Radius, { 1.0f,1.0f,1.0f });
+	//m_pDebugWire->AddDebugSphere(sphere3.m_sphere.Center, sphere3.m_sphere.Radius, { 1.0f,1.0f,1.0f });
 
 	Math::Vector3 debugPos1 = { 0.0f,-1.0f,-27.0f };
 	KdCollider::SphereInfo sphere4;
@@ -71,7 +75,7 @@ void Enemy::Update()
 	sphere4.m_sphere.Radius = 1.0f;
 	sphere4.m_type = KdCollider::TypeBump;
 
-	m_pDebugWire->AddDebugSphere(sphere4.m_sphere.Center, sphere4.m_sphere.Radius, { 0.0f,0.0f,1.0f });
+	//m_pDebugWire->AddDebugSphere(sphere4.m_sphere.Center, sphere4.m_sphere.Radius, { 0.0f,0.0f,1.0f });
 
 	Math::Vector3 debugPos2 = { 0.0f,-1.0f,27.0f };
 	KdCollider::SphereInfo sphere5;
@@ -79,21 +83,26 @@ void Enemy::Update()
 	sphere5.m_sphere.Radius = 1.0f;
 	sphere5.m_type = KdCollider::TypeBump;
 
-	m_pDebugWire->AddDebugSphere(sphere5.m_sphere.Center, sphere5.m_sphere.Radius, { 0.0f,0.0f,1.0f });
+	//m_pDebugWire->AddDebugSphere(sphere5.m_sphere.Center, sphere5.m_sphere.Radius, { 0.0f,0.0f,1.0f });
 
-	Application::Instance().m_log.Clear();
-	Application::Instance().m_log.AddLog("m_lostFlg=%d\n", m_lostFlg);
-	Application::Instance().m_log.AddLog("m_deathFlg=%d\n", m_deathFlg);
-	Application::Instance().m_log.AddLog("m_dissolveFlg=%d\n", m_dissolveFlg);
+	Math::Vector3 debugPos3 = (m_mMuzzle * m_mWorld).Translation();
+	KdCollider::SphereInfo sphere6;
+	sphere6.m_sphere.Center = debugPos3;
+	sphere6.m_sphere.Radius = 0.05f;
+	sphere6.m_type = KdCollider::TypeBump;
+
+	m_pDebugWire->AddDebugSphere(sphere6.m_sphere.Center, sphere6.m_sphere.Radius, { 1.0f,1.0f,1.0f });
+
+	//Application::Instance().m_log.Clear();
+	//Application::Instance().m_log.AddLog("m_lostFlg=%d\n", m_lostFlg);
+	//Application::Instance().m_log.AddLog("m_lostCnt=%d\n", m_lostCnt);
+	//Application::Instance().m_log.AddLog("m_deathFlg=%d\n", m_deathFlg);
+	//Application::Instance().m_log.AddLog("m_dissolveFlg=%d\n", m_dissolveFlg);
 
 	// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 
 
 	SearchProc();
-
-	//ChaseProc();
-
-	//RouteSearchProc();
 
 	m_pos.y -= m_gravity;
 	m_gravity += 0.04f;	
@@ -227,7 +236,7 @@ void Enemy::ChangeAnimation(const std::string& _animeName, bool _isLoop, float _
 }
 
 //=====================================================================================================
-// 索敵処理・・・ここから
+// 索敵処理
 //=====================================================================================================
 void Enemy::SearchProc()
 {
@@ -256,12 +265,9 @@ void Enemy::SearchProc()
 		}
 	}
 }
-//=====================================================================================================
-// 索敵処理・・・ここまで
-//=====================================================================================================
 
 //=====================================================================================================
-// 追従処理・・・ここから
+// 追従処理
 //=====================================================================================================
 void Enemy::ChaseProc()
 {
@@ -351,9 +357,77 @@ void Enemy::ChaseProc()
 	//	}
 	//}
 }
-//=====================================================================================================
-// 追従処理・・・ここまで
-//=====================================================================================================
+void Enemy::LostProc()
+{
+	const std::shared_ptr<Player>		spPlayer = m_wpPlayer.lock();
+
+	// プレイヤー座標取得用
+	Math::Vector3 targetPos;
+
+	// プレイヤーの情報があれば
+	if (spPlayer)
+	{
+		// プレイヤーの座標を取得
+		targetPos = spPlayer->GetPos();
+	}
+
+	// プレイヤーと敵の座標の差ベクトルを取得
+	Math::Vector3 targetVec = targetPos - m_pos;
+
+	// 差ベクトルの長さが警戒範囲外のとき
+	if (targetVec.Length() > m_waryArea)
+	{
+		// 失踪フラグがfalseのとき
+		if (!m_lostFlg)
+		{
+			// 失踪フラグをtrueにする
+			m_lostFlg = true;
+		}
+	}
+	else
+	{
+		// 失踪フラグがtrueのとき
+		if (m_lostFlg)
+		{
+			// 失踪フラグをfalseにする
+			m_lostFlg = false;
+		}
+	}
+
+	// 失踪フラグがtrueのとき
+	if (m_lostFlg)
+	{
+		// 失踪カウントを増やす
+		m_lostCnt++;
+	}
+	else
+	{
+		// 失踪カウントが最小値ではないとき
+		if (m_lostCnt != m_lostCntMin)
+		{
+			// 失踪カウントを最小値に設定
+			m_lostCnt = m_lostCntMin;
+		}
+	}
+
+	// 失踪カウントが最大値以上のとき
+	if (m_lostCnt >= m_lostCntMax)
+	{
+		// 発見フラグがtrueのとき
+		if (m_findFlg)
+		{
+			// 発見フラグをfalseにする
+			m_findFlg = false;
+		}
+
+		// 失踪カウントを最大値に設定
+		m_lostCnt = m_lostCntMax;
+
+		// "ActionIdle"に切り替え
+		ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
+}
 
 void Enemy::Death(const bool _deathFlg)
 {
@@ -616,6 +690,10 @@ void Enemy::ActionRun::Update(Enemy& _owner)
 {
 	const std::shared_ptr<Enemy_Gun>	spGun			= _owner.m_wpEnemy_Gun.lock();
 	const std::shared_ptr<Enemy_Main>	spEnemy_Main	= _owner.m_wpEnemy_Main.lock();
+	const std::shared_ptr<Player>		spPlayer		= _owner.m_wpPlayer.lock();
+
+	// 失踪処理
+	_owner.LostProc();
 
 	// 銃の情報があれば
 	if (spGun)
@@ -629,9 +707,6 @@ void Enemy::ActionRun::Update(Enemy& _owner)
 		}
 	}
 
-	// プレイヤーの情報を取得
-	std::shared_ptr<Player> spPlayer = _owner.m_wpPlayer.lock();
-
 	// プレイヤー座標取得用
 	Math::Vector3 targetPos;
 
@@ -642,10 +717,10 @@ void Enemy::ActionRun::Update(Enemy& _owner)
 		targetPos = spPlayer->GetPos();
 	}
 
-	// プレイヤーと敵の座標の差ベクトル取得用
+	// プレイヤーと敵の座標の差ベクトルを取得
 	Math::Vector3 targetVec = targetPos - _owner.m_pos;
 
-	// 差ベクトルが銃発射範囲内であれば
+	// 差ベクトルの長さが銃発射範囲内のとき
 	if (targetVec.Length() < _owner.m_shotArea)
 	{
 		// "ActionReady"に切り替え
@@ -702,6 +777,9 @@ void Enemy::ActionReady::Update(Enemy& _owner)
 	const std::shared_ptr<Enemy_Main>	spEnemy_Main	= _owner.m_wpEnemy_Main.lock();
 	const std::shared_ptr<Player>		spPlayer		= _owner.m_wpPlayer.lock();
 	Math::Vector3 targetPos;
+
+	// 失踪処理
+	_owner.LostProc();
 
 	// プレイヤーの情報があるとき
 	if (spPlayer)
@@ -794,6 +872,9 @@ void Enemy::ActionShot::Update(Enemy& _owner)
 
 	Math::Vector3 targetPos;
 
+	// 失踪処理
+	_owner.LostProc();
+
 	// プレイヤーの情報があるとき
 	if (spPlayer)
 	{
@@ -840,6 +921,30 @@ void Enemy::ActionShot::Update(Enemy& _owner)
 			{
 				// 発射待機時間をリセット
 				_owner.m_shotWait = _owner.m_maxShotWait;
+
+				// 銃口の座標を取得
+				Math::Vector3 muzzlePos = (_owner.m_mMuzzle * _owner.m_mWorld).Translation();
+
+				// 敵の向いている方向を取得
+				Math::Vector3 dir = _owner.m_mWorld.Backward();
+
+				// 回転行列を宣言
+				Math::Matrix rotMat;
+
+				// 弾にばらつきを持たせる
+				float x = DirectX::XMConvertToRadians(static_cast<float>(rand() % 11 - 5));
+				float y = DirectX::XMConvertToRadians(static_cast<float>(rand() % 11 - 5));
+				float z = DirectX::XMConvertToRadians(static_cast<float>(rand() % 11 - 5));
+
+				rotMat = Math::Matrix::CreateFromYawPitchRoll(y, x, z);
+				dir = Math::Vector3::TransformNormal(dir, rotMat);
+
+				// 弾を生成
+				std::shared_ptr<EnemyBullet> bullet;
+				bullet = std::make_shared<EnemyBullet>();
+				bullet->Init();
+				bullet->Shot(muzzlePos, dir);
+				SceneManager::Instance().AddObject(bullet);
 
 				// 残弾数を減らす
 				spGun->BulletDec();
@@ -905,6 +1010,9 @@ void Enemy::ActionReload::Update(Enemy& _owner)
 	const std::shared_ptr<Enemy_Gun>			spGun				= _owner.m_wpEnemy_Gun.lock();
 	const std::shared_ptr<Enemy_Magazine>		spMagazine			= _owner.m_wpEnemy_Magazine.lock();
 	const std::shared_ptr<Enemy_Gun_NoMagazine>	spGun_NoMagazine	= _owner.m_wpEnemy_Gun_NoMagazine.lock();
+
+	// 失踪処理
+	_owner.LostProc();
 
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;

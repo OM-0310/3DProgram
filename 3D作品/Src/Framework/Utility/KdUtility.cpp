@@ -36,3 +36,20 @@ float EaseInOutSine(float progress)
 {
 	return (float)(-(std::cos(M_PI * progress) - 1.0f) / 2.0f);
 }
+
+//===========================================
+//
+// 乱数計算関係
+//
+//===========================================
+int KdGetInt(int minValue, int maxValue)
+{
+	std::uniform_int_distribution<int> range(minValue, maxValue);
+	return range(KdRnd);
+}
+
+float KdGetFloat(float minValue, float maxValue)
+{
+	std::uniform_real_distribution<float> range(minValue, maxValue);
+	return range(KdRnd);
+}

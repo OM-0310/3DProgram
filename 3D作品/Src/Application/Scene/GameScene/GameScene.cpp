@@ -37,14 +37,19 @@
 #include "../../GameObject/Characters/Enemy/Enemy_Gun_NoMagazine/Enemy_Gun_NoMagazine.h"
 #include "../../GameObject/Characters/Enemy/Enemy_Magazine/Enemy_Magazine.h"
 
-#include "../../GameObject/Weapon/Pistol/Pistol_Disarm/Pistol_Disarm.h"
-#include "../../GameObject/Weapon/AssaultRifle/AssaultRifle.h"
 #include "../../GameObject/Characters/CharaBase.h"
 
+#include "../../GameObject/UI/GunInfoUI/GunInfoUI.h"
+#include "../../GameObject/UI/GunInfoUIBack/GunInfoUIBack.h"
+#include "../../GameObject/UI/BulletNumUI/BulletNumUI.h"
 #include "../../GameObject/UI/Reticle/Reticle.h"
 #include "../../GameObject/UI/CardKeyUI/CardKeyUI.h"
 #include "../../GameObject/UI/SecretFileUI/SecretFileUI.h"
+#include "../../GameObject/UI/HPBarUI/HPBarUI.h"
 #include "../../GameObject/UI/PadKeyUI/PadKeyUI.h"
+#include "../../GameObject/UI/MiniMapUIBack/MiniMapUIBack.h"
+#include "../../GameObject/UI/MiniMapUI/MiniMapUI.h"
+#include "../../GameObject/UI/CurrentLocation/CurrentLocation.h"
 
 void GameScene::Event()
 {
@@ -111,6 +116,7 @@ void GameScene::StageInit(
 	ground_Bottom->Init();
 	m_objList.push_back(ground_Bottom);
 
+	// 岩初期化
 	std::shared_ptr<RockWall> rock;
 	rock = std::make_shared<RockWall>();
 	rock->Init();
@@ -343,12 +349,68 @@ void GameScene::CharaInit(
 	//// UI関連初期化 //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 
 	//=================================================================
+	// 銃情報UI初期化
+	//=================================================================
+	std::shared_ptr<GunInfoUIBack> gunUIBack;
+	gunUIBack = std::make_shared<GunInfoUIBack>();
+	gunUIBack->Init();
+	m_objList.push_back(gunUIBack);
+
+	//=================================================================
+	// 銃情報UI初期化
+	//=================================================================
+	std::shared_ptr<GunInfoUI> gunUI;
+	gunUI = std::make_shared<GunInfoUI>();
+	gunUI->Init();
+	m_objList.push_back(gunUI);
+
+	//=================================================================
+	// 残弾数UI初期化
+	//=================================================================
+	std::shared_ptr<BulletNumUI> bulletNumUI;
+	bulletNumUI = std::make_shared<BulletNumUI>();
+	bulletNumUI->Init();
+	m_objList.push_back(bulletNumUI);
+
+	//=================================================================
 	// レティクル初期化
 	//=================================================================
 	std::shared_ptr<Reticle> reticle;
 	reticle = std::make_shared<Reticle>();
 	reticle->Init();
 	m_objList.push_back(reticle);
+
+	//=================================================================
+	// ミニマップUI背景初期化
+	//=================================================================
+	std::shared_ptr<HPBarUI> hpBarUI;
+	hpBarUI = std::make_shared<HPBarUI>();
+	hpBarUI->Init();
+	m_objList.push_back(hpBarUI);
+
+	//=================================================================
+	// ミニマップUI背景初期化
+	//=================================================================
+	std::shared_ptr<MiniMapUIBack> mapUIBack;
+	mapUIBack = std::make_shared<MiniMapUIBack>();
+	mapUIBack->Init();
+	m_objList.push_back(mapUIBack);
+
+	//=================================================================
+	// ミニマップUI初期化
+	//=================================================================
+	std::shared_ptr<MiniMapUI> mapUI;
+	mapUI = std::make_shared<MiniMapUI>();
+	mapUI->Init();
+	m_objList.push_back(mapUI);
+
+	//=================================================================
+	// 現在地UI初期化
+	//=================================================================
+	std::shared_ptr<CurrentLocation> currentLocation;
+	currentLocation = std::make_shared<CurrentLocation>();
+	currentLocation->Init();
+	m_objList.push_back(currentLocation);
 
 	//=================================================================
 	// カードキー取得UI初期化
@@ -378,6 +440,9 @@ void GameScene::CharaInit(
 
 	player->SetCamera(camera);
 	player->SetReticle(reticle);
+	player->SetMiniMapUI(mapUI);
+	player->SetMiniMapUIBack(mapUIBack);
+	player->SetCurrentLocation(currentLocation);
 	player->SetDoor(lockedDoor);
 	player->SetCardKey(card);
 	player->SetSecretFile(file);
@@ -411,9 +476,12 @@ void GameScene::CharaInit(
 	//pistol_Ready->SetPlayer(player);
 	//assault->SetChara(player);
 
+	bulletNumUI->SetPlayer_Ready_Pistol(player_Ready_Pistol);
 	cardUI->SetCardKey(card);
 	fileUI->SetSecretFile(file);
 	keyUI->SetLockedDoor(lockedDoor);
+	currentLocation->SetPlayer(player);
+	hpBarUI->SetPlayer_UpperBody(player_Up);
 
 	camera->SetPlayer(player);
 

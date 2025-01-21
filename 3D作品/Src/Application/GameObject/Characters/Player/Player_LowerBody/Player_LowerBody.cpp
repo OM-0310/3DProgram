@@ -14,7 +14,7 @@ void Player_LowerBody::Init()
 	m_objectType = KdGameObject::ObjectType::TypePlayer;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Player_LowerBodyCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
+	m_pCollider->RegisterCollisionShape("Player_LowerBodyCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump | KdCollider::TypeDamage);
 }
 
 void Player_LowerBody::Update()

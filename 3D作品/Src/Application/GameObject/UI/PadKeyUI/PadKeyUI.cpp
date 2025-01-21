@@ -18,7 +18,7 @@ void PadKeyUI::Init()
 
 	m_color			= { 1.f,1.f,1.f,m_alpha };
 
-	m_alphaValue	= AlphaValue::Dec;
+	m_alphaState	= AlphaStateType::Dec;
 }
 
 void PadKeyUI::Update()
@@ -57,21 +57,21 @@ void PadKeyUI::Update()
 	{
 		m_lifeSpan--;
 		m_animCnt += 0.5f;
-		switch (m_alphaValue)
+		switch (m_alphaState)
 		{
-		case AlphaValue::Inc:
+		case AlphaStateType::Inc:
 			m_alpha += m_alphaSpeed;
 			if (m_alpha >= 1.f)
 			{
-				m_alphaValue = AlphaValue::Dec;
+				m_alphaState = AlphaStateType::Dec;
 				m_alpha = 1.f;
 			}
 			break;
-		case AlphaValue::Dec:
+		case AlphaStateType::Dec:
 			m_alpha -= m_alphaSpeed;
 			if (m_alpha <= 0.f)
 			{
-				m_alphaValue = AlphaValue::Inc;
+				m_alphaState = AlphaStateType::Inc;
 				m_alpha = 0.f;
 			}
 			break;

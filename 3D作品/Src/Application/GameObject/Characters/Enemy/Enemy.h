@@ -22,8 +22,9 @@ public:
 
 	void UpdateCollision();
 
-	void SearchProc		();	// 索敵処理
-	void ChaseProc		();	// 追跡処理
+	void SearchProc		();						// 索敵処理
+	void ChaseProc		();						// 追跡処理
+	void LostProc		();						// 失踪処理
 	void Death			(const bool _deathFlg); // 死亡処理
 
 	void ChangeAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);	// アニメーション切り替え処理置に移動させる処理
@@ -55,54 +56,59 @@ public:
 
 private:
 
+	std::shared_ptr<KdAnimator>			m_spAnimator;					// アニメーション管理系
+
 	std::weak_ptr<Enemy_Main>			m_wpEnemy_Main;					// 敵(本体)情報
 	std::weak_ptr<Enemy_Gun>			m_wpEnemy_Gun;					// 敵(銃)情報
 	std::weak_ptr<Enemy_Gun_NoMagazine>	m_wpEnemy_Gun_NoMagazine;		// 敵(銃マガジン無し)情報
 	std::weak_ptr<Enemy_Magazine>		m_wpEnemy_Magazine;				// 敵(マガジン)情報
 	std::weak_ptr<Player>				m_wpPlayer;						// プレイヤー情報
 
-	std::shared_ptr<KdAnimator>	m_spAnimator;							// アニメーション管理系
-	float						m_nowAnimeFrm	= 0.0f;					// 現在のアニメーションフレーム
-	const float					m_zeroAnimFrm	= 0.0f;					// アニメーション初期化用変数
-	const float					m_dscovrAnimFrm = 36.0f;				// 発見アニメーションフレーム 36.0f
-	const float					m_shotAnimFrm	= 4.0f;					// 弾発射アニメーションフレーム 4.0f
-	const float					m_reloadAnimFrm = 90.0f;				// リロードアニメーションフレーム 90.0f
-	const float					m_deathAnimFrm	= 52.0f;				// 死亡アニメーションフレーム
-	const float					m_animFrmSpd	= 1.0f;					// アニメーションの1フレーム
+	Math::Matrix		m_mMuzzle	= Math::Matrix::Identity;	// 銃口行列
+	const Math::Vector3	m_muzzlePos = { 0.19f,1.46f,1.0 };		// 銃口座標
 
-	float						m_dissolveCnt	= 0.0f;					// ディゾルブカウント
-	const float					m_dissolveMax	= 1.0f;					// ディゾルブカウントのMAX値
-	const float					m_dissolveSpd	= 0.1f;					// ディゾルブ速度
-	bool						m_dissolveFlg	= false;				// ディゾルブフラグ
+	float			m_nowAnimeFrm	= 0.0f;						// 現在のアニメーションフレーム
+	const float		m_zeroAnimFrm	= 0.0f;						// アニメーション初期化用変数
+	const float		m_dscovrAnimFrm = 36.0f;					// 発見アニメーションフレーム 36.0f
+	const float		m_shotAnimFrm	= 4.0f;						// 弾発射アニメーションフレーム 4.0f
+	const float		m_reloadAnimFrm = 90.0f;					// リロードアニメーションフレーム 90.0f
+	const float		m_deathAnimFrm	= 52.0f;					// 死亡アニメーションフレーム
+	const float		m_animFrmSpd	= 1.0f;						// アニメーションの1フレーム
 
-	Math::Vector3				m_moveDir		= Math::Vector3::Zero;	// 移動方向
-	const float					m_arrivalZPos	= 27.0;					// 目的地Z座標
-	float						m_moveSpeed		= 0.0f;					// 移動速度
+	float			m_dissolveCnt	= 0.0f;						// ディゾルブカウント
+	const float		m_dissolveMax	= 1.0f;						// ディゾルブカウントのMAX値
+	const float		m_dissolveSpd	= 0.1f;						// ディゾルブ速度
+	bool			m_dissolveFlg	= false;					// ディゾルブフラグ
 
-	const float					m_zeroMoveSpd	= 0.0f;					// 停止時移動速度 0.0f
-	const float					m_walkMoveSpd	= 0.03f;				// 歩行時移動速度 0.03f
-	const float					m_runMoveSpd	= 0.07f;				// 走行時移動速度 0.07f
+	Math::Vector3	m_moveDir		= Math::Vector3::Zero;		// 移動方向
+	const float		m_arrivalZPos	= 27.0;						// 目的地Z座標
+	float			m_moveSpeed		= 0.0f;						// 移動速度
 
-	const float					m_viewRange		= 0.1f;					// 視野範囲
-	const float					m_waryArea		= 12.0f;				// 警戒範囲
-	const float					m_discoverArea	= 9.0f;					// 発見範囲
-	const float					m_shotArea		= 8.0f;					// 弾発射範囲
+	const float		m_zeroMoveSpd	= 0.0f;						// 停止時移動速度 0.0f
+	const float		m_walkMoveSpd	= 0.03f;					// 歩行時移動速度 0.03f
+	const float		m_runMoveSpd	= 0.07f;					// 走行時移動速度 0.07f
 
-	bool						m_dirFlg		= false;				// 方向フラグ
-	bool						m_waryFlg		= false;				// 警戒フラグ
-	bool						m_lostFlg		= false;				// 失踪フラグ
-	bool						m_findFlg		= false;				// 発見フラグ
-	bool						m_deathFlg		= false;				// 死亡フラグ
+	const float		m_viewRange		= 0.1f;						// 視野範囲
+	const float		m_waryArea		= 12.0f;					// 警戒範囲
+	const float		m_discoverArea	= 11.0f;						// 発見範囲
+	const float		m_shotArea		= 10.0f;						// 弾発射範囲
 
-	int							m_actionCnt		= 0;					// アクションカウント
+	bool			m_dirFlg		= false;					// 方向フラグ
+	bool			m_waryFlg		= false;					// 警戒フラグ
+	bool			m_findFlg		= false;					// 発見フラグ
+	bool			m_deathFlg		= false;					// 死亡フラグ
 
-	const int					m_maxShotWait	= 2;					// 発射待機時間MAX値
-	int							m_shotWait		= 0;					// 発射待機時間
+	UINT			m_actionCnt		= 0;						// アクションカウント 0以上の整数のみを使用するためunsigned型で使用
 
-	SituationType				m_sitType		= SituationType::Idle;
+	const int		m_maxShotWait	= 4;						// 発射待機時間MAX値
+	int				m_shotWait		= 0;						// 発射待機時間
 
-	std::shared_ptr<AstarGrid>				m_spGrid; // グリッドのポインタをクラスメンバとして保持
-	std::vector<std::shared_ptr<AstarNode>> m_spPath; // 現在のパスを保持する
+	bool			m_lostFlg		= false;					// 失踪フラグ
+	UINT			m_lostCnt		= 0;						// 失踪カウント 0以上の整数のみを使用するためunsigned型で使用
+	const UINT		m_lostCntMax	= 120;						// 失踪カウント最大値
+	const UINT		m_lostCntMin	= 0;						// 失踪カウント最小値
+
+	SituationType	m_sitType		= SituationType::Idle;
 
 private:
 

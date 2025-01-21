@@ -141,3 +141,12 @@ inline Math::Vector3 ConvertToRadian(const Math::Vector3& _degree)
 	return vec3;
 }
 
+//===========================================
+//
+// 乱数計算関係
+//
+//===========================================
+static	std::mt19937_64 KdRnd = std::mt19937_64();
+int		KdGetInt(int minValue, int maxValue);
+float	KdGetFloat(float minValue, float maxValue);
+

@@ -29,6 +29,10 @@ public:
 		m_wpPlayer = _spPlayer;
 	}
 
+	const UINT& GetNowBullet	() const { return m_nowBullet; }
+	const UINT& GetMagazinSize	() const { return m_magazineSize; }
+	const UINT& GetMagazinEmpty	() const { return m_magazineEmpty; }
+
 private:
 
 	std::shared_ptr<KdAnimator> m_spAnimator;
@@ -36,9 +40,9 @@ private:
 
 	Math::Matrix	m_localMuzzleMat = Math::Matrix::Identity;	// 親から銃口へのローカル行列
 
-	const int		m_magazineSize	= 10;		// マガジンサイズ 10
-	const int		m_magazineEmpty = 0;		// 残弾 空
-	int				m_nowBullet		= 0;		// 装弾数
+	const UINT		m_magazineSize	= 10;		// マガジンサイズ 10
+	const UINT		m_magazineEmpty = 0;		// 残弾 空
+	UINT			m_nowBullet		= 0;		// 装弾数
 
 	const float		m_shotWaitMax	= 25.0f;
 	float			m_shotWait		= 0.0f;

@@ -15,7 +15,14 @@ public:
 
 protected:
 
-	enum class AlphaValue
+	enum ProgressStateType
+	{
+		Stop		= 1 << 0,	// 停止
+		Progress	= 1 << 1,	// 前進
+		Retreat		= 1 << 2	// 後退
+	};
+
+	enum AlphaStateType
 	{
 		Inc = 1 << 0,	// 加算
 		Dec = 1 << 1	// 減算
@@ -25,17 +32,21 @@ protected:
 
 protected:
 
-	std::shared_ptr<KdTexture>		m_spTex		= nullptr;					// 画像情報
+	std::shared_ptr<KdTexture>		m_spTex			= nullptr;						// 画像情報
 
-	Math::Matrix					m_mScale	= Math::Matrix::Identity;	// 拡縮行列
+	Math::Matrix					m_mScale		= Math::Matrix::Identity;		// 拡縮行列
 	
-	Math::Rectangle					m_rect		= { 0,0,0,0 };				// 描画範囲
+	Math::Rectangle					m_rect			= { 0,0,0,0 };					// 描画範囲
 
-	Math::Vector2					m_pos		= Math::Vector2::Zero;		// 座標
+	Math::Color						m_color			= kWhiteColor;					// 色情報
 
-	Math::Color						m_color		= kWhiteColor;				// 色情報
+	Math::Vector2					m_pivot			= Math::Vector2::Zero;			// 枢軸
 
-	float							m_alpha		= 1.0f;						// アルファ値
-	float							m_alphaSpeed= 0.0f;						// アルファスピード
-	AlphaValue						m_alphaValue= AlphaValue::Inc;			// アルファ値加減
+	Math::Vector2					m_pos			= Math::Vector2::Zero;			// 座標
+
+	float							m_alpha			= 1.0f;							// アルファ値
+	float							m_alphaSpeed	= 0.0f;							// アルファスピード
+	UINT							m_alphaState	= AlphaStateType::Inc;			// アルファ値加減
+
+	UINT							m_progressState = ProgressStateType::Stop;		// 進行状態
 };

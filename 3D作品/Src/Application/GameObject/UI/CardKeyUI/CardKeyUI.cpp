@@ -4,7 +4,7 @@
 
 void CardKeyUI::Init()
 {
-	UIBase::SetAsset("Asset/Textures/UI/CardKeyUI/CardKeyUI.png");
+	UIBase::SetAsset("Asset/Textures/UI/CardKey/CardKeyUI/CardKeyUI.png");
 
 	m_rect			= { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
 
@@ -17,7 +17,7 @@ void CardKeyUI::Init()
 
 	m_color			= { 1.f,1.f,1.f,m_alpha };
 
-	m_alphaValue	= AlphaValue::Dec;
+	m_alphaState	= AlphaStateType::Dec;
 }
 
 void CardKeyUI::Update()
@@ -54,21 +54,21 @@ void CardKeyUI::Update()
 	else
 	{
 		m_lifeSpan--;
-		switch (m_alphaValue)
+		switch (m_alphaState)
 		{
-		case AlphaValue::Inc:
+		case AlphaStateType::Inc:
 			m_alpha += m_alphaSpeed;
 			if (m_alpha >= 1.f)
 			{
-				m_alphaValue = AlphaValue::Dec;
+				m_alphaState = AlphaStateType::Dec;
 				m_alpha = 1.f;
 			}
 			break;
-		case AlphaValue::Dec:
+		case AlphaStateType::Dec:
 			m_alpha -= m_alphaSpeed;
 			if (m_alpha <= 0.f)
 			{
-				m_alphaValue = AlphaValue::Inc;
+				m_alphaState = AlphaStateType::Inc;
 				m_alpha = 0.f;
 			}
 			break;

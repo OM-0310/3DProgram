@@ -15,6 +15,9 @@ class CardKey;
 class Goal;
 class SecretFile;
 class Reticle;
+class MiniMapUI;
+class MiniMapUIBack;
+class CurrentLocation;
 class PlayerStateBase;
 
 class Player : public CharaBase
@@ -53,13 +56,15 @@ public:
 	void Update					()	override;
 	void PostUpdate				()	override;
 
-	void UpdateCollision		();
+	void UpdateCollision		(); // 各当たり判定処理
+	void OpneMapProc			();	// マップ展開処理
+	void CollectItemProc		();	// アイテム回収処理
+	void AutoReloadProc			();	// 自動リロード処理
+	void ChanegeViewPointProc	();	// 視点切り替え処理
 
 	// アニメーション切り替え処理
 	void ChangeUpperBodyAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);// 上半身
 	void ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);// 下半身
-
-	void ChanegeViewPointProcess();	// 視点切り替え処理
 
 	void SetCamera					// カメラ情報セット		
 	(const std::shared_ptr<TPSCamera>& _spCamera) { m_wpCamera = _spCamera; }
@@ -92,9 +97,17 @@ public:
 	(const std::shared_ptr<Goal>& _spGoal) { m_wpGoal = _spGoal; }
 
 	void SetReticle					// レティクル情報セット
-	(const std::shared_ptr<Reticle>& reticle) { m_wpReticle = reticle; }
+	(const std::shared_ptr<Reticle>& _spReticle) { m_wpReticle = _spReticle; }
 
-	const bool&				GetHoldFlg			()			{ return m_holdFlg;			}
+	void SetMiniMapUI				// ミニマップ情報セット
+	(const std::shared_ptr<MiniMapUI>& _spMiniMapUI) { m_wpMiniMapUI = _spMiniMapUI; }
+
+	void SetMiniMapUIBack			// ミニマップ背景情報セット
+	(const std::shared_ptr<MiniMapUIBack> _spMiniMapUIBack) { m_wpMiniMapUIBack = _spMiniMapUIBack; }
+
+	void SetCurrentLocation			// 現在地UI情報セット
+	(const std::shared_ptr<CurrentLocation>& _spCurrentLocation) { m_wpCurrentLocation = _spCurrentLocation; }
+
 	const Math::Matrix&		GetRotateMat		()			{ return m_mRot;			}
 	const ItemCollectType&	GetItemCollType		() const	{ return m_itemCollType;	}
 	const UINT&				GetSituationType	() const	{ return m_sType;			}
@@ -103,13 +116,16 @@ public:
 private:
 
 	std::weak_ptr<TPSCamera>			m_wpCamera;					// カメラ情報
-	std::weak_ptr<Reticle>				m_wpReticle;				// レティクル情報
 	std::weak_ptr<Player_UpperBody>		m_wpPlayer_Up;				// プレイヤー上半身情報
 	std::weak_ptr<Player_LowerBody>		m_wpPlayer_Low;				// プレイヤー下半身情報
 	std::weak_ptr<Player_Disarm>		m_wpPlayer_Disarm;			// プレイヤー(武装解除)情報 
 	std::weak_ptr<Player_Disarm_Pistol> m_wpPlayer_Disarm_Pistol;	// 銃(武装解除)情報 
 	std::weak_ptr<Player_Ready_Pistol>	m_wpPlayer_Ready_Pistol;	// 銃(武装)情報 
 
+	std::weak_ptr<Reticle>				m_wpReticle;				// レティクル情報
+	std::weak_ptr<MiniMapUI>			m_wpMiniMapUI;				// ミニマップ情報
+	std::weak_ptr<MiniMapUIBack>		m_wpMiniMapUIBack;			// ミニマップ背景情報
+	std::weak_ptr<CurrentLocation>		m_wpCurrentLocation;		// 現在地UI情報
 	std::weak_ptr<LockedDoor>			m_wpLockDoor;				// ドア情報
 	std::weak_ptr<CardKey>				m_wpCard;					// カードキー情報
 	std::weak_ptr<SecretFile>			m_wpFile;					// 機密データ情報
@@ -129,17 +145,12 @@ private:
 	const float							m_runMoveSpd	= 0.12f;	// 走行速度 0.12f
 	const float							m_sitWalkMoveSpd= 0.08f;	// しゃがみ歩行速度 0.08f
 
-	bool								m_moveFlg		= false;	// 移動フラグ
+	bool								m_openMapKeyFlg = false;	// マップ展開キーフラグ
 	bool								m_shotKeyFlg	= false;	// エイムフラグ
 	bool								m_reloadKeyFlg	= false;	// リロードフラグ
-	bool								m_holdFlg		= false;	// 銃構えフラグ
 	bool								m_keyFlg		= false;	// キーフラグ
 	bool								m_changeKeyFlg	= false;	// 視点切り替え時用キーフラグ
 	bool								m_posKeyFlg		= false;	// しゃがみキーフラグ
-	bool								m_creepKeyFlg	= false;	// 匍匐キーフラグ
-	bool								m_animFlg		= false;	// アニメ－ション切り替えフラグ
-
-	static const int					MAXHP			= 100;		// 最大HP 100
 
 	UINT								m_sType			= SituationType::Idle;			// プレイヤーの状態タイプ
 	PostureType							m_posType		= PostureType::Stand;			// プレイヤーの体勢タイプ

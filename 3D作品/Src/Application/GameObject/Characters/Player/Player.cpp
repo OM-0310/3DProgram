@@ -8,9 +8,6 @@
 
 #include "../../Camera/TPSCamera/TPSCamera.h"
 
-#include "../../Weapon/Pistol/Pistol_Disarm/Pistol_Disarm.h"
-#include "../../Weapon/Pistol/Pistol_Ready/Pistol_Ready.h"
-
 #include "../../Gimmicks/LockedDoor/LockedDoor.h"
 
 #include "../../Item/CardKey/CardKey.h"
@@ -19,9 +16,17 @@
 #include "../../Goal/Goal.h"
 
 #include "../../UI/Reticle/Reticle.h"
+#include "../../UI/CollectCardKeyUI/CollectCardKeyUI.h"
+#include "../../UI/CollectSecretFileUI/CollectSecretFileUI.h"
+#include "../../UI/CollectUIBack/CollectUIBack.h"
+#include "../../UI/MiniMapUI/MiniMapUI.h"
+#include "../../UI/MiniMapUIBack/MiniMapUIBack.h"
+#include "../../UI/CurrentLocation/CurrentLocation.h"
+
 #include "../../Bullet/Bullet.h"
 
 #include "../../../Scene/SceneManager.h"
+#include "../../../main.h"
 
 void Player::Init()
 {
@@ -30,19 +35,16 @@ void Player::Init()
 
 	ChangeActionState(std::make_shared<ActionIdle>());
 
-	m_HP			= MAXHP;
-
 	m_pos			= { 0.0f,-0.9f,-50.0f };
 	m_moveDir		= Math::Vector3::Zero;
 	m_moveSpeed		= 0.0f;
 
-	m_moveFlg		= false;
+	m_openMapKeyFlg = false;
 	m_shotKeyFlg	= false;
 	m_reloadKeyFlg	= false;
 	m_keyFlg		= false;
 	m_changeKeyFlg	= false;
 	m_posKeyFlg		= false;
-	m_creepKeyFlg	= false;
 
 	m_sType			= SituationType::Idle;
 	m_posType		= PostureType::Stand;
@@ -57,16 +59,17 @@ void Player::Init()
 
 void Player::Update()
 {
-	const std::shared_ptr<CardKey>		spCard		= m_wpCard.lock();
-	const std::shared_ptr<LockedDoor>	spLockDoor	= m_wpLockDoor.lock();
-	const std::shared_ptr<SecretFile>	spFile		= m_wpFile.lock();
-	const std::shared_ptr<Goal>			spGoal		= m_wpGoal.lock();
-
 	m_gravity += 0.04f;
 	m_pos.y -= m_gravity;
 
 	// 視点切り替え処理
-	ChanegeViewPointProcess();
+	ChanegeViewPointProc();
+
+	// マップ展開処理
+	OpneMapProc();
+
+	// アイテム回収処理
+	CollectItemProc();
 
 	// 各種「状態」に応じた更新処理を実行する
 	if (m_nowState)
@@ -76,63 +79,6 @@ void Player::Update()
 
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mRot * m_mTrans;
-
-	// Eキーが押されたとき
-	if (GetAsyncKeyState('E') & 0x8000)
-	{
-		// キーフラグがfalseのとき
-		if (!m_keyFlg)
-		{
-			// キーフラグをtrueにする
-			m_keyFlg = true;
-
-			// カードキーの情報があるとき
-			if (spCard)
-			{
-				// カードキー回収フラグがtrueのとき
-				if (spCard->GetCollectFlg())
-				{
-					// アイテム取得状態を"カードキー取得状態"にし、CardKeyクラスを破棄する
-					m_itemCollType = ItemCollectType::CardKeyCollect;
-					spCard->Extinction();
-				}
-			}
-			// 鍵のかかったドアの情報があるとき
-			if (spLockDoor)
-			{
-				// ドア開錠可能フラグがtrueのとき
-				if (spLockDoor->GetOpeAbleFlg())
-				{
-					// ドアを開錠する
-					spLockDoor->Open();
-				}
-			}
-			// 機密ファイルの情報があるとき
-			if (spFile)
-			{
-				// 機密ファイル回収フラグがtrueのとき
-				if (spFile->GetCollectFlg())
-				{
-					// アイテム取得状態を"機密ファイル取得状態"にし、SecretFileクラスを破棄する
-					m_itemCollType = ItemCollectType::SecretFileCollect;
-					spFile->Extinction();
-
-					// ゴールの情報があるとき
-					if (spGoal)
-					{
-						// ゴール可能状態にする
-						spGoal->CanBeGoal();
-					}
-				}
-			}
-		}
-	}
-	// キーが離されたとき
-	else
-	{
-		// キーフラグをfalseにする
-		m_keyFlg = false;
-	}
 
 	//m_pDebugWire->AddDebugSphere(readySphereInfo.m_sphere.Center, readySphereInfo.m_sphere.Radius, kBlueColor);
 }
@@ -230,6 +176,191 @@ void Player::UpdateCollision()
 }
 
 //================================================================================================================================
+// マップ展開処理
+//================================================================================================================================
+void Player::OpneMapProc()
+{
+	const std::shared_ptr<MiniMapUI>		spMiniMapUI = m_wpMiniMapUI.lock();
+	const std::shared_ptr<MiniMapUIBack>	spMiniMapUIBack = m_wpMiniMapUIBack.lock();
+	const std::shared_ptr<CurrentLocation>	spCurrentLocation = m_wpCurrentLocation.lock();
+
+	if (GetAsyncKeyState(VK_TAB) & 0x8000)
+	{
+		if (!m_openMapKeyFlg)
+		{
+			m_openMapKeyFlg = true;
+
+			if (spMiniMapUI)
+			{
+				if (!spMiniMapUI->GetActive())
+				{
+					spMiniMapUI->Open(true);
+				}
+				else
+				{
+					spMiniMapUI->Open(false);
+				}
+			}
+
+			if (spMiniMapUIBack)
+			{
+				if (!spMiniMapUIBack->GetActive())
+				{
+					spMiniMapUIBack->Open(true);
+				}
+				else
+				{
+					spMiniMapUIBack->Open(false);
+				}
+			}
+
+			if (spCurrentLocation)
+			{
+				if (!spCurrentLocation->GetActive())
+				{
+					spCurrentLocation->Open(true);
+				}
+				else
+				{
+					spCurrentLocation->Open(false);
+				}
+			}
+		}
+	}
+	else
+	{
+		m_openMapKeyFlg = false;
+	}
+}
+
+//================================================================================================================================
+// アイテム回収処理
+//================================================================================================================================
+void Player::CollectItemProc()
+{
+	const std::shared_ptr<CardKey>			spCard		= m_wpCard.lock();
+	const std::shared_ptr<LockedDoor>		spLockDoor	= m_wpLockDoor.lock();
+	const std::shared_ptr<SecretFile>		spFile		= m_wpFile.lock();
+	const std::shared_ptr<Goal>				spGoal		= m_wpGoal.lock();
+
+	// Eキーが押されたとき
+	if (GetAsyncKeyState('E') & 0x8000)
+	{
+		// キーフラグがfalseのとき
+		if (!m_keyFlg)
+		{
+			// キーフラグをtrueにする
+			m_keyFlg = true;
+
+			// カードキーの情報があるとき
+			if (spCard)
+			{
+				// カードキー回収フラグがtrueのとき
+				if (spCard->GetCollectFlg())
+				{
+					// カードキー入手時のUIを生成
+					std::shared_ptr<CollectUIBack> collectUIBack;
+					collectUIBack = std::make_shared<CollectUIBack>();
+					collectUIBack->Init();
+					SceneManager::Instance().AddObject(collectUIBack);
+
+					std::shared_ptr<CollectCardKeyUI> collectCardUI;
+					collectCardUI = std::make_shared<CollectCardKeyUI>();
+					collectCardUI->Init();
+					SceneManager::Instance().AddObject(collectCardUI);
+
+					// アイテム取得状態を"カードキー取得状態"にし、CardKeyクラスを破棄する
+					m_itemCollType = ItemCollectType::CardKeyCollect;
+					spCard->Extinction();
+				}
+			}
+			// 鍵のかかったドアの情報があるとき
+			if (spLockDoor)
+			{
+				// ドア開錠可能フラグがtrueのとき
+				if (spLockDoor->GetOpeAbleFlg())
+				{
+					// ドアを開錠する
+					spLockDoor->Open();
+				}
+			}
+			// 機密ファイルの情報があるとき
+			if (spFile)
+			{
+
+				// 機密ファイル回収フラグがtrueのとき
+				if (spFile->GetCollectFlg())
+				{
+					// 機密ファイル入手時のUIを生成
+					std::shared_ptr<CollectUIBack> collectUIBack;
+					collectUIBack = std::make_shared<CollectUIBack>();
+					collectUIBack->Init();
+					SceneManager::Instance().AddObject(collectUIBack);
+
+					std::shared_ptr<CollectSecretFileUI> collectFileUI;
+					collectFileUI = std::make_shared<CollectSecretFileUI>();
+					collectFileUI->Init();
+					SceneManager::Instance().AddObject(collectFileUI);
+
+					// アイテム取得状態を"機密ファイル取得状態"にし、SecretFileクラスを破棄する
+					m_itemCollType = ItemCollectType::SecretFileCollect;
+					spFile->Extinction();
+
+					// ゴールの情報があるとき
+					if (spGoal)
+					{
+						// ゴール可能状態にする
+						spGoal->CanBeGoal();
+					}
+				}
+			}
+		}
+	}
+	// キーが離されたとき
+	else
+	{
+		// キーフラグをfalseにする
+		m_keyFlg = false;
+	}
+}
+
+//================================================================================================================================
+// 自動リロード処理
+//================================================================================================================================
+void Player::AutoReloadProc()
+{
+	const std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
+	UINT nowBullet = 0;
+
+	// 銃の情報があるとき
+	if (spPlayer_Ready_Pistol)
+	{
+		// 残弾数を取得
+		nowBullet = spPlayer_Ready_Pistol->GetNowBullet();
+
+		// 残弾数が空のとき
+		if (nowBullet <= spPlayer_Ready_Pistol->GetMagazinEmpty())
+		{
+			switch (m_posType)
+			{
+			case Player::PostureType::Stand:
+
+				// Reload_Idleに切り替え
+				ChangeActionState(std::make_shared<ActionReload_Idle>());
+				return;
+				break;
+			case Player::PostureType::Sit:
+				break;
+			case Player::PostureType::Creep:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+//================================================================================================================================
 // アニメーション切り替え処理
 //================================================================================================================================
 
@@ -271,7 +402,7 @@ void Player::ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoo
 //================================================================================================================================
 // 視点切り替え処理
 //================================================================================================================================
-void Player::ChanegeViewPointProcess()
+void Player::ChanegeViewPointProc()
 {
 	const std::shared_ptr<TPSCamera> spCamera = m_wpCamera.lock();
 
@@ -379,8 +510,8 @@ void Player::ActionIdle::Enter(Player& _owner)
 
 void Player::ActionIdle::Update(Player& _owner)
 {
-	// カメラ情報取得
-	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
 
 	// プレイヤーの移動方向を常に初期化
 	_owner.m_moveDir = Math::Vector3::Zero;
@@ -396,21 +527,32 @@ void Player::ActionIdle::Update(Player& _owner)
 		return;
 	}
 
-	// "R"キーを押されたとき
-	if (GetAsyncKeyState('R') & 0x8000)
+	// 自動リロード処理
+	_owner.AutoReloadProc();
+
+	// 銃の情報があるとき
+	if (spReady_Pistol)
 	{
-		// リロードキーフラグがfalseのとき
-		if (!_owner.m_reloadKeyFlg)
+		// "R"キーを押されたとき
+		if (GetAsyncKeyState('R') & 0x8000)
 		{
-			// リロードフラグをtrueにし、ActionReload_Idleに切り替え
-			_owner.m_reloadKeyFlg = true;
-			_owner.ChangeActionState(std::make_shared<ActionReload_Idle>());
+			// 残弾数がマガジンサイズ以下のとき
+			if (spReady_Pistol->GetNowBullet() <= spReady_Pistol->GetMagazinSize())
+			{
+				// リロードキーフラグがfalseのとき
+				if (!_owner.m_reloadKeyFlg)
+				{
+					// リロードフラグをtrueにし、ActionReload_Idleに切り替え
+					_owner.m_reloadKeyFlg = true;
+					_owner.ChangeActionState(std::make_shared<ActionReload_Idle>());
+				}
+			}
 		}
-	}
-	// キーが離されたとき
-	else
-	{
-		_owner.m_reloadKeyFlg = false;
+		// キーが離されたとき
+		else
+		{
+			_owner.m_reloadKeyFlg = false;
+		}
 	}
 
 	// "C"キーを押したとき
@@ -441,6 +583,9 @@ void Player::ActionIdle::Update(Player& _owner)
 		// 姿勢状態切り替えキーフラグ
 		_owner.m_posKeyFlg = false;
 	}
+
+	// 自動リロード処理
+	_owner.AutoReloadProc();
 
 	// マウス右クリックされたとき、ActionReadyに切り替える
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
@@ -478,7 +623,8 @@ void Player::ActionWalk::Enter(Player& _owner)
 void Player::ActionWalk::Update(Player& _owner)
 {
 	// カメラ情報取得
-	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
 
 	// 現在の移動速度が歩行速度と同じでないとき
 	if (_owner.m_moveSpeed != _owner.m_walkMoveSpd)
@@ -516,23 +662,34 @@ void Player::ActionWalk::Update(Player& _owner)
 		}
 	}
 
-	// "Rキーが押されたとき"
-	if (GetAsyncKeyState('R') & 0x8000)
+	// 自動リロード処理
+	_owner.AutoReloadProc();
+
+	// 銃の情報があるとき
+	if (spReady_Pistol)
 	{
-		// リロードキーフラグがfalseのとき
-		if (!_owner.m_reloadKeyFlg)
+		// "Rキーが押されたとき"
+		if (GetAsyncKeyState('R') & 0x8000)
 		{
-			// リロードキーフラグをtrueにし、ActionReload_Walkに切り替え
-			_owner.m_reloadKeyFlg = true;
-			_owner.ChangeActionState(std::make_shared<ActionReload_Walk>());
-			return;
+			// 残弾数がマガジンサイズ以下のとき
+			if (spReady_Pistol->GetNowBullet() <= spReady_Pistol->GetMagazinSize())
+			{
+				// リロードキーフラグがfalseのとき
+				if (!_owner.m_reloadKeyFlg)
+				{
+					// リロードキーフラグをtrueにし、ActionReload_Walkに切り替え
+					_owner.m_reloadKeyFlg = true;
+					_owner.ChangeActionState(std::make_shared<ActionReload_Walk>());
+					return;
+				}
+			}
 		}
-	}
-	// キーフラグが離されたとき
-	else
-	{
-		// リロードキーフラグをfalseにする
-		_owner.m_reloadKeyFlg = false;
+		// キーフラグが離されたとき
+		else
+		{
+			// リロードキーフラグをfalseにする
+			_owner.m_reloadKeyFlg = false;
+		}
 	}
 
 	// "C"キーが押されたとき
@@ -611,8 +768,8 @@ void Player::ActionRun::Enter(Player& _owner)
 
 void Player::ActionRun::Update(Player& _owner)
 {
-	// カメラ情報取得
-	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
+	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
 
 	// 現在の移動速度が走行速度と同じでないとき
 	if (_owner.m_moveSpeed != _owner.m_runMoveSpd)
@@ -648,22 +805,33 @@ void Player::ActionRun::Update(Player& _owner)
 		}
 	}
 
-	// "R"キーが押されたとき
-	if (GetAsyncKeyState('R') & 0x8000)
+	// 自動リロード処理
+	_owner.AutoReloadProc();
+
+	// 銃の情報があるとき
+	if (spReady_Pistol)
 	{
-		// リロードキーフラグがfalseのとき
-		if (!_owner.m_reloadKeyFlg)
+		// "R"キーが押されたとき
+		if (GetAsyncKeyState('R') & 0x8000)
 		{
-			// リロードキーフラグをtrueにし、ActionReload_Runに切り替え
-			_owner.m_reloadKeyFlg = true;
-			_owner.ChangeActionState(std::make_shared<ActionReload_Run>());
+			// 残弾数がマガジンサイズ以下のとき
+			if (spReady_Pistol->GetNowBullet() <= spReady_Pistol->GetMagazinSize())
+			{
+				// リロードキーフラグがfalseのとき
+				if (!_owner.m_reloadKeyFlg)
+				{
+					// リロードキーフラグをtrueにし、ActionReload_Runに切り替え
+					_owner.m_reloadKeyFlg = true;
+					_owner.ChangeActionState(std::make_shared<ActionReload_Run>());
+				}
+			}
 		}
-	}
-	// 離されたとき
-	else
-	{
-		// リロードキーフラグをfalseにする
-		_owner.m_reloadKeyFlg = false;
+		// 離されたとき
+		else
+		{
+			// リロードキーフラグをfalseにする
+			_owner.m_reloadKeyFlg = false;
+		}
 	}
 
 	// "C"キーが押されたとき
@@ -755,6 +923,22 @@ void Player::ActionReady::Update(Player& _owner)
 		camRotMat = spCamera->GetRotationMatrix();
 	}
 
+	// 現在の移動速度が走行速度と同じでないとき
+	if (_owner.m_moveSpeed != _owner.m_runMoveSpd)
+	{
+		// 移動速度を初期化
+		_owner.m_moveSpeed = _owner.m_runMoveSpd;
+	}
+
+	// 移動方向初期化
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	// 各移動キーが押されたとき、対応した方向に向ける
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward;	}
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
+
 	// 右クリックされたとき
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
@@ -809,6 +993,39 @@ void Player::ActionReady::Update(Player& _owner)
 		return;
 	}
 
+	// 自動リロード処理
+	_owner.AutoReloadProc();
+
+	// "R"キーを押されたとき
+	if (GetAsyncKeyState('R') & 0x8000)
+	{
+		// リロードキーフラグがfalseのとき
+		if (!_owner.m_reloadKeyFlg)
+		{
+			// リロードキーフラグをtrueにし、ActionReload_Idleに切り替え
+			_owner.m_reloadKeyFlg = true;
+			_owner.ChangeActionState(std::make_shared<ActionReload_Idle>());
+		}
+	}
+	// キーが離されたとき
+	else
+	{
+		// リロードキーフラグをfalseにする
+		_owner.m_reloadKeyFlg = false;
+	}
+
+	// ベクトルの向きをY軸の回転行列で変換
+	_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+
+	// 移動方向を正規化
+	_owner.m_moveDir.Normalize();
+
+	// 移動方向と移動速度を合成し、座標に加算して更新
+	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	_owner.UpdateRotate(_owner.m_moveDir);
+
 	// カメラのローカル回転行列を格納
 	_owner.m_mRot = camRotMat;
 }
@@ -834,7 +1051,33 @@ void Player::ActionShot::Enter(Player& _owner)
 
 void Player::ActionShot::Update(Player& _owner)
 {
-	const std::shared_ptr<Player_Ready_Pistol> spPlayer_Ready_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
+
+	// カメラの行列を格納するためにローカル行列を宣言
+	Math::Matrix camRotMat;
+
+	// カメラの情報があれば、カメラの行列をローカル行列に格納
+	if (spCamera)
+	{
+		camRotMat = spCamera->GetRotationMatrix();
+	}
+
+	// 現在の移動速度が走行速度と同じでないとき
+	if (_owner.m_moveSpeed != _owner.m_runMoveSpd)
+	{
+		// 移動速度を初期化
+		_owner.m_moveSpeed = _owner.m_runMoveSpd;
+	}
+
+	// 移動方向初期化
+	_owner.m_moveDir = Math::Vector3::Zero;
+
+	// 各移動キーが押されたとき、対応した方向に向ける
+	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward;	}
+	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
+	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
+	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
 
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
@@ -842,7 +1085,7 @@ void Player::ActionShot::Update(Player& _owner)
 	// 現在のアニメーションフレームが弾発射アニメーションフレーム以上のとき
 	if (_owner.m_nowAnimeFrm >= _owner.m_bulletShotFrm)
 	{
-		spPlayer_Ready_Pistol->ShotBullet(true);
+		spReady_Pistol->ShotBullet(true);
 	}
 
 	// 現在のアニメーションフレームが最後まで再生されたら
@@ -851,6 +1094,21 @@ void Player::ActionShot::Update(Player& _owner)
 		// ActionReadyに切り替え
 		_owner.ChangeActionState(std::make_shared<ActionReady>());
 	}
+
+	// ベクトルの向きをY軸の回転行列で変換
+	_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+
+	// 移動方向を正規化
+	_owner.m_moveDir.Normalize();
+
+	// 移動方向と移動速度を合成し、座標に加算して更新
+	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
+
+	//	キャラクターの回転角度を計算する
+	_owner.UpdateRotate(_owner.m_moveDir);
+
+	// カメラのローカル回転行列を格納
+	_owner.m_mRot = camRotMat;
 }
 
 void Player::ActionShot::Exit(Player& _owner)
@@ -901,8 +1159,10 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 
 void Player::ActionReload_Idle::Update(Player& _owner)
 {
-	const std::shared_ptr<Player_Ready_Pistol> spReady_Pistol = _owner.m_wpPlayer_Ready_Pistol.lock();
-
+	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Reticle>				spReticle		= _owner.m_wpReticle.lock();
+	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
+	
 	// 移動方向を初期化
 	_owner.m_moveDir = Math::Vector3::Zero;
 
@@ -914,6 +1174,37 @@ void Player::ActionReload_Idle::Update(Player& _owner)
 	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
 	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
 	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		// レティクルを表示し、カメラの状態を切り替え
+		spReticle->SetActive(true);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			spCamera->ChangeAimR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			spCamera->ChangeAimL();
+			break;
+		}
+	}
+	else
+	{
+		// レティクルを非表示にし、カメラの状態を切り替え、
+		// ActionIdleに切り替え
+		spReticle->SetActive(false);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			spCamera->ChangeTPSR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			spCamera->ChangeTPSL();
+			break;
+		}
+	}
 
 	// 移動方向のベクトルが0より大きいとき
 	if (_owner.m_moveDir.LengthSquared() > 0)
@@ -944,8 +1235,12 @@ void Player::ActionReload_Idle::Update(Player& _owner)
 
 void Player::ActionReload_Idle::Exit(Player& _owner)
 {
-	// 現在のアニメーションフレームを初期化する
-	_owner.m_nowAnimeFrm = 0.0f;
+	// アニメーションフレームが最後まで再生されていたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_reloadFrmMax)
+	{
+		// 現在のアニメーションフレームを初期化する
+		_owner.m_nowAnimeFrm = 0.0f;
+	}
 }
 
 void Player::ActionReload_Walk::Enter(Player& _owner)
@@ -1161,15 +1456,6 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 			// 上半身と下半身のアニメーションを"Reload_Run"に切り替え
 			_owner.ChangeUpperBodyAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
 			_owner.ChangeLowerBodyAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
-		}
-		// 0.0fであるとき
-		else
-		{
-			// 現在のアニメーションフレームを初期化し、
-			// 上半身と下半身のアニメーションを"Reload_Run"に切り替え
-			_owner.m_nowAnimeFrm = 0.0f;
-			_owner.ChangeUpperBodyAnimation("Reload_Run", false);
-			_owner.ChangeLowerBodyAnimation("Reload_Run", false);
 		}
 	}
 }

@@ -11,21 +11,20 @@ void Bullet::Init()
 		m_spModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Bullet/Bullet.gltf");
 	}
 
-	m_tPoly.SetMaterial("Asset/Texture/Orbit/Orbit.png");
-	m_tPoly.SetLength(100);
-	//m_tPoly.
+	m_tPoly.SetMaterial("Asset/Textures/Orbit/Orbit.png");
+	m_tPoly.SetLength(25);
 
-	m_pos = {};
-	m_moveDir = {};
+	m_pos			= {};
+	m_moveDir		= {};
 
-	m_lifeSpan = 300;
+	m_lifeSpan		= 300;
 
-	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+	m_pDebugWire	= std::make_unique<KdDebugWireFrame>();
 }
 
 void Bullet::Update()
 {
-	m_pos	+= m_moveDir * m_moveSpeed;
+	m_pos += m_moveDir * m_moveSpeed;
 
 	m_lifeSpan--;
 	if (m_lifeSpan < 0)
@@ -48,15 +47,18 @@ void Bullet::Update()
 	bool hit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
-		hit = obj->Intersects(sphere, nullptr);
-
-		if (hit)
+		if (obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy)
 		{
-			obj->SetHPDec(BULLETPOW);
+			hit = obj->Intersects(sphere, nullptr);
 
-			ClassDestruction();
+			if (hit)
+			{
+				obj->SetHPDec(BULLETPOW);
 
-			break;
+				ClassDestruction();
+
+				break;
+			}
 		}
 	}
 
@@ -67,7 +69,7 @@ void Bullet::Update()
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mRot * m_mTrans;
 
-	// トレイルポリゴンに頂点追加
+	// トレイルポリゴン頂点追加
 	m_tPoly.AddPoint(m_mWorld);
 }
 

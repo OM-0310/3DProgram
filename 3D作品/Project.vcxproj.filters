@@ -94,18 +94,6 @@
     <Filter Include="Src\Application\GameObject\Characters\Player">
       <UniqueIdentifier>{c9f2517f-0e03-43b1-9d11-9b04c4bd9483}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon">
-      <UniqueIdentifier>{1e091458-ae0d-4eea-8714-8610cdef373b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Pistol">
-      <UniqueIdentifier>{e7c03c77-4549-4a83-8626-926307d37587}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\AssaultRifle">
-      <UniqueIdentifier>{cabdeb6d-9084-407c-9fc1-96ab52f27739}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\WeaponBase">
-      <UniqueIdentifier>{bf6486fb-aea0-444d-8fd4-9e4202e7c1a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\UI">
       <UniqueIdentifier>{b1a0e723-6bca-41d6-b04b-6fc3a14ebb20}</UniqueIdentifier>
     </Filter>
@@ -126,12 +114,6 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Terrains\Building\Building_Roof">
       <UniqueIdentifier>{5c2cb618-4ff1-4614-b3ef-5ed414bae855}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm">
-      <UniqueIdentifier>{b6e915f3-3d4d-4c1a-847f-8e52cbf0f06f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready">
-      <UniqueIdentifier>{5fa487ef-57d6-4f74-9d8c-b3f0acd02e92}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\UI\CardKeyUI">
       <UniqueIdentifier>{9b99203c-6151-4bbf-b709-7137ad67cf59}</UniqueIdentifier>
@@ -210,6 +192,39 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main">
       <UniqueIdentifier>{216b20dd-c8f3-4be1-a692-ac665d51a360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\EnemyBullet">
+      <UniqueIdentifier>{16e05c07-3436-47eb-a609-ea5670a5d280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\CollectSecretFileUI">
+      <UniqueIdentifier>{012c1160-b0a9-48df-a74a-a5736e7c9abf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\CollectUIBack">
+      <UniqueIdentifier>{7f74d58d-da02-45f4-9fda-738c19bacbf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GunInfoUI">
+      <UniqueIdentifier>{5f934709-a0cf-4e95-ac87-b98660b861e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GunInfoUIBack">
+      <UniqueIdentifier>{0f6283c0-37f7-468d-be7a-ee5c7db2df86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\BulletNumUI">
+      <UniqueIdentifier>{c9297e9a-37f8-4ff7-b705-3568b161f362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Bullet">
+      <UniqueIdentifier>{f47fced1-e4fc-44a5-beca-f7e3e440a294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\HPBarUI">
+      <UniqueIdentifier>{97a5721e-bad7-4edd-8114-bcb5e0839a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MiniMapUI">
+      <UniqueIdentifier>{4eb6c251-d5e7-4779-b6f6-b6fa4e138c51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MiniMapUIBack">
+      <UniqueIdentifier>{c564eda5-d29e-4b7d-97e2-bfe69168221e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\CurrentLocation">
+      <UniqueIdentifier>{ed283de3-5701-419c-aa80-70daa3c14df2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -399,20 +414,11 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h">
       <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.h">
-      <Filter>Src\Application\GameObject\Weapon\AssaultRifle</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.h">
-      <Filter>Src\Application\GameObject\Weapon\WeaponBase</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\UIBase.h">
       <Filter>Src\Application\GameObject\UI</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy.h">
       <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Bullet\Bullet.h">
-      <Filter>Src\Application\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h">
       <Filter>Src\Application\GameObject\UI\Reticle</Filter>
@@ -428,12 +434,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.h">
       <Filter>Src\Application\GameObject\Terrains\Building\Building_Roof</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm\Pistol_Disarm.h">
-      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready\Pistol_Ready.h">
-      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Ready</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.h">
       <Filter>Src\Application\GameObject\UI\CardKeyUI</Filter>
@@ -512,6 +512,42 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.h">
       <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\EnemyBullet\EnemyBullet.h">
+      <Filter>Src\Application\GameObject\EnemyBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\CollectCardKeyUI\CollectCardKeyUI.h">
+      <Filter>Src\Application\GameObject\UI\CollectCardKeyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\CollectSecretFileUI\CollectSecretFileUI.h">
+      <Filter>Src\Application\GameObject\UI\CollectSecretFileUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\CollectUIBack\CollectUIBack.h">
+      <Filter>Src\Application\GameObject\UI\CollectUIBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GunInfoUI\GunInfoUI.h">
+      <Filter>Src\Application\GameObject\UI\GunInfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GunInfoUIBack\GunInfoUIBack.h">
+      <Filter>Src\Application\GameObject\UI\GunInfoUIBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\BulletNumUI\BulletNumUI.h">
+      <Filter>Src\Application\GameObject\UI\BulletNumUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Bullet\Bullet.h">
+      <Filter>Src\Application\GameObject\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\HPBarUI\HPBarUI.h">
+      <Filter>Src\Application\GameObject\UI\HPBarUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MiniMapUI\MiniMapUI.h">
+      <Filter>Src\Application\GameObject\UI\MiniMapUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MiniMapUIBack\MiniMapUIBack.h">
+      <Filter>Src\Application\GameObject\UI\MiniMapUIBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\CurrentLocation\CurrentLocation.h">
+      <Filter>Src\Application\GameObject\UI\CurrentLocation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -674,20 +710,11 @@
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp">
       <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\AssaultRifle\AssaultRifle.cpp">
-      <Filter>Src\Application\GameObject\Weapon\AssaultRifle</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase\WeaponBase.cpp">
-      <Filter>Src\Application\GameObject\Weapon\WeaponBase</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp">
       <Filter>Src\Application\GameObject\UI</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy.cpp">
       <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Bullet\Bullet.cpp">
-      <Filter>Src\Application\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp">
       <Filter>Src\Application\GameObject\UI\Reticle</Filter>
@@ -703,12 +730,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.cpp">
       <Filter>Src\Application\GameObject\Terrains\Building\Building_Roof</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm\Pistol_Disarm.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Disarm</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol_Ready\Pistol_Ready.cpp">
-      <Filter>Src\Application\GameObject\Weapon\Pistol\Pistol_Ready</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\CardKeyUI\CardKeyUI.cpp">
       <Filter>Src\Application\GameObject\UI\CardKeyUI</Filter>
@@ -787,6 +808,42 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.cpp">
       <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\EnemyBullet\EnemyBullet.cpp">
+      <Filter>Src\Application\GameObject\EnemyBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\CollectCardKeyUI\CollectCardKeyUI.cpp">
+      <Filter>Src\Application\GameObject\UI\CollectCardKeyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\CollectSecretFileUI\CollectSecretFileUI.cpp">
+      <Filter>Src\Application\GameObject\UI\CollectSecretFileUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\CollectUIBack\CollectUIBack.cpp">
+      <Filter>Src\Application\GameObject\UI\CollectUIBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GunInfoUI\GunInfoUI.cpp">
+      <Filter>Src\Application\GameObject\UI\GunInfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GunInfoUIBack\GunInfoUIBack.cpp">
+      <Filter>Src\Application\GameObject\UI\GunInfoUIBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\BulletNumUI\BulletNumUI.cpp">
+      <Filter>Src\Application\GameObject\UI\BulletNumUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Bullet\Bullet.cpp">
+      <Filter>Src\Application\GameObject\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\HPBarUI\HPBarUI.cpp">
+      <Filter>Src\Application\GameObject\UI\HPBarUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MiniMapUI\MiniMapUI.cpp">
+      <Filter>Src\Application\GameObject\UI\MiniMapUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MiniMapUIBack\MiniMapUIBack.cpp">
+      <Filter>Src\Application\GameObject\UI\MiniMapUIBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\CurrentLocation\CurrentLocation.cpp">
+      <Filter>Src\Application\GameObject\UI\CurrentLocation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

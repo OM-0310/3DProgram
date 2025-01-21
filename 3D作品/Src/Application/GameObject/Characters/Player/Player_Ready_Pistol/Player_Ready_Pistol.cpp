@@ -22,7 +22,7 @@ void Player_Ready_Pistol::Init()
 	m_shotFlg		= false;
 	m_rayBulletFlg	= false;
 
-	m_localMuzzleMat = Math::Matrix::CreateTranslation({0.698f,1.75f,0.1f});
+	m_localMuzzleMat = Math::Matrix::CreateTranslation({ 0.33f,1.68f,0.1f });
 
 	m_alpha = m_alphaMin;
 
@@ -65,59 +65,55 @@ void Player_Ready_Pistol::Update()
 		m_shotWait = 0.0f;
 	}
 
-	// 弾発射
-	if (m_shotFlg)
+	KdCollider::RayInfo rayInfo;
+	rayInfo.m_pos = muzzlePos;
+	rayInfo.m_dir = parentMat.Backward();
+	rayInfo.m_range = 1000.f;
+	rayInfo.m_type = KdCollider::TypeDamage | KdCollider::TypeGround;
+
+	m_pDebugWire->AddDebugLine(rayInfo.m_pos, rayInfo.m_dir, rayInfo.m_range, kBlueColor);
+
+	std::list<KdCollider::CollisionResult> retRayList;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
-		KdCollider::RayInfo rayInfo;
-		rayInfo.m_pos = muzzlePos;
-		rayInfo.m_dir = parentMat.Backward();
-		rayInfo.m_range = 1000.f;
-		rayInfo.m_type = KdCollider::TypeDamage | KdCollider::TypeGround;
+		obj->Intersects(rayInfo, &retRayList);
+	}
 
-		m_pDebugWire->AddDebugLine(rayInfo.m_pos, rayInfo.m_dir, rayInfo.m_range, kBlueColor);
 
-		std::list<KdCollider::CollisionResult> retRayList;
+	bool hit = false;
+	float maxOverLap = 0.f;
+	Math::Vector3 hitPos = {};
 
-		for (auto& obj : SceneManager::Instance().GetObjList())
+	for (auto& ret : retRayList)
+	{
+		if (maxOverLap < ret.m_overlapDistance)
 		{
-			obj->Intersects(rayInfo, &retRayList);
+			maxOverLap = ret.m_overlapDistance;
+			hitPos = ret.m_hitPos;
+			hit = true;
 		}
+	}
 
-
-		bool hit = false;
-		float maxOverLap = 0.f;
-		Math::Vector3 hitPos = {};
-
-		for (auto& ret : retRayList)
+	if (m_nowBullet > m_magazineEmpty)
+	{
+		if (m_rayBulletFlg)
 		{
-			if (maxOverLap < ret.m_overlapDistance)
+			if (hit)
 			{
-				maxOverLap = ret.m_overlapDistance;
-				hitPos = ret.m_hitPos;
-				hit = true;
-			}
-		}
-
-		if (m_nowBullet >= m_magazineEmpty)
-		{
-			if (m_rayBulletFlg)
-			{
-				if (hit)
+				if (m_shotWait <= 0.0f)
 				{
-					if (m_shotWait <= 0.0f)
-					{
-						m_nowBullet--;
-						m_shotWait = m_shotWaitMax;
+					m_nowBullet--;
+					m_shotWait = m_shotWaitMax;
 
-						// レイの着弾地点を利用して弾を飛ばすベクトルを算出
-						Math::Vector3 bulletDir = hitPos - muzzlePos;
+					// レイの着弾地点を利用して弾を飛ばすベクトルを算出
+					Math::Vector3 bulletDir = hitPos - muzzlePos;
 
-						// 発射
-						std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
-						bullet->Init();
-						bullet->Shot(muzzlePos, bulletDir);
-						SceneManager::Instance().AddObject(bullet);
-					}
+					// 発射
+					std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
+					bullet->Init();
+					bullet->Shot(muzzlePos, bulletDir);
+					SceneManager::Instance().AddObject(bullet);
 				}
 			}
 		}
@@ -126,15 +122,12 @@ void Player_Ready_Pistol::Update()
 	// プレイヤー情報があるとき
 	if (spPlayer)
 	{
-		// プレイヤーの行列を取得
-		parentMat = spPlayer->GetMatrix();
-
 		// ワールド行列にプレイヤーの行列を格納
 		m_mWorld = spPlayer->GetMatrix();
 
 		// プレイヤーの状態が"構え状態"または"リロード状態"または"弾発射状態"であるとき
 		if (spPlayer->GetSituationType() & Player::SituationType::Ready ||
-			spPlayer->GetSituationType() & Player::SituationType::Reload||
+			spPlayer->GetSituationType() & Player::SituationType::Reload ||
 			spPlayer->GetSituationType() & Player::SituationType::Shot)
 		{
 			// アルファ値を最大値にする
@@ -146,6 +139,20 @@ void Player_Ready_Pistol::Update()
 			// アルファ値を最小値にする
 			m_alpha = m_alphaMin;
 		}
+	}
+
+	// 残弾数がマガジンサイズより大きいとき
+	if (m_nowBullet >= m_magazineSize)
+	{
+		// 残弾数をマガジンサイズに設定
+		m_nowBullet = m_magazineSize;
+	}
+
+	// 残弾数が0以下のとき
+	if (m_nowBullet <= m_magazineEmpty)
+	{
+		// 残弾数を0に設定
+		m_nowBullet = m_magazineEmpty;
 	}
 
 	// 色情報の確定

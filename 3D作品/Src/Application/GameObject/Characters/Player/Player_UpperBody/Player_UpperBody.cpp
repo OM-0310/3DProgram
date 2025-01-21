@@ -2,6 +2,8 @@
 
 #include "../Player.h"
 
+#include "../../../../main.h"
+
 void Player_UpperBody::Init()
 {
 	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_UpperBody_3.gltf");
@@ -11,10 +13,12 @@ void Player_UpperBody::Init()
 
 	m_pos = { 0.f,-0.9f,-50.0f };
 
+	m_HP = m_maxHP;
+
 	m_objectType = KdGameObject::ObjectType::TypePlayer;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Player_UpperBodyCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
+	m_pCollider->RegisterCollisionShape("Player_UpperBodyCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump | KdCollider::TypeDamage);
 }
 
 void Player_UpperBody::Update()
@@ -24,6 +28,9 @@ void Player_UpperBody::Update()
 	{
 		m_mWorld = spPlayer->GetMatrix();
 	}
+
+	Application::Instance().m_log.Clear();
+	Application::Instance().m_log.AddLog("m_hp=%d", m_HP);
 }
 
 void Player_UpperBody::PostUpdate()
