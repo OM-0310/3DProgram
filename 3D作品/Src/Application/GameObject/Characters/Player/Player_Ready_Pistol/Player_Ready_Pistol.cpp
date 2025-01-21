@@ -8,7 +8,7 @@
 
 void Player_Ready_Pistol::Init()
 {
-	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_Ready_Pistol.gltf");
+	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_Ready_Pistol/Player_Ready_Pistol.gltf");
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 	ChangeAnimation("Idle");

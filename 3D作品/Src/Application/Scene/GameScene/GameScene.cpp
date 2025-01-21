@@ -25,8 +25,7 @@
 #include "../../GameObject/Goal/Goal.h"
 
 #include "../../GameObject/Characters/Player/Player.h"
-#include "../../GameObject/Characters/Player/Player_UpperBody/Player_UpperBody.h"
-#include "../../GameObject/Characters/Player/Player_LowerBody/Player_LowerBody.h"
+#include "../../GameObject/Characters/Player/Player_Main/Player_Main.h"
 #include "../../GameObject/Characters/Player/Player_Disarm/Player_Disarm.h"
 #include "../../GameObject/Characters/Player/Player_Disarm_Pistol/Player_Disarm_Pistol.h"
 #include "../../GameObject/Characters/Player/Player_Ready_Pistol/Player_Ready_Pistol.h"
@@ -50,6 +49,8 @@
 #include "../../GameObject/UI/MiniMapUIBack/MiniMapUIBack.h"
 #include "../../GameObject/UI/MiniMapUI/MiniMapUI.h"
 #include "../../GameObject/UI/CurrentLocation/CurrentLocation.h"
+#include "../../GameObject/UI/CardKeyLocation/CardKeyLocation.h"
+#include "../../GameObject/UI/SecretFileLocation/SecretFileLocation.h"
 
 void GameScene::Event()
 {
@@ -208,16 +209,10 @@ void GameScene::CharaInit(
 	m_wpPlayer = player;
 
 	// プレイヤー上半身
-	std::shared_ptr<Player_UpperBody> player_Up;
-	player_Up = std::make_shared<Player_UpperBody>();
-	player_Up->Init();
-	m_objList.push_back(player_Up);
-
-	// プレイヤー下半身
-	std::shared_ptr<Player_LowerBody> player_Low;
-	player_Low = std::make_shared<Player_LowerBody>();
-	player_Low->Init();
-	m_objList.push_back(player_Low);
+	std::shared_ptr<Player_Main> player_Main;
+	player_Main = std::make_shared<Player_Main>();
+	player_Main->Init();
+	m_objList.push_back(player_Main);
 
 	// プレイヤー(武装解除状態)初期化
 	std::shared_ptr<Player_Disarm> player_Disarm;
@@ -413,6 +408,22 @@ void GameScene::CharaInit(
 	m_objList.push_back(currentLocation);
 
 	//=================================================================
+	// カードキー位置UI初期化
+	//=================================================================
+	std::shared_ptr<CardKeyLocation> cardKeyLocation;
+	cardKeyLocation = std::make_shared<CardKeyLocation>();
+	cardKeyLocation->Init();
+	m_objList.push_back(cardKeyLocation);
+
+	//=================================================================
+	// 機密ファイル位置UI初期化
+	//=================================================================
+	std::shared_ptr<SecretFileLocation> secretFileLocation;
+	secretFileLocation = std::make_shared<SecretFileLocation>();
+	secretFileLocation->Init();
+	m_objList.push_back(secretFileLocation);
+
+	//=================================================================
 	// カードキー取得UI初期化
 	//=================================================================
 	std::shared_ptr<CardKeyUI> cardUI;
@@ -443,18 +454,18 @@ void GameScene::CharaInit(
 	player->SetMiniMapUI(mapUI);
 	player->SetMiniMapUIBack(mapUIBack);
 	player->SetCurrentLocation(currentLocation);
+	player->SetCardKeyLocation(cardKeyLocation);
+	player->SetSecretFileLocation(secretFileLocation);
 	player->SetDoor(lockedDoor);
 	player->SetCardKey(card);
 	player->SetSecretFile(file);
 	player->SetGoal(goal);
 	//player->SetPistolReady(pistol_Ready);
-	player->SetPlayerUpperBody(player_Up);
-	player->SetPlayerLowerBody(player_Low);
+	player->SetPlayerUpperBody(player_Main);
 	player->SetPlayerDisarm(player_Disarm);
 	player->SetPlayerDisarmPistol(player_Disarm_Pistol);
 	player->SetPlayerReadyPistol(player_Ready_Pistol);
-	player_Up->SetPlayer(player);
-	player_Low->SetPlayer(player);
+	player_Main->SetPlayer(player);
 	player_Disarm->SetPlayer(player);
 	player_Disarm_Pistol->SetPlayer(player);
 	player_Ready_Pistol->SetPlayer(player);
@@ -481,7 +492,9 @@ void GameScene::CharaInit(
 	fileUI->SetSecretFile(file);
 	keyUI->SetLockedDoor(lockedDoor);
 	currentLocation->SetPlayer(player);
-	hpBarUI->SetPlayer_UpperBody(player_Up);
+	cardKeyLocation->SetCardKey(card);
+	secretFileLocation->SetSecretFile(file);
+	hpBarUI->SetPlayer_Main(player_Main);
 
 	camera->SetPlayer(player);
 

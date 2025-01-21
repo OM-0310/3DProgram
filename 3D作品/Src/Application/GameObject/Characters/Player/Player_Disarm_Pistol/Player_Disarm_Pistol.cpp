@@ -4,7 +4,7 @@
 
 void Player_Disarm_Pistol::Init()
 {
-	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_Disarm_Pistol.gltf");
+	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_Disarm_Pistol/Player_Disarm_Pistol.gltf");
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 	ChangeAnimation("Idle");

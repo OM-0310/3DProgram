@@ -4,12 +4,12 @@
 
 class Player;
 
-class Player_UpperBody : public CharaBase
+class Player_Main : public CharaBase
 {
 public:
 
-	Player_UpperBody	()				{}
-	~Player_UpperBody	()	override	{}
+	Player_Main		()				{}
+	~Player_Main	()	override	{}
 
 	void Init			()	override;
 	void Update			()	override;

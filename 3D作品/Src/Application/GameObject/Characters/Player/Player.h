@@ -2,14 +2,12 @@
 #include "../CharaBase.h"
 
 class TPSCamera;
-class Player_UpperBody;
-class Player_LowerBody;
+class Player_Main;
 class Player_Disarm;
 class Player_Disarm_Pistol;
 class Player_Ready_Pistol;
 class Pistol_Disarm;
 class Pistol_Ready;
-class AssaultRifle;
 class LockedDoor;
 class CardKey;
 class Goal;
@@ -18,6 +16,8 @@ class Reticle;
 class MiniMapUI;
 class MiniMapUIBack;
 class CurrentLocation;
+class CardKeyLocation;
+class SecretFileLocation;
 class PlayerStateBase;
 
 class Player : public CharaBase
@@ -63,17 +63,13 @@ public:
 	void ChanegeViewPointProc	();	// 視点切り替え処理
 
 	// アニメーション切り替え処理
-	void ChangeUpperBodyAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);// 上半身
-	void ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);// 下半身
+	void ChangeAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);
 
 	void SetCamera					// カメラ情報セット		
 	(const std::shared_ptr<TPSCamera>& _spCamera) { m_wpCamera = _spCamera; }
 
 	void SetPlayerUpperBody			// プレイヤー上半身情報セット
-	(std::shared_ptr<Player_UpperBody>& _spPlayer_Up) { m_wpPlayer_Up = _spPlayer_Up; }
-
-	void SetPlayerLowerBody			// プレイヤー下半身情報セット
-	(std::shared_ptr<Player_LowerBody>& _spPlayer_Low) { m_wpPlayer_Low = _spPlayer_Low; }
+	(std::shared_ptr<Player_Main>& _spPlayer_Main) { m_wpPlayer_Main = _spPlayer_Main; }
 
 	void SetPlayerDisarm			// 拳銃ホルダー情報セット
 	(std::shared_ptr<Player_Disarm>& _spPlayer_Disarm) { m_wpPlayer_Disarm = _spPlayer_Disarm; }
@@ -108,6 +104,12 @@ public:
 	void SetCurrentLocation			// 現在地UI情報セット
 	(const std::shared_ptr<CurrentLocation>& _spCurrentLocation) { m_wpCurrentLocation = _spCurrentLocation; }
 
+	void SetCardKeyLocation			// カードキー位置情報セット
+	(const std::shared_ptr<CardKeyLocation>& _spCardKeyLocation) { m_wpCardKeyLocation = _spCardKeyLocation; }
+
+	void SetSecretFileLocation		// 機密ファイル位置情報セット
+	(const std::shared_ptr<SecretFileLocation>& _spSecretFileLocation) { m_wpSecretFileLocation = _spSecretFileLocation; }
+
 	const Math::Matrix&		GetRotateMat		()			{ return m_mRot;			}
 	const ItemCollectType&	GetItemCollType		() const	{ return m_itemCollType;	}
 	const UINT&				GetSituationType	() const	{ return m_sType;			}
@@ -116,8 +118,7 @@ public:
 private:
 
 	std::weak_ptr<TPSCamera>			m_wpCamera;					// カメラ情報
-	std::weak_ptr<Player_UpperBody>		m_wpPlayer_Up;				// プレイヤー上半身情報
-	std::weak_ptr<Player_LowerBody>		m_wpPlayer_Low;				// プレイヤー下半身情報
+	std::weak_ptr<Player_Main>			m_wpPlayer_Main;			// プレイヤー本体情報
 	std::weak_ptr<Player_Disarm>		m_wpPlayer_Disarm;			// プレイヤー(武装解除)情報 
 	std::weak_ptr<Player_Disarm_Pistol> m_wpPlayer_Disarm_Pistol;	// 銃(武装解除)情報 
 	std::weak_ptr<Player_Ready_Pistol>	m_wpPlayer_Ready_Pistol;	// 銃(武装)情報 
@@ -126,6 +127,8 @@ private:
 	std::weak_ptr<MiniMapUI>			m_wpMiniMapUI;				// ミニマップ情報
 	std::weak_ptr<MiniMapUIBack>		m_wpMiniMapUIBack;			// ミニマップ背景情報
 	std::weak_ptr<CurrentLocation>		m_wpCurrentLocation;		// 現在地UI情報
+	std::weak_ptr<CardKeyLocation>		m_wpCardKeyLocation;		// カードキー位置UI情報
+	std::weak_ptr<SecretFileLocation>	m_wpSecretFileLocation;		// 機密ファイルUI情報
 	std::weak_ptr<LockedDoor>			m_wpLockDoor;				// ドア情報
 	std::weak_ptr<CardKey>				m_wpCard;					// カードキー情報
 	std::weak_ptr<SecretFile>			m_wpFile;					// 機密データ情報

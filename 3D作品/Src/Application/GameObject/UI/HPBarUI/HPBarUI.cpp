@@ -1,6 +1,6 @@
 ﻿#include "HPBarUI.h"
 
-#include "../../Characters/Player/Player_UpperBody/Player_UpperBody.h"
+#include "../../Characters/Player/Player_Main/Player_Main.h"
 
 void HPBarUI::Init()
 {
@@ -17,37 +17,37 @@ void HPBarUI::Init()
 
 void HPBarUI::Update()
 {
-	const std::shared_ptr<Player_UpperBody> spPlayer_Up = m_wpPlayer_Up.lock();
+	const std::shared_ptr<Player_Main> spPlayer_Main = m_wpPlayer_Main.lock();
 	int hp = 0, width = 0, singleWidth = 0;
 
 	// プレイヤーの上藩士の情報があるとき
-	if (spPlayer_Up)
+	if (spPlayer_Main)
 	{
 		// プレイヤーのHPを取得
-		hp = spPlayer_Up->GetHP();
+		hp = spPlayer_Main->GetHP();
 
 		// 画像の横幅を取得
 		width = m_spTex->GetWidth();
 
 		// 横幅と最大HPを割り算しHP1分の横幅を算出
-		singleWidth = width / spPlayer_Up->GetMaxHP();
+		singleWidth = width / spPlayer_Main->GetMaxHP();
 
 		// 各パラメータを代入
 		m_rect = { 0,0,(long)(singleWidth * hp),(long)m_spTex->GetHeight() };
 
 		// HPが最大HP以下かつHP半分より大きいとき
-		if (hp > spPlayer_Up->GetHalfHP() && hp <= spPlayer_Up->GetMaxHP())
+		if (hp > spPlayer_Main->GetHalfHP() && hp <= spPlayer_Main->GetMaxHP())
 		{
 			// HPバーを緑色に表示する
 			m_color = kGreenColor;
 		}
 		// HPが半分以下かつHP4分の1より大きいとき
-		else if (hp > spPlayer_Up->GetQuaterHP() && hp <= spPlayer_Up->GetHalfHP())
+		else if (hp > spPlayer_Main->GetQuaterHP() && hp <= spPlayer_Main->GetHalfHP())
 		{
 			m_color = { 1.0f,1.0f,0.0f,1.0f };
 		}
 		// HPが4分の1以下のとき
-		else if (hp <= spPlayer_Up->GetQuaterHP())
+		else if (hp <= spPlayer_Main->GetQuaterHP())
 		{
 			m_color = kRedColor;
 		}

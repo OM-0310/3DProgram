@@ -1,7 +1,6 @@
 ﻿#include "Player.h"
 
-#include "Player_UpperBody/Player_UpperBody.h"
-#include "Player_LowerBody/Player_LowerBody.h"
+#include "Player_Main/Player_Main.h"
 #include "Player_Disarm/Player_Disarm.h"
 #include "Player_Disarm_Pistol/Player_Disarm_Pistol.h"
 #include "Player_Ready_Pistol/Player_Ready_Pistol.h"
@@ -22,6 +21,8 @@
 #include "../../UI/MiniMapUI/MiniMapUI.h"
 #include "../../UI/MiniMapUIBack/MiniMapUIBack.h"
 #include "../../UI/CurrentLocation/CurrentLocation.h"
+#include "../../UI/CardKeyLocation/CardKeyLocation.h"
+#include "../../UI/SecretFileLocation/SecretFileLocation.h"
 
 #include "../../Bullet/Bullet.h"
 
@@ -180,9 +181,11 @@ void Player::UpdateCollision()
 //================================================================================================================================
 void Player::OpneMapProc()
 {
-	const std::shared_ptr<MiniMapUI>		spMiniMapUI = m_wpMiniMapUI.lock();
-	const std::shared_ptr<MiniMapUIBack>	spMiniMapUIBack = m_wpMiniMapUIBack.lock();
-	const std::shared_ptr<CurrentLocation>	spCurrentLocation = m_wpCurrentLocation.lock();
+	const std::shared_ptr<MiniMapUI>			spMiniMapUI			= m_wpMiniMapUI.lock();
+	const std::shared_ptr<MiniMapUIBack>		spMiniMapUIBack		= m_wpMiniMapUIBack.lock();
+	const std::shared_ptr<CurrentLocation>		spCurrentLocation	= m_wpCurrentLocation.lock();
+	const std::shared_ptr<CardKeyLocation>		spCardKeyLocation	= m_wpCardKeyLocation.lock();
+	const std::shared_ptr<SecretFileLocation>	spSecretFileLocation = m_wpSecretFileLocation.lock();
 
 	if (GetAsyncKeyState(VK_TAB) & 0x8000)
 	{
@@ -223,6 +226,36 @@ void Player::OpneMapProc()
 				else
 				{
 					spCurrentLocation->Open(false);
+				}
+			}
+
+			if (spCardKeyLocation)
+			{
+				if (spCardKeyLocation->GetPermissionFlg())
+				{
+					if (!spCardKeyLocation->GetActive())
+					{
+						spCardKeyLocation->Open(true);
+					}
+					else
+					{
+						spCardKeyLocation->Open(false);
+					}
+				}
+			}
+
+			if (spSecretFileLocation)
+			{
+				if (spSecretFileLocation->GetPermissionFlg())
+				{
+					if (!spSecretFileLocation->GetActive())
+					{
+						spSecretFileLocation->Open(true);
+					}
+					else
+					{
+						spSecretFileLocation->Open(false);
+					}
 				}
 			}
 		}
@@ -363,31 +396,19 @@ void Player::AutoReloadProc()
 //================================================================================================================================
 // アニメーション切り替え処理
 //================================================================================================================================
-
-// プレイヤー上半身のアニメーション切り替え処理
-void Player::ChangeUpperBodyAnimation(const std::string& _animeName, bool _isLoop, float _time)
+void Player::ChangeAnimation(const std::string& _animeName, bool _isLoop, float _time)
 {
-	const std::shared_ptr<Player_UpperBody>		spPlayer_Up				= m_wpPlayer_Up.lock();
-	const std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol	= m_wpPlayer_Ready_Pistol.lock();
-	if (spPlayer_Up)
+	const std::shared_ptr<Player_Main>			spPlayer_Main = m_wpPlayer_Main.lock();
+	const std::shared_ptr<Player_Ready_Pistol>	spPlayer_Ready_Pistol = m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Player_Disarm>		spPlayer_Disarm = m_wpPlayer_Disarm.lock();
+	const std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol = m_wpPlayer_Disarm_Pistol.lock();
+	if (spPlayer_Main)
 	{
-		spPlayer_Up->ChangeAnimation(_animeName, _isLoop, _time);
+		spPlayer_Main->ChangeAnimation(_animeName, _isLoop, _time);
 	}
 	if (spPlayer_Ready_Pistol)
 	{
 		spPlayer_Ready_Pistol->ChangeAnimation(_animeName, _isLoop, _time);
-	}
-}
-
-// プレイヤー下半身のアニメーション切り替え処理
-void Player::ChangeLowerBodyAnimation(const std::string& _animeName, bool _isLoop, float _time)
-{
-	const std::shared_ptr<Player_LowerBody>		spPlayer_Low			= m_wpPlayer_Low.lock();
-	const std::shared_ptr<Player_Disarm>		spPlayer_Disarm			= m_wpPlayer_Disarm.lock();
-	const std::shared_ptr<Player_Disarm_Pistol>	spPlayer_Disarm_Pistol	= m_wpPlayer_Disarm_Pistol.lock();
-	if (spPlayer_Low)
-	{
-		spPlayer_Low->ChangeAnimation(_animeName, _isLoop, _time);
 	}
 	if (spPlayer_Disarm)
 	{
@@ -487,8 +508,7 @@ void Player::ActionIdle::Enter(Player& _owner)
 			_owner.m_posType = PostureType::Stand;
 			_owner.m_sType = SituationType::Idle;
 			// プレイヤーの上半身と下半身のアニメーションを"Idle"に切り替え
-			_owner.ChangeUpperBodyAnimation("Idle", _owner.m_nowAnimeFrm);
-			_owner.ChangeLowerBodyAnimation("Idle", _owner.m_nowAnimeFrm);
+			_owner.ChangeAnimation("Idle", _owner.m_nowAnimeFrm);
 		}
 	}
 	else
@@ -502,8 +522,7 @@ void Player::ActionIdle::Enter(Player& _owner)
 			_owner.m_posType = PostureType::Stand;
 			_owner.m_sType = SituationType::Idle;
 			// プレイヤーの上半身と下半身のアニメーションを"Idle"に切り替え
-			_owner.ChangeUpperBodyAnimation("Idle");
-			_owner.ChangeLowerBodyAnimation("Idle");
+			_owner.ChangeAnimation("Idle");
 		}
 	}
 }
@@ -614,9 +633,8 @@ void Player::ActionWalk::Enter(Player& _owner)
 	{
 		// プレイヤーの状態を"歩行状態"にする
 		_owner.m_sType = SituationType::Walk;
-		// プレイヤーの上半身と下半身のアニメーションを"Walk"に切り替え
-		_owner.ChangeUpperBodyAnimation("Walk");
-		_owner.ChangeLowerBodyAnimation("Walk");
+		// アニメーションを"Walk"に切り替え
+		_owner.ChangeAnimation("Walk");
 	}
 }
 
@@ -759,10 +777,9 @@ void Player::ActionRun::Enter(Player& _owner)
 	if (_owner.m_sType != SituationType::Run)
 	{
 		// プレイヤーの状態を"走行状態"に切り替えて、
-		// プレイヤーの上半身と下半身のアニメーションを"Run"に切り替え
+		// アニメーションを"Run"に切り替え
 		_owner.m_sType = SituationType::Run;
-		_owner.ChangeUpperBodyAnimation("Run");
-		_owner.ChangeLowerBodyAnimation("Run");
+		_owner.ChangeAnimation("Run");
 	}
 }
 
@@ -901,10 +918,9 @@ void Player::ActionReady::Enter(Player& _owner)
 	if (_owner.m_sType != SituationType::Ready)
 	{
 		// プレイヤーの状態を"構え状態"に切り替えて、
-		// プレイヤーの上半身と下半身のアニメーションを"Ready"に切り替え
+		// アニメーションを"Ready"に切り替え
 		_owner.m_sType = SituationType::Ready;
-		_owner.ChangeUpperBodyAnimation("Ready");
-		_owner.ChangeLowerBodyAnimation("Ready");
+		_owner.ChangeAnimation("Ready");
 	}
 }
 
@@ -1042,10 +1058,9 @@ void Player::ActionShot::Enter(Player& _owner)
 	if (_owner.m_sType != SituationType::Shot)
 	{
 		// プレイヤーの状態を"発射状態"にし、
-		// 上半身と下半身のアニメーションを"Shot"に切り替え
+		// アニメーションを"Shot"に切り替え
 		_owner.m_sType = SituationType::Shot;
-		_owner.ChangeUpperBodyAnimation("Shot", false);
-		_owner.ChangeLowerBodyAnimation("Shot", false);
+		_owner.ChangeAnimation("Shot", false);
 	}
 }
 
@@ -1130,10 +1145,9 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 	if (_owner.m_sType != Player::SituationType::Reload)
 	{
 		// プレイヤーの状態を"リロード状態"にし、
-		// 上半身と下半身のアニメーションを"Reload"に切り替え
+		// アニメーションを"Reload"に切り替え
 		_owner.m_sType = Player::SituationType::Reload;
-		_owner.ChangeUpperBodyAnimation("Reload", false);
-		_owner.ChangeLowerBodyAnimation("Reload", false);
+		_owner.ChangeAnimation("Reload", false);
 	}
 	// "リロード状態"であるとき
 	else
@@ -1141,18 +1155,16 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 		// 現在のアニメーションフレームが0.0fでないとき
 		if (_owner.m_nowAnimeFrm != 0.0f)
 		{
-			// 上半身と下半身のアニメーションを"Reload"に切り替え
-			_owner.ChangeUpperBodyAnimation("Reload", false, _owner.m_nowAnimeFrm);
-			_owner.ChangeLowerBodyAnimation("Reload", false, _owner.m_nowAnimeFrm);
+			// アニメーションを"Reload"に切り替え
+			_owner.ChangeAnimation("Reload", false, _owner.m_nowAnimeFrm);
 		}
 		// 0.0fであるとき
 		else
 		{
 			// アニメーションを初期化し、
-			// 上半身と下半身のアニメーションを"Reload"に切り替え
+			// アニメーションを"Reload"に切り替え
 			_owner.m_nowAnimeFrm = 0.0f;
-			_owner.ChangeUpperBodyAnimation("Reload", false);
-			_owner.ChangeLowerBodyAnimation("Reload", false);
+			_owner.ChangeAnimation("Reload", false);
 		}
 	}
 }
@@ -1249,10 +1261,9 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 	if (_owner.m_sType != Player::SituationType::Reload)
 	{
 		// プレイヤーの状態を"リロード状態"にし、
-		// 上半身と下半身のアニメーションを"Reload_Walk"に切り替え
+		// アニメーションを"Reload_Walk"に切り替え
 		_owner.m_sType = Player::SituationType::Reload;
-		_owner.ChangeUpperBodyAnimation("Reload_Walk", false);
-		_owner.ChangeLowerBodyAnimation("Reload_Walk", false);
+		_owner.ChangeAnimation("Reload_Walk", false);
 	}
 	// "リロード状態"であるとき
 	else
@@ -1260,18 +1271,16 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 		// 現在のアニメーションフレームが0.0fでないとき
 		if (_owner.m_nowAnimeFrm != 0.0f)
 		{
-			// 上半身と下半身のアニメーションを"Reload_Walk"に切り替え
-			_owner.ChangeUpperBodyAnimation("Reload_Walk", false, _owner.m_nowAnimeFrm);
-			_owner.ChangeLowerBodyAnimation("Reload_Walk", false, _owner.m_nowAnimeFrm);
+			// アニメーションを"Reload_Walk"に切り替え
+			_owner.ChangeAnimation("Reload_Walk", false, _owner.m_nowAnimeFrm);
 		}
 		// 0.0fであるとき
 		else
 		{
 			// 現在のアニメーションフレームを初期化し、
-			// 上半身と下半身のアニメーションを"Reload_Walk"に切り替え
+			// アニメーションを"Reload_Walk"に切り替え
 			_owner.m_nowAnimeFrm = 0.0f;
-			_owner.ChangeUpperBodyAnimation("Reload_Walk", false);
-			_owner.ChangeLowerBodyAnimation("Reload_Walk", false);
+			_owner.ChangeAnimation("Reload_Walk", false);
 		}
 	}
 }
@@ -1442,10 +1451,9 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 	if (_owner.m_sType != Player::SituationType::Reload)
 	{
 		// プレイヤーの状態を"リロード状態"にし、
-		// 上半身と下半身のアニメーションを"Reload_Run"に切り替え
+		// アニメーションを"Reload_Run"に切り替え
 		_owner.m_sType = Player::SituationType::Reload;
-		_owner.ChangeUpperBodyAnimation("Reload_Run", false);
-		_owner.ChangeLowerBodyAnimation("Reload_Run", false);
+		_owner.ChangeAnimation("Reload_Run", false);
 	}
 	// "リロード状態"であるとき
 	else
@@ -1453,9 +1461,8 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 		// 現在のアニメーションフレームが0.0fでないとき
 		if (_owner.m_nowAnimeFrm <= _owner.m_reloadFrmMax)
 		{
-			// 上半身と下半身のアニメーションを"Reload_Run"に切り替え
-			_owner.ChangeUpperBodyAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
-			_owner.ChangeLowerBodyAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
+			// アニメーションを"Reload_Run"に切り替え
+			_owner.ChangeAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
 		}
 	}
 }
@@ -1555,10 +1562,9 @@ void Player::ActionSit::Enter(Player& _owner)
 	if (_owner.m_posType != PostureType::Sit)
 	{
 		// 現在のアニメーションフレームを初期化し、
-		// 上半身と下半身のアニメーションを"Sit"に切り替え
+		// アニメーションを"Sit"に切り替え
 		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.ChangeUpperBodyAnimation("Sit", false);
-		_owner.ChangeLowerBodyAnimation("Sit", false);
+		_owner.ChangeAnimation("Sit", false);
 	}
 }
 
@@ -1592,10 +1598,9 @@ void Player::ActionStand::Enter(Player& _owner)
 	if (_owner.m_posType != PostureType::Stand)
 	{
 		// 現在のアニメーションフレームを初期化し、
-		// 上半身と下半身のアニメーションを"Stand"に切り替え
+		// アニメーションを"Stand"に切り替え
 		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.ChangeUpperBodyAnimation("Stand");
-		_owner.ChangeLowerBodyAnimation("Stand");
+		_owner.ChangeAnimation("Stand");
 	}
 }
 
@@ -1635,9 +1640,8 @@ void Player::ActionSit_Idle::Enter(Player& _owner)
 		_owner.m_nowAnimeFrm	= 0.0f;
 		_owner.m_sType			= SituationType::Idle;
 		_owner.m_posType		= PostureType::Sit;
-		// 上半身と下半身のアニメーションを"Sit_Idle"に切り替え
-		_owner.ChangeUpperBodyAnimation("Sit_Idle");
-		_owner.ChangeLowerBodyAnimation("Sit_Idle");
+		// アニメーションを"Sit_Idle"に切り替え
+		_owner.ChangeAnimation("Sit_Idle");
 	}
 }
 
@@ -1719,9 +1723,8 @@ void Player::ActionSit_Walk::Enter(Player& _owner)
 		// プレイヤーの状態を"歩行状態"に切り替え
 		_owner.m_nowAnimeFrm = 0.0f;
 		_owner.m_sType = SituationType::Walk;
-		// 上半身と下半身のアニメーションを"Sit_Walk"に切り替え
-		_owner.ChangeUpperBodyAnimation("Sit_Walk");
-		_owner.ChangeLowerBodyAnimation("Sit_Walk");
+		// アニメーションを"Sit_Walk"に切り替え
+		_owner.ChangeAnimation("Sit_Walk");
 	}
 }
 
@@ -1828,9 +1831,8 @@ void Player::ActionSit_Ready::Enter(Player& _owner)
 		_owner.m_nowAnimeFrm	= 0.0f;
 		_owner.m_sType			= SituationType::Ready;
 		_owner.m_posType		= PostureType::Sit;
-		// 上半身と下半身のアニメーションを"Sit_Ready"に切り替え
-		_owner.ChangeUpperBodyAnimation("Sit_Ready");
-		_owner.ChangeLowerBodyAnimation("Sit_Ready");
+		// アニメーションを"Sit_Ready"に切り替え
+		_owner.ChangeAnimation("Sit_Ready");
 	}
 }
 

@@ -4,7 +4,7 @@
 
 void Player_Disarm::Init()
 {
-	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_Disarm_Holder.gltf");
+	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_Disarm_Holder/Player_Disarm_Holder.gltf");
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 	ChangeAnimation("Idle");

@@ -1,12 +1,12 @@
-﻿#include "Player_UpperBody.h"
+﻿#include "Player_Main.h"
 
 #include "../Player.h"
 
 #include "../../../../main.h"
 
-void Player_UpperBody::Init()
+void Player_Main::Init()
 {
-	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_UpperBody_3.gltf");
+	CharaBase::SetAsset("Asset/Models/Characters/Player/Player_Main/Player_Main.gltf");
 	m_spAnimator = std::make_shared<KdAnimator>();
 
 	ChangeAnimation("Idle");
@@ -18,10 +18,10 @@ void Player_UpperBody::Init()
 	m_objectType = KdGameObject::ObjectType::TypePlayer;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Player_UpperBodyCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump | KdCollider::TypeDamage);
+	m_pCollider->RegisterCollisionShape("Player_MainCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump | KdCollider::TypeDamage);
 }
 
-void Player_UpperBody::Update()
+void Player_Main::Update()
 {
 	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 	if (spPlayer)
@@ -33,7 +33,7 @@ void Player_UpperBody::Update()
 	Application::Instance().m_log.AddLog("m_hp=%d", m_HP);
 }
 
-void Player_UpperBody::PostUpdate()
+void Player_Main::PostUpdate()
 {
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
 	m_spModel->CalcNodeMatrices();
