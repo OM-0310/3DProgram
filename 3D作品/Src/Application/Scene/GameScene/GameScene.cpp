@@ -461,10 +461,11 @@ void GameScene::CharaInit(
 	player->SetSecretFile(file);
 	player->SetGoal(goal);
 	//player->SetPistolReady(pistol_Ready);
-	player->SetPlayerUpperBody(player_Main);
-	player->SetPlayerDisarm(player_Disarm);
-	player->SetPlayerDisarmPistol(player_Disarm_Pistol);
-	player->SetPlayerReadyPistol(player_Ready_Pistol);
+	player->SetPlayer_Main(player_Main);
+	player->SetPlayer_Disarm(player_Disarm);
+	player->SetPlayer_Disarm_Pistol(player_Disarm_Pistol);
+	player->SetPlayer_Ready_Pistol(player_Ready_Pistol);
+	player->SetEnemy(enemy);
 	player_Main->SetPlayer(player);
 	player_Disarm->SetPlayer(player);
 	player_Disarm_Pistol->SetPlayer(player);

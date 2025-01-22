@@ -46,6 +46,8 @@ protected:
 
 	float							m_alpha			= 1.0f;							// アルファ値
 	float							m_alphaSpeed	= 0.0f;							// アルファスピード
+	const float						m_alphaMax		= 1.0f;							// アルファ値最大値
+	const float						m_alphaMin		= 0.0f;							// アルファ値最小値
 	UINT							m_alphaState	= AlphaStateType::Inc;			// アルファ値加減
 
 	UINT							m_progressState = ProgressStateType::Stop;		// 進行状態

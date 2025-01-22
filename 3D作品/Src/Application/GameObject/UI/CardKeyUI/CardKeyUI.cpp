@@ -24,62 +24,96 @@ void CardKeyUI::Update()
 {
 	const std::shared_ptr<CardKey> spCard = m_wpCard.lock();
 
+	// 使用フラグがfalseのとき
 	if (!m_useFlg)
 	{
+		// カードキーの情報があるとき
 		if (spCard)
 		{
+			// カードキーのクラスが破棄されたとき
 			if (spCard->IsExpired())
 			{
+				// 使用フラグをtrueにする
 				m_useFlg = true;
 			}
+
+			// カードキーのアイテム回収フラグがtrueのとき
 			if (spCard->GetCollectFlg())
 			{
+				// アルファ値を加算
 				m_alpha += m_alphaSpeed;
 			}
+			// falseのとき
 			else
 			{
+				// アルファ値を減算
 				m_alpha -= m_alphaSpeed;
 			}
 
-			if (m_alpha >= 1.f)
+			// アルファ値が最大値以上のとき
+			if (m_alpha >= m_alphaMax)
 			{
-				m_alpha = 1.f;
+				// アルファ値を最大値に設定
+				m_alpha = m_alphaMax;
 			}
-			if (m_alpha <= 0.f)
+
+			// アルファ値が最小値以下のとき
+			if (m_alpha <= m_alphaMin)
 			{
-				m_alpha = 0.f;
+				// アルファ値を最小値に設定
+				m_alpha = m_alphaMin;
 			}
 		}
 	}
 	else
 	{
+		// 生存期間を減少
 		m_lifeSpan--;
+
 		switch (m_alphaState)
 		{
 		case AlphaStateType::Inc:
+
+			// アルファ値を加算
 			m_alpha += m_alphaSpeed;
-			if (m_alpha >= 1.f)
+
+			// アルファ値が最大値以上のとき
+			if (m_alpha >= m_alphaMax)
 			{
+				// アルファ値の加減を"減少状態"に切り替え
 				m_alphaState = AlphaStateType::Dec;
-				m_alpha = 1.f;
+
+				// アルファ値を最大値に設定
+				m_alpha = m_alphaMax;
 			}
 			break;
 		case AlphaStateType::Dec:
+
+			// アルファ値を減算
 			m_alpha -= m_alphaSpeed;
-			if (m_alpha <= 0.f)
+
+			// アルファ値が最小値以下のとき
+			if (m_alpha <= m_alphaMin)
 			{
+				// アルファ値の加減を"増加状態"に切り替え
 				m_alphaState = AlphaStateType::Inc;
-				m_alpha = 0.f;
+
+				// アルファ値を最小値に設定
+				m_alpha = m_alphaMin;
 			}
 			break;
 		}
-		if (m_lifeSpan == 0)
+
+		// 生存期間が最小値以下のとき
+		if (m_lifeSpan <= m_lifeSpanMin)
 		{
+			// クラスを破棄する
 			m_isExpired = true;
 		}
 	}
-	m_color = { 1.f, 1.f, 1.f, m_alpha };
 
+	// 色情報を確定
+	m_color = { 1.f, 1.f, 1.f, m_alpha };
 }
 
 void CardKeyUI::DrawSprite()

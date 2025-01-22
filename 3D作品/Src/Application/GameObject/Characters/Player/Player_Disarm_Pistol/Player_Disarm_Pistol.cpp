@@ -26,8 +26,9 @@ void Player_Disarm_Pistol::Update()
 	{
 		m_mWorld = spPlayer->GetMatrix();
 
-		if (spPlayer->GetSituationType() & Player::SituationType::Ready ||
-			spPlayer->GetSituationType() & Player::SituationType::Reload)
+		if (spPlayer->GetSituationType() & Player::SituationType::Ready		||
+			spPlayer->GetSituationType() & Player::SituationType::Reload	||
+			spPlayer->GetSituationType() & Player::SituationType::Restraint)
 		{
 			m_alpha = m_alphaMin;
 		}

@@ -5,6 +5,8 @@
 #include "Player_Disarm_Pistol/Player_Disarm_Pistol.h"
 #include "Player_Ready_Pistol/Player_Ready_Pistol.h"
 
+#include "../Enemy/Enemy.h"
+
 #include "../../Camera/TPSCamera/TPSCamera.h"
 
 #include "../../Gimmicks/LockedDoor/LockedDoor.h"
@@ -530,6 +532,7 @@ void Player::ActionIdle::Enter(Player& _owner)
 void Player::ActionIdle::Update(Player& _owner)
 {
 	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
+	const std::shared_ptr<Enemy>				spEnemy			= _owner.m_wpEnemy.lock();
 	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
 
 	// プレイヤーの移動方向を常に初期化
@@ -544,6 +547,31 @@ void Player::ActionIdle::Update(Player& _owner)
 	{
 		_owner.ChangeActionState(std::make_shared<ActionRun>());
 		return;
+	}
+
+	Math::Vector3 parentPos,diffVec;
+
+	// 敵の情報があるとき
+	if (spEnemy)
+	{
+		// 敵の座標を取得
+		parentPos = spEnemy->GetPos();
+	}
+
+	// プレイヤーと敵の座標の差ベクトルを算出
+	diffVec =  parentPos - _owner.m_pos;
+
+	// 差ベクトルが拘束エリア範囲内のとき
+	if (diffVec.Length() <= _owner.m_tightArea)
+	{
+
+		// 左クリックしたとき
+		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+		{
+			// "ActionRestraint"に切り替え
+			_owner.ChangeActionState(std::make_shared<ActionRestraint>());
+			return;
+		}
 	}
 
 	// 自動リロード処理
@@ -1137,6 +1165,94 @@ void Player::ActionShot::Exit(Player& _owner)
 		// 現在のアニメーションフレームを初期化する
 		_owner.m_nowAnimeFrm = 0.0f;
 	}
+}
+
+void Player::ActionRestraint::Enter(Player& _owner)
+{
+	// プレイヤーの状態が"リロード状態"でないとき
+	if (_owner.m_sType != Player::SituationType::Restraint)
+	{
+		// プレイヤーの状態を"リロード状態"にし、
+		// アニメーションを"Reload"に切り替え
+		_owner.m_sType = Player::SituationType::Restraint;
+		_owner.ChangeAnimation("Restraint", false);
+	}
+}
+
+void Player::ActionRestraint::Update(Player& _owner)
+{
+	const std::shared_ptr<Enemy> spEnemy = _owner.m_wpEnemy.lock();
+
+	// 現在の移動速度が停止速度と同じでないとき
+	if (_owner.m_moveSpeed != _owner.m_zeroMoveSpd)
+	{
+		// 移動速度を初期化
+		_owner.m_moveSpeed = _owner.m_zeroMoveSpd;
+	}
+
+	// アニメーションフレームを更新
+	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+
+	// アニメーションフレームが掴み時のフレームのとき
+	if (_owner.m_nowAnimeFrm >= _owner.m_grabFrm)
+	{
+		if (spEnemy)
+		{
+			// 敵を"拘束状態"に切り替え
+			spEnemy->ChangeAressted();
+		}
+	}
+
+	// アニメーションフレームが終了していたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_restFrmMax)
+	{
+		// ActionRestraint_Idleに切り替え
+		_owner.ChangeActionState(std::make_shared<ActionRestraint_Idle>());
+		return;
+	}
+}
+
+void Player::ActionRestraint::Exit(Player& _owner)
+{
+	// アニメーションフレームを初期化
+	_owner.m_nowAnimeFrm = 0.0f;
+}
+
+void Player::ActionRestraint_Idle::Enter(Player& _owner)
+{
+	// アニメーションを"Restraint_Idle"に切り替え
+	_owner.ChangeAnimation("Restraint_Idle");
+}
+
+void Player::ActionRestraint_Idle::Update(Player& _owner)
+{
+	const std::shared_ptr<Enemy> spEnemy = _owner.m_wpEnemy.lock();
+
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	{
+
+	}
+	else
+	{
+		// ActionIdleに切り替え
+		_owner.ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
+}
+
+void Player::ActionRestraint_Idle::Exit(Player& _owner)
+{
+	const std::shared_ptr<Enemy> spEnemy = _owner.m_wpEnemy.lock();
+
+	// 敵の情報があるとき
+	if (spEnemy)
+	{
+		// 敵を"停止状態"に切り替え
+		spEnemy->ChangeIdle();
+	}
+
+	// アニメーションフレームを初期化
+	_owner.m_nowAnimeFrm = 0.0f;
 }
 
 void Player::ActionReload_Idle::Enter(Player& _owner)

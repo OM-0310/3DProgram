@@ -20,18 +20,17 @@ void BulletNumUI::Update()
 	UINT	bulletNum	= 0; 
 	int		singleWidth = 0;
 
+	// 銃の情報があるとき
 	if (spPlayer_Ready_Pistol)
 	{
+		// 残弾数を取得
 		bulletNum = spPlayer_Ready_Pistol->GetNowBullet();
 
+		// 残弾数1つ分の横幅を算出
 		singleWidth = m_spTex->GetWidth() / spPlayer_Ready_Pistol->GetMagazinSize();
 	}
 
-	//m_rect = { 
-	//	static_cast<long>(singleWidth * bulletNum),0,
-	//	static_cast<long>(m_spTex->GetWidth()),
-	//	static_cast<long>(m_spTex->GetHeight()) };
-
+	// 描画範囲の各パラメータに代入
 	m_rect = {
 		0,0,
 		static_cast<long>(singleWidth * bulletNum),

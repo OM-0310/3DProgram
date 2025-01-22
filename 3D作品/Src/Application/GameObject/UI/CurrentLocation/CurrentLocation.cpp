@@ -19,16 +19,21 @@ void CurrentLocation::Update()
 	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 	Math::Vector3 parentPos;
 
+	// プレイヤーの情報があるとき
 	if (spPlayer)
 	{
+		// プレイヤーの座標を取得
 		parentPos = spPlayer->GetPos();
 	}
 
+	// 座標を調整
 	float x = parentPos.x * m_posMulti;
 	float y = (parentPos.z * m_posMulti) + m_adjustZPos;
 
+	// 座標を確定
 	m_pos = { x,y };
 
+	// 色情報を確定
 	m_color = { 0.0f,0.0f,1.0f,1.0f };
 }
 

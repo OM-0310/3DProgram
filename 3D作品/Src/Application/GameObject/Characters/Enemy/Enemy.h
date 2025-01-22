@@ -25,6 +25,8 @@ public:
 	void SearchProc		();						// 索敵処理
 	void ChaseProc		();						// 追跡処理
 	void LostProc		();						// 失踪処理
+	void ChangeAressted	();						// 拘束状態切り替え処理
+	void ChangeIdle		();						// 停止状態切り替え処理
 	void Death			(const bool _deathFlg); // 死亡処理
 
 	void ChangeAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);	// アニメーション切り替え処理置に移動させる処理
@@ -50,8 +52,9 @@ public:
 		Run		= 1 << 3,	// 走行状態
 		Ready	= 1 << 4,	// 構え状態
 		Shot	= 1 << 5,	// 発射状態
-		Reload	= 1 << 6,	// リロード状態
-		Death	= 1 << 7	// 死亡状態
+		Aressted= 1 << 6,	// 拘束状態
+		Reload	= 1 << 7,	// リロード状態
+		Death	= 1 << 8	// 死亡状態
 	};
 
 private:
@@ -64,8 +67,11 @@ private:
 	std::weak_ptr<Enemy_Magazine>		m_wpEnemy_Magazine;				// 敵(マガジン)情報
 	std::weak_ptr<Player>				m_wpPlayer;						// プレイヤー情報
 
-	Math::Matrix		m_mMuzzle	= Math::Matrix::Identity;	// 銃口行列
-	const Math::Vector3	m_muzzlePos = { 0.19f,1.46f,1.0 };		// 銃口座標
+	Math::Matrix		m_mMuzzle		= Math::Matrix::Identity;	// 銃口行列
+	const Math::Vector3	m_muzzlePos		= { 0.19f,1.46f,1.0 };		// 銃口座標
+
+	Math::Matrix		m_mlocalAresst	= Math::Matrix::Identity;
+	const Math::Vector3 m_localAresstPos= { -0.1f,0.0f,0.25f };
 
 	float			m_nowAnimeFrm	= 0.0f;						// 現在のアニメーションフレーム
 	const float		m_zeroAnimFrm	= 0.0f;						// アニメーション初期化用変数
@@ -184,6 +190,17 @@ private:
 
 		ActionShot	()				{}
 		~ActionShot	()	override	{}
+
+		void Enter	(Enemy& _owner)	override;
+		void Update	(Enemy& _owner)	override;
+	};
+
+	class ActionAressted : public ActionStateBase
+	{
+	public:
+
+		ActionAressted	()				{}
+		~ActionAressted	()	override	{}
 
 		void Enter	(Enemy& _owner)	override;
 		void Update	(Enemy& _owner)	override;

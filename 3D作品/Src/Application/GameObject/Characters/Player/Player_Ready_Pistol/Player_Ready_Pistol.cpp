@@ -126,8 +126,9 @@ void Player_Ready_Pistol::Update()
 		m_mWorld = spPlayer->GetMatrix();
 
 		// プレイヤーの状態が"構え状態"または"リロード状態"または"弾発射状態"であるとき
-		if (spPlayer->GetSituationType() & Player::SituationType::Ready ||
-			spPlayer->GetSituationType() & Player::SituationType::Reload ||
+		if (spPlayer->GetSituationType() & Player::SituationType::Ready		||
+			spPlayer->GetSituationType() & Player::SituationType::Reload	||
+			spPlayer->GetSituationType() & Player::SituationType::Restraint ||
 			spPlayer->GetSituationType() & Player::SituationType::Shot)
 		{
 			// アルファ値を最大値にする

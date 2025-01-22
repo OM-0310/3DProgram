@@ -19,6 +19,7 @@ void Enemy::Init()
 	ChangeAnimation("Idle");
 
 	m_mMuzzle		= Math::Matrix::CreateTranslation(m_muzzlePos);
+	m_mlocalAresst	= Math::Matrix::CreateTranslation(m_localAresstPos);
 
 	m_dirFlg		= false;
 	m_waryFlg		= false;
@@ -112,10 +113,6 @@ void Enemy::Update()
 	{
 		m_nowState->Update(*this);
 	}
-
-	m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle.y));
-	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
-	m_mWorld = m_mRot * m_mTrans;
 }
 
 void Enemy::PostUpdate()
@@ -429,6 +426,20 @@ void Enemy::LostProc()
 	}
 }
 
+void Enemy::ChangeAressted()
+{
+	// ActionAresstedに切り替え
+	ChangeActionState(std::make_shared<ActionAressted>());
+	return;
+}
+
+void Enemy::ChangeIdle()
+{
+	// ActionIdleに切り替え
+	ChangeActionState(std::make_shared<ActionIdle>());
+	return;
+}
+
 void Enemy::Death(const bool _deathFlg)
 {
 	// 死亡フラグをtrueにする
@@ -515,6 +526,10 @@ void Enemy::ActionIdle::Update(Enemy& _owner)
 
 	//	キャラクターの回転角度を計算する
 	_owner.UpdateRotate(_owner.m_moveDir);
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
 void Enemy::ActionWalk::Enter(Enemy& _owner)
@@ -623,6 +638,10 @@ void Enemy::ActionWalk::Update(Enemy& _owner)
 
 	//	キャラクターの回転角度を計算する
 	_owner.UpdateRotate(_owner.m_moveDir);
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
 void Enemy::ActionDiscover::Enter(Enemy& _owner)
@@ -646,6 +665,15 @@ void Enemy::ActionDiscover::Enter(Enemy& _owner)
 
 void Enemy::ActionDiscover::Update(Enemy& _owner)
 {
+	const std::shared_ptr<Player> spPlayer = _owner.m_wpPlayer.lock();
+
+	// プレイヤーの情報があるとき
+	if (spPlayer)
+	{
+		// 敵とプレイヤーの差ベクトルを算出
+		_owner.m_moveDir = spPlayer->GetPos() = _owner.m_pos;
+	}
+
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
 
@@ -672,6 +700,10 @@ void Enemy::ActionDiscover::Update(Enemy& _owner)
 
 	// キャラクターの回転角度を計算する
 	_owner.UpdateRotate(_owner.m_moveDir);
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
 void Enemy::ActionRun::Enter(Enemy& _owner)
@@ -754,6 +786,10 @@ void Enemy::ActionRun::Update(Enemy& _owner)
 
 	// キャラクターの回転角度を計算する
 	_owner.UpdateRotate(_owner.m_moveDir);
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
 void Enemy::ActionReady::Enter(Enemy& _owner)
@@ -847,6 +883,10 @@ void Enemy::ActionReady::Update(Enemy& _owner)
 
 	// キャラクターの回転角度を計算する
 	_owner.UpdateRotate(_owner.m_moveDir);
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
 void Enemy::ActionShot::Enter(Enemy& _owner)
@@ -982,6 +1022,46 @@ void Enemy::ActionShot::Update(Enemy& _owner)
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
 		return;
 	}
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
+}
+
+void Enemy::ActionAressted::Enter(Enemy& _owner)
+{
+	// 敵の状態が"拘束状態"でないとき
+	if (_owner.m_sitType != SituationType::Aressted)
+	{
+		// 敵の状態を"拘束状態"に切り替え、
+		// アニメーションを"Aressted"に切り替え
+		_owner.m_sitType = SituationType::Aressted;
+		_owner.ChangeAnimation("Aressted");
+	}
+}
+
+void Enemy::ActionAressted::Update(Enemy& _owner)
+{
+	const std::shared_ptr<Player> spPlayer = _owner.m_wpPlayer.lock();
+	Math::Vector3 parentPos;
+
+	// プレイヤーの情報があるとき
+	if (spPlayer)
+	{
+		// プレイヤーの行列を格納
+		parentPos = spPlayer->GetPos();
+	}
+
+	// 発見フラグがfalseのとき
+	if (!_owner.m_findFlg)
+	{
+		// 発見フラグをtrueにする
+		_owner.m_findFlg = true;
+	}
+
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(parentPos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans * _owner.m_mlocalAresst;
+
 }
 
 void Enemy::ActionReload::Enter(Enemy& _owner)
@@ -1040,11 +1120,25 @@ void Enemy::ActionReload::Update(Enemy& _owner)
 			// リロードする
 			spGun->Reload();
 
-			// ActionIdleに切り替え
-			_owner.ChangeActionState(std::make_shared<ActionIdle>());
-			return;
+			// 発見フラグがtrueのとき
+			if (_owner.m_findFlg)
+			{
+				// ActionReadyに切り替え
+				_owner.ChangeActionState(std::make_shared<ActionReady>());
+				return;
+			}
+			else
+			{
+				// ActionIdleに切り替え
+				_owner.ChangeActionState(std::make_shared<ActionIdle>());
+				return;
+			}
 		}
 	}
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
 void Enemy::ActionDeath::Enter(Enemy& _owner)
@@ -1098,4 +1192,8 @@ void Enemy::ActionDeath::Update(Enemy& _owner)
 		_owner.m_dissolveCnt	= _owner.m_dissolveMax;
 		_owner.m_isExpired		= true;
 	}
+
+	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
+	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
+	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }

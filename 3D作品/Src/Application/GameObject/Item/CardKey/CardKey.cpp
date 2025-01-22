@@ -25,8 +25,10 @@ void CardKey::Init()
 
 void CardKey::Update()
 {
+	// プレイヤーとの当たり判定処理
 	ItemBase::UpdateCollision();
 
+	// 点滅処理
 	Flickering(m_alphaSpeed);
 }
 
