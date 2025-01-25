@@ -24,7 +24,9 @@ private:
 
 	std::weak_ptr<SecretFile>	m_wpFile;
 
-	int							m_lifeSpan	= 0;
+	const short					m_lifeSpanMax	= 35;
+	const short					m_lifeSpanMin	= 0;
+	short						m_lifeSpan		= 0;
 
-	bool						m_useFlg	= false;
+	bool						m_useFlg		= false;
 };

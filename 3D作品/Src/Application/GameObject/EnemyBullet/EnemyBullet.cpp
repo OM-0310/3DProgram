@@ -19,7 +19,7 @@ void EnemyBullet::Init()
 	m_pos			= {};
 	m_moveDir		= {};
 
-	m_lifeSpan		= 100;
+	m_lifeSpan		= m_lifeSpanMax;
 
 	m_pDebugWire	= std::make_unique<KdDebugWireFrame>();
 }
@@ -29,7 +29,7 @@ void EnemyBullet::Update()
 	m_pos += m_moveDir * m_moveSpeed;
 
 	m_lifeSpan--;
-	if (m_lifeSpan < 0)
+	if (m_lifeSpan < m_lifeSpanMin)
 	{
 		m_isExpired = true;
 	}

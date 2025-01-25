@@ -4,7 +4,7 @@
 
 void BulletNumUI::Init()
 {
-	UIBase::SetAsset("Asset/Textures/UI/BulletNumUI/BulletNumUI.png");
+	UIBase::SetAsset("Asset/Textures/UI/GunInfo/BulletNumUI/BulletNumUI.png");
 
 	m_rect	= { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
 

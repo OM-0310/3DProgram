@@ -4,7 +4,7 @@
 
 void HPBarUI::Init()
 {
-	UIBase::SetAsset("Asset/Textures/UI/HPBarUI/HPBar.png");
+	UIBase::SetAsset("Asset/Textures/UI/HPBar/HPBarUI/HPBarUI.png");
 
 	m_rect = { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
 

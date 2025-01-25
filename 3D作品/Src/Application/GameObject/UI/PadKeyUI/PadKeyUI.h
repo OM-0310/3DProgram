@@ -22,13 +22,15 @@ public:
 
 private:
 
-	std::weak_ptr<LockedDoor>	m_wpLockedDoor;			// 鍵のかかったドア情報
+	std::weak_ptr<LockedDoor>	m_wpLockedDoor;				// 鍵のかかったドア情報
 
-	bool						m_useFlg	= false;	// フラグ
+	bool						m_useFlg		= false;	// フラグ
 
-	int							m_lifeSpan	= 0;		// 生存期間
-	int							m_singleX	= 0;		// アニメーション時の1つの画像サイズ
+	const short					m_lifeSpanMax	= 35;		// 生存期間最大値 35
+	const short					m_lifeSpanMin	= 0;		// 生存期間最小値 0
+	short						m_lifeSpan		= 0;		// 生存期間
+	short						m_singleX		= 0;		// アニメーション時の1つの画像サイズ
 
-	const int					m_animMax	= 12;		// アニメーションする画像の総数
-	float						m_animCnt	= 0.0f;		// アニメーションカウント
+	const short					m_animMax		= 12;		// アニメーションする画像の総数
+	float						m_animCnt		= 0.0f;		// アニメーションカウント
 };

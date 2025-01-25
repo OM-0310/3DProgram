@@ -39,7 +39,7 @@ void Bullet::Update()
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Center	= m_pos;
 	sphere.m_sphere.Radius	= m_hitArea;
-	sphere.m_type			= KdCollider::TypeDamage;
+	sphere.m_type			= KdCollider::TypeDamage | KdCollider::TypeGround;
 
 	// デバッグ確認用
 	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
@@ -47,14 +47,26 @@ void Bullet::Update()
 	bool hit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
-		if (obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy)
+		if (obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy_1 ||
+			obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy_2)
 		{
 			hit = obj->Intersects(sphere, nullptr);
 
 			if (hit)
 			{
-				obj->SetHPDec(BULLETPOW);
+				obj->SetHPDec(m_bulletPow);
 
+				ClassDestruction();
+
+				break;
+			}
+		}
+		else if (obj->GetObjectType() == KdGameObject::ObjectType::TypeObstacles)
+		{
+			hit = obj->Intersects(sphere, nullptr);
+
+			if (hit)
+			{
 				ClassDestruction();
 
 				break;

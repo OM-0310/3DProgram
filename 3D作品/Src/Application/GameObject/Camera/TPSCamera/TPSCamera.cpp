@@ -7,7 +7,8 @@ void TPSCamera::Init()
 	// 親クラスの初期化呼び出し
 	CameraBase::Init();
 
-	m_basePoint		= m_tpsRBasePoint;
+	//m_basePoint		= m_tpsRBasePoint;
+	m_basePoint = {};
 
 	m_camType		= CameraType::TpsR;
 	m_pastCamType	= m_camType;

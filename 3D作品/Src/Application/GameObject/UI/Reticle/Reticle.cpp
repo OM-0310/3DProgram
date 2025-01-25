@@ -1,14 +1,35 @@
 ﻿#include "Reticle.h"
 
+#include "../../Camera/TPSCamera/TPSCamera.h"
+
 void Reticle::Init()
 {
 	UIBase::SetAsset("Asset/Textures/UI/Reticle/Reticle.png");
 
-	m_pos = Math::Vector2::Zero;
+	m_pos = m_aimRPos;
 
 	m_color = kWhiteColor;
 
 	m_Active = false;
+}
+
+void Reticle::Update()
+{
+	const std::shared_ptr<TPSCamera> _spCamera = m_wpTPSCamera.lock();
+
+	if (_spCamera)
+	{
+		if (_spCamera->GetCamType() == TPSCamera::CameraType::AimR)
+		{
+			//m_pos = m_aimRPos;
+			m_pos = {};
+		}
+		else if(_spCamera->GetCamType() == TPSCamera::CameraType::AimL)
+		{
+			//m_pos = m_aimLPos;
+			m_pos = {};
+		}
+	}
 }
 
 void Reticle::DrawSprite()

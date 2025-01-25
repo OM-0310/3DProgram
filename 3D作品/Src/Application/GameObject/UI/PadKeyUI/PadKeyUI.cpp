@@ -9,12 +9,12 @@ void PadKeyUI::Init()
 
 	m_pos			= { 0.f, -220.f };
 	m_alpha			= 0.f;
-	m_alphaSpeed	= 0.1f;
+	m_alphaSpeed	= 0.2f;
 
 	m_useFlg		= false;
-	m_lifeSpan		= 70;
+	m_lifeSpan		= m_lifeSpanMax;
 	m_animCnt		= 0;
-	m_singleX		= m_spTex->GetWidth() / m_animMax;
+	m_singleX		= static_cast<short>(m_spTex->GetWidth()) / m_animMax;
 
 	m_color			= { 1.f,1.f,1.f,m_alpha };
 
@@ -43,13 +43,13 @@ void PadKeyUI::Update()
 				m_alpha -= m_alphaSpeed;
 			}
 
-			if (m_alpha >= 1.f)
+			if (m_alpha >= m_alphaMax)
 			{
-				m_alpha = 1.f;
+				m_alpha = m_alphaMax;
 			}
-			if (m_alpha <= 0.f)
+			if (m_alpha <= m_alphaMin)
 			{
-				m_alpha = 0.f;
+				m_alpha = m_alphaMin;
 			}
 		}
 	}
@@ -61,18 +61,18 @@ void PadKeyUI::Update()
 		{
 		case AlphaStateType::Inc:
 			m_alpha += m_alphaSpeed;
-			if (m_alpha >= 1.f)
+			if (m_alpha >= m_alphaMax)
 			{
 				m_alphaState = AlphaStateType::Dec;
-				m_alpha = 1.f;
+				m_alpha = m_alphaMax;
 			}
 			break;
 		case AlphaStateType::Dec:
 			m_alpha -= m_alphaSpeed;
-			if (m_alpha <= 0.f)
+			if (m_alpha <= m_alphaMin)
 			{
 				m_alphaState = AlphaStateType::Inc;
-				m_alpha = 0.f;
+				m_alpha = m_alphaMin;
 			}
 			break;
 		}
@@ -80,7 +80,7 @@ void PadKeyUI::Update()
 		{
 			m_animCnt = static_cast<float>(m_animMax) - 1;
 		}
-		if (m_lifeSpan == 0)
+		if (m_lifeSpan <= m_lifeSpanMin)
 		{
 			m_isExpired = true;
 		}

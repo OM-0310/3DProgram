@@ -35,6 +35,20 @@ Math::Vector3 KdGameObject::GetScale() const
 	return Math::Vector3(m_mWorld.Right().Length(), m_mWorld.Up().Length(), m_mWorld.Backward().Length());
 }
 
+bool KdGameObject::CheckInScreen(const DirectX::BoundingFrustum& frustum) const
+{
+	DirectX::BoundingSphere boundingSphere;
+	boundingSphere.Center = { m_mWorld.Translation().x, m_mWorld.Translation().y, m_mWorld.Translation().z };
+	boundingSphere.Radius = 1.0f;
+
+	if (frustum.Intersects(boundingSphere))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void KdGameObject::CalcDistSqrFromCamera(const Math::Vector3& camPos)
 {
 	m_distSqrFromCamera = (m_mWorld.Translation() - camPos).LengthSquared();

@@ -12,7 +12,7 @@ void SecretFileLocation::Init()
 	m_color			= { 0.0f,1.0f,0.0f,1.0f };
 
 	m_active		= false;
-	m_permissionFlg = true;
+	m_permissionFlg = false;
 }
 
 void SecretFileLocation::Update()

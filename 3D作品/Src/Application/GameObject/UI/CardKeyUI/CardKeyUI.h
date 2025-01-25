@@ -26,8 +26,9 @@ private:
 
 	std::weak_ptr<CardKey>	m_wpCard;
 
-	int						m_lifeSpan		= 0;	// 生存期間
+	const int				m_lifeSpanMax	= 35;	// 生存期間最大値
 	const int				m_lifeSpanMin	= 0;	// 生存期間最小値
+	int						m_lifeSpan		= 0;	// 生存期間
 
 	bool					m_useFlg	= false;	// 使用フラグ
 };

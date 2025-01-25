@@ -23,6 +23,4 @@ public:
 private:
 
 	std::weak_ptr<Player_Main> m_wpPlayer_Main;
-
-	Math::Vector2					m_pivot;
 };

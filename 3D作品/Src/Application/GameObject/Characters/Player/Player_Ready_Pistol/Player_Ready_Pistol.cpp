@@ -17,12 +17,12 @@ void Player_Ready_Pistol::Init()
 
 	m_nowBullet		= m_magazineSize;
 
-	m_shotWait		= 0.0f;
+	m_shotWait		= m_shotWaitMin;
 
 	m_shotFlg		= false;
 	m_rayBulletFlg	= false;
 
-	m_localMuzzleMat = Math::Matrix::CreateTranslation({ 0.33f,1.68f,0.1f });
+	m_localMuzzleMat = Math::Matrix::CreateTranslation({ 0.0f,1.56f,1.0f });
 
 	m_alpha = m_alphaMin;
 
@@ -58,12 +58,6 @@ void Player_Ready_Pistol::Update()
 	sphereInfo.m_type = KdCollider::TypeDamage;
 
 	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, kBlueColor);
-
-	m_shotWait -= m_time;
-	if (m_shotWait <= 0.0f)
-	{
-		m_shotWait = 0.0f;
-	}
 
 	KdCollider::RayInfo rayInfo;
 	rayInfo.m_pos = muzzlePos;
@@ -101,7 +95,7 @@ void Player_Ready_Pistol::Update()
 		{
 			if (hit)
 			{
-				if (m_shotWait <= 0.0f)
+				if (m_shotWait <= m_shotWaitMin)
 				{
 					m_nowBullet--;
 					m_shotWait = m_shotWaitMax;
@@ -126,9 +120,11 @@ void Player_Ready_Pistol::Update()
 		m_mWorld = spPlayer->GetMatrix();
 
 		// プレイヤーの状態が"構え状態"または"リロード状態"または"弾発射状態"であるとき
-		if (spPlayer->GetSituationType() & Player::SituationType::Ready		||
-			spPlayer->GetSituationType() & Player::SituationType::Reload	||
-			spPlayer->GetSituationType() & Player::SituationType::Restraint ||
+		if (spPlayer->GetSituationType() & Player::SituationType::Ready				||
+			spPlayer->GetSituationType() & Player::SituationType::Reload			||
+			spPlayer->GetSituationType() & Player::SituationType::Restraint			||
+			spPlayer->GetSituationType() & Player::SituationType::Restraint_Idle	||
+			spPlayer->GetSituationType() & Player::SituationType::Kill				||
 			spPlayer->GetSituationType() & Player::SituationType::Shot)
 		{
 			// アルファ値を最大値にする
@@ -140,6 +136,16 @@ void Player_Ready_Pistol::Update()
 			// アルファ値を最小値にする
 			m_alpha = m_alphaMin;
 		}
+	}
+
+	// 発射待機時間を減少する
+	m_shotWait--;
+
+	// 発射待機時間が最小値以下のとき
+	if (m_shotWait <= m_shotWaitMin)
+	{
+		// 発射待機時間を最小値に設定
+		m_shotWait = m_shotWaitMin;
 	}
 
 	// 残弾数がマガジンサイズより大きいとき

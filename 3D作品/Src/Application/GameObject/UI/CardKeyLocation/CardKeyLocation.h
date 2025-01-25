@@ -35,4 +35,6 @@ private:
 
 	const float	m_posMulti		= 2.5f;		// 座標掛け算値
 	const float	m_adjustZPos	= 157.5f;	// Z座標調整
+
+	
 };

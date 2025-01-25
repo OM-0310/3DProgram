@@ -23,8 +23,8 @@ private:
 	Math::Vector3					m_pos			= Math::Vector3::Zero;
 	Math::Vector3					m_moveDir		= Math::Vector3::Zero;
 
-	static const int				BULLETPOW		= 1;
-	int								m_lifeSpan		= 0;
+	const short						m_bulletPow		= 1;
+	short							m_lifeSpan		= 0;
 	const float						m_hitArea		= 0.4f;
 
 	const float						m_moveSpeed		= 2.0f;

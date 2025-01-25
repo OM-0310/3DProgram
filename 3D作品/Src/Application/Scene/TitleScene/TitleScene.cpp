@@ -2,9 +2,6 @@
 #include "../GameScene/GameScene.h"
 #include "../SceneManager.h"
 
-#include "../../GameObject/Terrains/Ground/Ground.h"
-#include "../../GameObject/Terrains/Building/Building.h"
-
 
 void TitleScene::Event()
 {

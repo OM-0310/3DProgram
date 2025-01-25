@@ -10,10 +10,10 @@ void CardKeyUI::Init()
 
 	m_pos			= { 0.f, -220.f };
 	m_alpha			= 0.f;
-	m_alphaSpeed	= 0.1f;
+	m_alphaSpeed	= 0.2f;
 
 	m_useFlg		= false;
-	m_lifeSpan		= 70;
+	m_lifeSpan		= m_lifeSpanMax;
 
 	m_color			= { 1.f,1.f,1.f,m_alpha };
 

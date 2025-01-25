@@ -25,8 +25,10 @@ private:
 	Math::Vector3					m_moveDir		= Math::Vector3::Zero;
 	const Math::Vector3				m_localTrailPos = { 0.0f,0.0f,-2.0 };
 
-	static const int				BULLETPOW		= 1;
-	int								m_lifeSpan		= 0;
+	static const short				BULLETPOW		= 1;
+	const short						m_lifeSpanMax	= 100;
+	const short						m_lifeSpanMin	= 0;
+	short							m_lifeSpan		= 0;
 	const float						m_hitArea		= 0.2f;
 
 	const float						m_moveSpeed		= 2.0f;

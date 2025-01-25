@@ -2,7 +2,7 @@
 
 void GunInfoUI::Init()
 {
-	UIBase::SetAsset("Asset/Textures/UI/GunInfoUI/GunInfoUI.png");
+	UIBase::SetAsset("Asset/Textures/UI/GunInfo/GunInfoUI/GunInfoUI.png");
 
 	m_rect	= { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
 

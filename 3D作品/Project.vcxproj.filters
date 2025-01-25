@@ -175,18 +175,6 @@
     <Filter Include="Src\Application\GameObject\Terrains\RockWall">
       <UniqueIdentifier>{278b7bdc-1cb2-47bc-8909-42589e47d3ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun">
-      <UniqueIdentifier>{91373d35-2680-4cd6-b22f-554bde5aebba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine">
-      <UniqueIdentifier>{45517c89-668b-4a44-b810-56c3b01b6473}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine">
-      <UniqueIdentifier>{f6718afb-d665-42d8-a52a-fef152ec4dcb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main">
-      <UniqueIdentifier>{216b20dd-c8f3-4be1-a692-ac665d51a360}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\EnemyBullet">
       <UniqueIdentifier>{16e05c07-3436-47eb-a609-ea5670a5d280}</UniqueIdentifier>
     </Filter>
@@ -228,6 +216,81 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\UI\SecretFileLocation">
       <UniqueIdentifier>{94676e5c-c47c-4776-807d-b6f39d6a9a53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\HPBarUIBack">
+      <UniqueIdentifier>{cbd9e0a9-8bc8-40ed-af89-7ee561bc1d25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\RestraintUI">
+      <UniqueIdentifier>{0cd29db9-cd5b-43a4-943e-3a1c9c56e846}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\KillUI">
+      <UniqueIdentifier>{ed2f18b0-6ed3-41f7-a73f-8ee2cf21b421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\InterrogationUI">
+      <UniqueIdentifier>{d286f08b-6531-4fe1-9c20-34962418f713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\AnswerUI">
+      <UniqueIdentifier>{5ee4bf2f-2baa-4397-9bf5-429620bd4cc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\AnswerUIBack">
+      <UniqueIdentifier>{0cc47049-5d73-45f0-831a-88d63c518063}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\NoAnswerUI">
+      <UniqueIdentifier>{9655e8c7-7749-416d-bdcf-47e7c4b4acfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MapUpdateUI">
+      <UniqueIdentifier>{0c4b89e8-1425-4450-b6c8-b469acf30722}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MapUpdateUIBack">
+      <UniqueIdentifier>{a6eb5a4e-b16d-4885-b93d-6f8585ea1c79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MainMissionUI">
+      <UniqueIdentifier>{fbd917f3-ba4e-4d8b-b8ca-45af5f08666c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_1">
+      <UniqueIdentifier>{fb2d8a80-a8f5-4b78-8526-9c24525d347f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_1">
+      <UniqueIdentifier>{91373d35-2680-4cd6-b22f-554bde5aebba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_NoMagazine_1">
+      <UniqueIdentifier>{45517c89-668b-4a44-b810-56c3b01b6473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Magazine_1">
+      <UniqueIdentifier>{f6718afb-d665-42d8-a52a-fef152ec4dcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Main_1">
+      <UniqueIdentifier>{216b20dd-c8f3-4be1-a692-ac665d51a360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_2">
+      <UniqueIdentifier>{2913822e-e53c-4480-9952-bd5777a595db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_3">
+      <UniqueIdentifier>{14dcc54e-2411-4065-8b27-e2b3a52f0db6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_2">
+      <UniqueIdentifier>{2675ad36-bd15-4794-b3a0-597e12e098e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_NoMagazine_2">
+      <UniqueIdentifier>{01db9fd1-89f4-4b0a-8e5d-0d44e9ee74ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Magazine_2">
+      <UniqueIdentifier>{237b1081-6e44-41c4-9274-a8fa19ccd186}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Main_2">
+      <UniqueIdentifier>{f108fe12-cf16-47ed-a9bf-07bf2c97dee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_3">
+      <UniqueIdentifier>{4cef9acd-58d5-4be8-a6ce-ab7c1491a5e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_NoMagazine_3">
+      <UniqueIdentifier>{6e2b6e4b-5474-402e-bf72-2879e8825988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Magazine_3">
+      <UniqueIdentifier>{904c907b-b02e-4b00-b937-0503b5805941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Main_3">
+      <UniqueIdentifier>{1ad41c6c-2a63-4887-8f81-0b1b6e1987c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -414,20 +477,11 @@
     <ClInclude Include="Src\Application\GameObject\Characters\Player\Player.h">
       <Filter>Src\Application\GameObject\Characters\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground.h">
-      <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\UIBase.h">
       <Filter>Src\Application\GameObject\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy.h">
-      <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h">
       <Filter>Src\Application\GameObject\UI\Reticle</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building.h">
-      <Filter>Src\Application\GameObject\Terrains\Building</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Sky\Sky.h">
       <Filter>Src\Application\GameObject\Sky</Filter>
@@ -498,18 +552,6 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\RockWall\RockWall.h">
       <Filter>Src\Application\GameObject\Terrains\RockWall</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun\Enemy_Gun.h">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine\Enemy_Gun_NoMagazine.h">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine\Enemy_Magazine.h">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Magazine</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.h">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Main</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\EnemyBullet\EnemyBullet.h">
       <Filter>Src\Application\GameObject\EnemyBullet</Filter>
     </ClInclude>
@@ -554,6 +596,81 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\SecretFileLocation\SecretFileLocation.h">
       <Filter>Src\Application\GameObject\UI\SecretFileLocation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\HPBarUIBack\HPBarUIBack.h">
+      <Filter>Src\Application\GameObject\UI\HPBarUIBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\RestraintUI\RestraintUI.h">
+      <Filter>Src\Application\GameObject\UI\RestraintUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\KillUI\KillUI.h">
+      <Filter>Src\Application\GameObject\UI\KillUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\InterrogationUI\InterrogationUI.h">
+      <Filter>Src\Application\GameObject\UI\InterrogationUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\AnswerUI\AnswerUI.h">
+      <Filter>Src\Application\GameObject\UI\AnswerUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\AnswerUIBack\AnswerUIBack.h">
+      <Filter>Src\Application\GameObject\UI\AnswerUIBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\NoAnswerUI\NoAnswerUI.h">
+      <Filter>Src\Application\GameObject\UI\NoAnswerUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MapUpdateUI\MapUpdateUI.h">
+      <Filter>Src\Application\GameObject\UI\MapUpdateUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MapUpdateUIBack\MapUpdateUIBack.h">
+      <Filter>Src\Application\GameObject\UI\MapUpdateUIBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MainMissionUI\MainMissionUI.h">
+      <Filter>Src\Application\GameObject\UI\MainMissionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_1.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_1\Enemy_Gun_1.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_NoMagazine_1\Enemy_Gun_NoMagazine_1.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_NoMagazine_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Magazine_1\Enemy_Magazine_1.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Magazine_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Main_1\Enemy_Main_1.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Main_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_2\Enemy_Gun_2.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_NoMagazine_2\Enemy_Gun_NoMagazine_2.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_NoMagazine_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Magazine_2\Enemy_Magazine_2.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Magazine_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Main_2\Enemy_Main_2.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Main_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_2.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_3\Enemy_Gun_3.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_3</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_NoMagazine_3\Enemy_Gun_NoMagazine_3.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_NoMagazine_3</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Magazine_3\Enemy_Magazine_3.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Magazine_3</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Main_3\Enemy_Main_3.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Main_3</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_3.h">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -713,20 +830,11 @@
     <ClCompile Include="Src\Application\GameObject\Characters\Player\Player.cpp">
       <Filter>Src\Application\GameObject\Characters\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground.cpp">
-      <Filter>Src\Application\GameObject\Terrains\Ground</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp">
       <Filter>Src\Application\GameObject\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy.cpp">
-      <Filter>Src\Application\GameObject\Characters\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp">
       <Filter>Src\Application\GameObject\UI\Reticle</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building.cpp">
-      <Filter>Src\Application\GameObject\Terrains\Building</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Sky\Sky.cpp">
       <Filter>Src\Application\GameObject\Sky</Filter>
@@ -797,18 +905,6 @@
     <ClCompile Include="Src\Application\GameObject\Terrains\RockWall\RockWall.cpp">
       <Filter>Src\Application\GameObject\Terrains\RockWall</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun\Enemy_Gun.cpp">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine\Enemy_Gun_NoMagazine.cpp">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Gun_NoMagazine</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Magazine\Enemy_Magazine.cpp">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Magazine</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_Main\Enemy_Main.cpp">
-      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_Main</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\EnemyBullet\EnemyBullet.cpp">
       <Filter>Src\Application\GameObject\EnemyBullet</Filter>
     </ClCompile>
@@ -853,6 +949,81 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\SecretFileLocation\SecretFileLocation.cpp">
       <Filter>Src\Application\GameObject\UI\SecretFileLocation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\HPBarUIBack\HPBarUIBack.cpp">
+      <Filter>Src\Application\GameObject\UI\HPBarUIBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\RestraintUI\RestraintUI.cpp">
+      <Filter>Src\Application\GameObject\UI\RestraintUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\KillUI\KillUI.cpp">
+      <Filter>Src\Application\GameObject\UI\KillUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\InterrogationUI\InterrogationUI.cpp">
+      <Filter>Src\Application\GameObject\UI\InterrogationUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\AnswerUI\AnswerUI.cpp">
+      <Filter>Src\Application\GameObject\UI\AnswerUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\AnswerUIBack\AnswerUIBack.cpp">
+      <Filter>Src\Application\GameObject\UI\AnswerUIBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\NoAnswerUI\NoAnswerUI.cpp">
+      <Filter>Src\Application\GameObject\UI\NoAnswerUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MapUpdateUI\MapUpdateUI.cpp">
+      <Filter>Src\Application\GameObject\UI\MapUpdateUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MapUpdateUIBack\MapUpdateUIBack.cpp">
+      <Filter>Src\Application\GameObject\UI\MapUpdateUIBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MainMissionUI\MainMissionUI.cpp">
+      <Filter>Src\Application\GameObject\UI\MainMissionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_1.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_1\Enemy_Gun_1.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_1</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_NoMagazine_1\Enemy_Gun_NoMagazine_1.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Gun_NoMagazine_1</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Magazine_1\Enemy_Magazine_1.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Magazine_1</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Main_1\Enemy_Main_1.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_1\Enemy_Main_1</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_2\Enemy_Gun_2.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_2</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_NoMagazine_2\Enemy_Gun_NoMagazine_2.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Gun_NoMagazine_2</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Magazine_2\Enemy_Magazine_2.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Magazine_2</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Main_2\Enemy_Main_2.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_Main_2</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_2\Enemy_2.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_2</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_3\Enemy_Gun_3.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_3</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_NoMagazine_3\Enemy_Gun_NoMagazine_3.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Gun_NoMagazine_3</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Magazine_3\Enemy_Magazine_3.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Magazine_3</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Main_3\Enemy_Main_3.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Main_3</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_3.cpp">
+      <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

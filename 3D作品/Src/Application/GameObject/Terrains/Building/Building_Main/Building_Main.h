@@ -10,7 +10,6 @@ public:
 
 	void Init						()	override;
 	void DrawLit					()	override;
-	//void GenerateDepthMapFromLight	()	override;
 
 private:
 };

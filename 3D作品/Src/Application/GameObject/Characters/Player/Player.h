@@ -1,19 +1,27 @@
 ﻿#pragma once
 #include "../CharaBase.h"
 
+#define TOTALKEYNUM 7
+
 class TPSCamera;
 class Player_Main;
 class Player_Disarm;
 class Player_Disarm_Pistol;
 class Player_Ready_Pistol;
-class Enemy;
+class Enemy_1;
+class Enemy_2;
+class Enemy_3;
 class LockedDoor;
 class CardKey;
 class Goal;
 class SecretFile;
 class Reticle;
+class RestraintUI;
+class KillUI;
+class InterrogationUI;
 class MiniMapUI;
 class MiniMapUIBack;
+class MainMissionUI;
 class CurrentLocation;
 class CardKeyLocation;
 class SecretFileLocation;
@@ -22,6 +30,18 @@ class PlayerStateBase;
 class Player : public CharaBase
 {
 public:
+
+	enum KeyFlgType
+	{
+		KillKey			,	// 0:殺害キー
+		InterKey		,	// 1:尋問キー
+		OpenMapKey		,	// 2:マップ展開キー
+		ShotKey			,	// 3:弾発射キー
+		ReloadKey		,	// 4:リロードキー
+		CollectKey		,	// 5:アイテム回収キー
+		ChangeKey		,	// 6:視点切り替えキー
+		PosKey			,	// 7:姿勢切り替えキー
+	};
 
 	enum SituationType
 	{
@@ -33,6 +53,7 @@ public:
 		Reload			= 1 << 5,	// リロード状態
 		Restraint		= 1 << 6,	// 拘束状態
 		Restraint_Idle	= 1 << 7,	// 拘束停止状態
+		Kill			= 1 << 8	// 処刑状態
 	};
 
 	enum class PostureType
@@ -61,6 +82,7 @@ public:
 	void CollectItemProc		();	// アイテム回収処理
 	void AutoReloadProc			();	// 自動リロード処理
 	void ChanegeViewPointProc	();	// 視点切り替え処理
+	void RestraintProc			();	// 拘束処理
 
 	// アニメーション切り替え処理
 	void ChangeAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);
@@ -80,8 +102,14 @@ public:
 	void SetPlayer_Ready_Pistol		// 構え時の銃情報セット
 	(const std::shared_ptr<Player_Ready_Pistol>& _spPlayer_Ready_Pistol) { m_wpPlayer_Ready_Pistol = _spPlayer_Ready_Pistol; }
 
-	void SetEnemy					// 敵情報セット
-	(const std::shared_ptr<Enemy>& _spEnemy) { m_wpEnemy = _spEnemy; }
+	void SetEnemy_1					// 敵1情報セット
+	(const std::shared_ptr<Enemy_1>& _spEnemy_1) { m_wpEnemy_1 = _spEnemy_1; }
+
+	void SetEnemy_2					// 敵2情報セット
+	(const std::shared_ptr<Enemy_2>& _spEnemy_2) { m_wpEnemy_2 = _spEnemy_2; }
+
+	void SetEnemy_3					// 敵2情報セット
+	(const std::shared_ptr<Enemy_3>& _spEnemy_3) { m_wpEnemy_3 = _spEnemy_3; }
 
 	void SetCardKey					// カードキー情報セット
 	(const std::shared_ptr<CardKey>& _spCard) { m_wpCard = _spCard; }
@@ -98,11 +126,23 @@ public:
 	void SetReticle					// レティクル情報セット
 	(const std::shared_ptr<Reticle>& _spReticle) { m_wpReticle = _spReticle; }
 
+	void SetRestraintUI				// 拘束UI情報セット
+	(const std::shared_ptr<RestraintUI>& _spRestraintUI) { m_wpRestraintUI = _spRestraintUI; }
+
+	void SetKillUI					// 殺害UI情報セット
+	(const std::shared_ptr<KillUI>& _spKillUI) { m_wpKillUI = _spKillUI; }
+
+	void SetInterrogationUI			// 尋問UI情報セット
+	(const std::shared_ptr<InterrogationUI>& _spInterrogationUI) { m_wpInterrogationUI = _spInterrogationUI; }
+
 	void SetMiniMapUI				// ミニマップ情報セット
 	(const std::shared_ptr<MiniMapUI>& _spMiniMapUI) { m_wpMiniMapUI = _spMiniMapUI; }
 
 	void SetMiniMapUIBack			// ミニマップ背景情報セット
 	(const std::shared_ptr<MiniMapUIBack> _spMiniMapUIBack) { m_wpMiniMapUIBack = _spMiniMapUIBack; }
+
+	void SetMainMissionUI			// メインミッションUI情報セット
+	(const std::shared_ptr<MainMissionUI>& _spMainMissionUI) { m_wpMainMissionUI = _spMainMissionUI; }
 
 	void SetCurrentLocation			// 現在地UI情報セット
 	(const std::shared_ptr<CurrentLocation>& _spCurrentLocation) { m_wpCurrentLocation = _spCurrentLocation; }
@@ -117,19 +157,29 @@ public:
 	const ItemCollectType&	GetItemCollType		() const	{ return m_itemCollType;	}
 	const UINT&				GetSituationType	() const	{ return m_sType;			}
 	const PostureType&		GetPostureType		() const	{ return m_posType;			}
+	const Math::Vector3&	GetDiffVec			() const	{ return m_diffVec;			}
+	const float&			GetTightArea		() const	{ return m_tightArea;		}
 
 private:
 
 	std::weak_ptr<TPSCamera>			m_wpCamera;					// カメラ情報
+
 	std::weak_ptr<Player_Main>			m_wpPlayer_Main;			// プレイヤー本体情報
 	std::weak_ptr<Player_Disarm>		m_wpPlayer_Disarm;			// プレイヤー(武装解除)情報 
 	std::weak_ptr<Player_Disarm_Pistol> m_wpPlayer_Disarm_Pistol;	// 銃(武装解除)情報 
 	std::weak_ptr<Player_Ready_Pistol>	m_wpPlayer_Ready_Pistol;	// 銃(武装)情報 
 
-	std::weak_ptr<Enemy>				m_wpEnemy;					// 敵情報
+	std::weak_ptr<Enemy_1>				m_wpEnemy_1;				// 敵1情報
+	std::weak_ptr<Enemy_2>				m_wpEnemy_2;				// 敵2情報
+	std::weak_ptr<Enemy_3>				m_wpEnemy_3;				// 敵3情報
+
 	std::weak_ptr<Reticle>				m_wpReticle;				// レティクル情報
+	std::weak_ptr<RestraintUI>			m_wpRestraintUI;			// 拘束UI情報
+	std::weak_ptr<KillUI>				m_wpKillUI;					// 殺害UI情報
+	std::weak_ptr<InterrogationUI>		m_wpInterrogationUI;		// 尋問UI情報
 	std::weak_ptr<MiniMapUI>			m_wpMiniMapUI;				// ミニマップ情報
 	std::weak_ptr<MiniMapUIBack>		m_wpMiniMapUIBack;			// ミニマップ背景情報
+	std::weak_ptr<MainMissionUI>		m_wpMainMissionUI;			// メインミッションUI情報
 	std::weak_ptr<CurrentLocation>		m_wpCurrentLocation;		// 現在地UI情報
 	std::weak_ptr<CardKeyLocation>		m_wpCardKeyLocation;		// カードキー位置UI情報
 	std::weak_ptr<SecretFileLocation>	m_wpSecretFileLocation;		// 機密ファイルUI情報
@@ -149,20 +199,21 @@ private:
 	const float							m_bulletShotFrm = 2.5f;		// 弾発射フレーム 2.5f
 	const float							m_restFrmMax	= 32.5f;	// 拘束フレーム最大値 32.5f
 	const float							m_grabFrm		= 7.5f;		// 掴み時フレーム 17.5f
+	const float							m_killFrmMax	= 45.0f;	// 処刑時フレーム最大値 45.0f
 
 	const float							m_zeroMoveSpd	= 0.0f;		// 停止速度 0.0f
 	const float							m_walkMoveSpd	= 0.05f;	// 歩行速度 0.05f
 	const float							m_runMoveSpd	= 0.12f;	// 走行速度 0.12f
 	const float							m_sitWalkMoveSpd= 0.08f;	// しゃがみ歩行速度 0.08f
 
-	const float							m_tightArea		= 3.0f;		// 拘束エリア 0.3f
+	const float							m_tightArea		= 1.25f;	// 拘束エリア 1.25f
 
-	bool								m_openMapKeyFlg = false;	// マップ展開キーフラグ
-	bool								m_shotKeyFlg	= false;	// エイムフラグ
-	bool								m_reloadKeyFlg	= false;	// リロードフラグ
-	bool								m_keyFlg		= false;	// キーフラグ
-	bool								m_changeKeyFlg	= false;	// 視点切り替え時用キーフラグ
-	bool								m_posKeyFlg		= false;	// しゃがみキーフラグ
+	std::bitset<TOTALKEYNUM>			m_bitsKeyFlg	= false;
+	bool								m_restEnemy1Flg	= false;
+	bool								m_restEnemy2Flg = false;
+	bool								m_restEnemy3Flg = false;
+
+	Math::Vector3						m_diffVec		= Math::Vector3::Zero;			// 敵とプレイヤーの差ベクトル
 
 	UINT								m_sType			= SituationType::Idle;			// プレイヤーの状態タイプ
 	PostureType							m_posType		= PostureType::Stand;			// プレイヤーの体勢タイプ
@@ -260,6 +311,18 @@ private:
 
 		ActionRestraint_Idle	()				{}
 		~ActionRestraint_Idle	()	override	{}
+
+		void Enter	(Player& _owner)	override;
+		void Update	(Player& _owner)	override;
+		void Exit	(Player& _owner)	override;
+	};
+
+	class ActionKill : public ActionStateBase
+	{
+	public:
+
+		ActionKill	()				{}
+		~ActionKill	()	override	{}
 
 		void Enter	(Player& _owner)	override;
 		void Update	(Player& _owner)	override;

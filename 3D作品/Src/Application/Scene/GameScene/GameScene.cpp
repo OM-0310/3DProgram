@@ -8,8 +8,6 @@
 #include "../../GameObject/Terrains/Ground/Ground_UP/Ground_UP.h"
 #include "../../GameObject/Terrains/Ground/Ground_Bottom/Ground_Bottom.h"
 #include "../../GameObject/Terrains/RockWall/RockWall.h"
-#include "../../GameObject/Terrains/Ground/Ground.h"
-#include "../../GameObject/Terrains/Building/Building.h"
 #include "../../GameObject/Terrains/Building/Building_Main/Building_Main.h"
 #include "../../GameObject/Terrains/Building/Building_Roof/Building_Roof.h"
 #include "../../GameObject/Terrains/ArmoredCar/ArmoredCar.h"
@@ -30,11 +28,23 @@
 #include "../../GameObject/Characters/Player/Player_Disarm_Pistol/Player_Disarm_Pistol.h"
 #include "../../GameObject/Characters/Player/Player_Ready_Pistol/Player_Ready_Pistol.h"
 
-#include "../../GameObject/Characters/Enemy/Enemy.h"
-#include "../../GameObject/Characters/Enemy/Enemy_Main/Enemy_Main.h"
-#include "../../GameObject/Characters/Enemy/Enemy_Gun/Enemy_Gun.h"
-#include "../../GameObject/Characters/Enemy/Enemy_Gun_NoMagazine/Enemy_Gun_NoMagazine.h"
-#include "../../GameObject/Characters/Enemy/Enemy_Magazine/Enemy_Magazine.h"
+#include "../../GameObject/Characters/Enemy/Enemy_1/Enemy_1.h"
+#include "../../GameObject/Characters/Enemy/Enemy_1/Enemy_Main_1/Enemy_Main_1.h"
+#include "../../GameObject/Characters/Enemy/Enemy_1/Enemy_Gun_1/Enemy_Gun_1.h"
+#include "../../GameObject/Characters/Enemy/Enemy_1/Enemy_Gun_NoMagazine_1/Enemy_Gun_NoMagazine_1.h"
+#include "../../GameObject/Characters/Enemy/Enemy_1/Enemy_Magazine_1/Enemy_Magazine_1.h"
+
+#include "../../GameObject/Characters/Enemy/Enemy_2/Enemy_2.h"
+#include "../../GameObject/Characters/Enemy/Enemy_2/Enemy_Main_2/Enemy_Main_2.h"
+#include "../../GameObject/Characters/Enemy/Enemy_2/Enemy_Gun_2/Enemy_Gun_2.h"
+#include "../../GameObject/Characters/Enemy/Enemy_2/Enemy_Gun_NoMagazine_2/Enemy_Gun_NoMagazine_2.h"
+#include "../../GameObject/Characters/Enemy/Enemy_2/Enemy_Magazine_2/Enemy_Magazine_2.h"
+
+#include "../../GameObject/Characters/Enemy/Enemy_3/Enemy_3.h"
+#include "../../GameObject/Characters/Enemy/Enemy_3/Enemy_Main_3/Enemy_Main_3.h"
+#include "../../GameObject/Characters/Enemy/Enemy_3/Enemy_Gun_3/Enemy_Gun_3.h"
+#include "../../GameObject/Characters/Enemy/Enemy_3/Enemy_Gun_NoMagazine_3/Enemy_Gun_NoMagazine_3.h"
+#include "../../GameObject/Characters/Enemy/Enemy_3/Enemy_Magazine_3/Enemy_Magazine_3.h"
 
 #include "../../GameObject/Characters/CharaBase.h"
 
@@ -43,11 +53,16 @@
 #include "../../GameObject/UI/BulletNumUI/BulletNumUI.h"
 #include "../../GameObject/UI/Reticle/Reticle.h"
 #include "../../GameObject/UI/CardKeyUI/CardKeyUI.h"
+#include "../../GameObject/UI/KillUI/KillUI.h"
+#include "../../GameObject/UI/InterrogationUI/InterrogationUI.h"
 #include "../../GameObject/UI/SecretFileUI/SecretFileUI.h"
+#include "../../GameObject/UI/RestraintUI/RestraintUI.h"
 #include "../../GameObject/UI/HPBarUI/HPBarUI.h"
+#include "../../GameObject/UI/HPBarUIBack/HPBarUIBack.h"
 #include "../../GameObject/UI/PadKeyUI/PadKeyUI.h"
 #include "../../GameObject/UI/MiniMapUIBack/MiniMapUIBack.h"
 #include "../../GameObject/UI/MiniMapUI/MiniMapUI.h"
+#include "../../GameObject/UI/MainMissionUI/MainMissionUI.h"
 #include "../../GameObject/UI/CurrentLocation/CurrentLocation.h"
 #include "../../GameObject/UI/CardKeyLocation/CardKeyLocation.h"
 #include "../../GameObject/UI/SecretFileLocation/SecretFileLocation.h"
@@ -146,11 +161,6 @@ void GameScene::StageInit(
 	car->Init();
 	m_objList.push_back(car);
 
-	std::shared_ptr<Building> build;
-	build = std::make_shared<Building>();
-	build->Init();
-	m_objList.push_back(build);
-
 	{
 		// 初期化完了を通知
 		std::lock_guard<std::mutex> lock(mtx);
@@ -188,8 +198,8 @@ void GameScene::GrassInit(
 }
 
 void GameScene::CharaInit(
-	std::atomic<bool>& done,		std::atomic<bool>& stageDone,
-	std::condition_variable& cv,	std::mutex& mtx)
+	std::atomic<bool>& done, std::atomic<bool>& stageDone,
+	std::condition_variable& cv, std::mutex& mtx)
 {
 	// ステージ初期化完了を待つ
 	{
@@ -231,56 +241,128 @@ void GameScene::CharaInit(
 	m_objList.push_back(player_Ready_Pistol);
 
 	// 敵初期化
-	std::shared_ptr<Enemy> enemy;
-	enemy = std::make_shared<Enemy>();
-	enemy->Init();
-	m_objList.push_back(enemy);
+	std::shared_ptr<Enemy_1>				enemy_1;
+	std::shared_ptr<Enemy_Main_1>			enemy_Main_1;
+	std::shared_ptr<Enemy_Gun_1>			enemy_Gun_1;
+	std::shared_ptr<Enemy_Gun_NoMagazine_1>	enemy_Gun_NoMagazine_1;
+	std::shared_ptr<Enemy_Magazine_1>		enemy_Magazine_1;
+
+	// 敵管理初期化
+	enemy_1 = std::make_shared<Enemy_1>();
+	enemy_1->Init();
+	m_objList.push_back(enemy_1);
 
 	// 敵メイン部分初期化
-	std::shared_ptr<Enemy_Main> enemy_Main;
-	enemy_Main = std::make_shared<Enemy_Main>();
-	enemy_Main->Init();
-	m_objList.push_back(enemy_Main);
+	enemy_Main_1 = std::make_shared<Enemy_Main_1>();
+	enemy_Main_1->Init();
+	m_objList.push_back(enemy_Main_1);
 
 	// 敵銃(マガジンあり)
-	std::shared_ptr<Enemy_Gun> enemy_Gun;
-	enemy_Gun = std::make_shared<Enemy_Gun>();
-	enemy_Gun->Init();
-	m_objList.push_back(enemy_Gun);
+	enemy_Gun_1 = std::make_shared<Enemy_Gun_1>();
+	enemy_Gun_1->Init();
+	m_objList.push_back(enemy_Gun_1);
 
 	// 敵銃(マガジン無し)
-	std::shared_ptr<Enemy_Gun_NoMagazine> enemy_Gun_NoMagazine;
-	enemy_Gun_NoMagazine = std::make_shared<Enemy_Gun_NoMagazine>();
-	enemy_Gun_NoMagazine->Init();
-	m_objList.push_back(enemy_Gun_NoMagazine);
+	enemy_Gun_NoMagazine_1 = std::make_shared<Enemy_Gun_NoMagazine_1>();
+	enemy_Gun_NoMagazine_1->Init();
+	m_objList.push_back(enemy_Gun_NoMagazine_1);
 
 	// 敵マガジン本体
-	std::shared_ptr<Enemy_Magazine> enemy_Magazine;
-	enemy_Magazine = std::make_shared<Enemy_Magazine>();
-	enemy_Magazine->Init();
-	m_objList.push_back(enemy_Magazine);
+	enemy_Magazine_1 = std::make_shared<Enemy_Magazine_1>();
+	enemy_Magazine_1->Init();
+	m_objList.push_back(enemy_Magazine_1);
 
-	//=================================================================
-	// 武器関係
-	//=================================================================
+	enemy_1->SetPlayer(player);
+	enemy_1->SetEnemy_Main(enemy_Main_1);
+	enemy_1->SetEnemy_Gun(enemy_Gun_1);
+	enemy_1->SetEnemy_Gun_NoMagazine(enemy_Gun_NoMagazine_1);
+	enemy_1->SetEnemy_Magazine(enemy_Magazine_1);
+	enemy_Main_1->SetEnemy(enemy_1);
+	enemy_Gun_1->SetEnemy(enemy_1);
+	enemy_Gun_NoMagazine_1->SetEnemy(enemy_1);
+	enemy_Magazine_1->SetEnemy(enemy_1);
 
-	// 銃(ピストル)
-	//std::shared_ptr<Pistol_Disarm> pistol_Disarm;
-	//pistol_Disarm = std::make_shared<Pistol_Disarm>();
-	//pistol_Disarm->Init();
-	//m_objList.push_back(pistol_Disarm);
+	std::shared_ptr<Enemy_2>				enemy_2;
+	std::shared_ptr<Enemy_Main_2>			enemy_Main_2;
+	std::shared_ptr<Enemy_Gun_2>			enemy_Gun_2;
+	std::shared_ptr<Enemy_Gun_NoMagazine_2>	enemy_Gun_NoMagazine_2;
+	std::shared_ptr<Enemy_Magazine_2>		enemy_Magazine_2;
 
-	//std::shared_ptr<Pistol_Ready> pistol_Ready;
-	//pistol_Ready = std::make_shared<Pistol_Ready>();
-	//pistol_Ready->Init();
-	//m_objList.push_back(pistol_Ready);
+	// 敵管理初期化
+	enemy_2 = std::make_shared<Enemy_2>();
+	enemy_2->Init();
+	m_objList.push_back(enemy_2);
 
+	// 敵メイン部分初期化
+	enemy_Main_2 = std::make_shared<Enemy_Main_2>();
+	enemy_Main_2->Init();
+	m_objList.push_back(enemy_Main_2);
 
-	//// 銃(アサルトライフル)
-	//std::shared_ptr<AssaultRifle> assault;
-	//assault = std::make_shared<AssaultRifle>();
-	//assault->Init();
-	//m_objList.push_back(assault);
+	// 敵銃(マガジンあり)
+	enemy_Gun_2 = std::make_shared<Enemy_Gun_2>();
+	enemy_Gun_2->Init();
+	m_objList.push_back(enemy_Gun_2);
+
+	// 敵銃(マガジン無し)
+	enemy_Gun_NoMagazine_2 = std::make_shared<Enemy_Gun_NoMagazine_2>();
+	enemy_Gun_NoMagazine_2->Init();
+	m_objList.push_back(enemy_Gun_NoMagazine_2);
+
+	// 敵マガジン本体
+	enemy_Magazine_2 = std::make_shared<Enemy_Magazine_2>();
+	enemy_Magazine_2->Init();
+	m_objList.push_back(enemy_Magazine_2);
+
+	enemy_2->SetPlayer(player);
+	enemy_2->SetEnemy_Main(enemy_Main_2);
+	enemy_2->SetEnemy_Gun(enemy_Gun_2);
+	enemy_2->SetEnemy_Gun_NoMagazine(enemy_Gun_NoMagazine_2);
+	enemy_2->SetEnemy_Magazine(enemy_Magazine_2);
+	enemy_Main_2->SetEnemy(enemy_2);
+	enemy_Gun_2->SetEnemy(enemy_2);
+	enemy_Gun_NoMagazine_2->SetEnemy(enemy_2);
+	enemy_Magazine_2->SetEnemy(enemy_2);
+
+	std::shared_ptr<Enemy_3>				enemy_3;
+	std::shared_ptr<Enemy_Main_3>			enemy_Main_3;
+	std::shared_ptr<Enemy_Gun_3>			enemy_Gun_3;
+	std::shared_ptr<Enemy_Gun_NoMagazine_3>	enemy_Gun_NoMagazine_3;
+	std::shared_ptr<Enemy_Magazine_3>		enemy_Magazine_3;
+
+	// 敵管理初期化
+	enemy_3 = std::make_shared<Enemy_3>();
+	enemy_3->Init();
+	m_objList.push_back(enemy_3);
+
+	// 敵メイン部分初期化
+	enemy_Main_3 = std::make_shared<Enemy_Main_3>();
+	enemy_Main_3->Init();
+	m_objList.push_back(enemy_Main_3);
+
+	// 敵銃(マガジンあり)
+	enemy_Gun_3 = std::make_shared<Enemy_Gun_3>();
+	enemy_Gun_3->Init();
+	m_objList.push_back(enemy_Gun_3);
+
+	// 敵銃(マガジン無し)
+	enemy_Gun_NoMagazine_3 = std::make_shared<Enemy_Gun_NoMagazine_3>();
+	enemy_Gun_NoMagazine_3->Init();
+	m_objList.push_back(enemy_Gun_NoMagazine_3);
+
+	// 敵マガジン本体
+	enemy_Magazine_3 = std::make_shared<Enemy_Magazine_3>();
+	enemy_Magazine_3->Init();
+	m_objList.push_back(enemy_Magazine_3);
+
+	enemy_3->SetPlayer(player);
+	enemy_3->SetEnemy_Main(enemy_Main_3);
+	enemy_3->SetEnemy_Gun(enemy_Gun_3);
+	enemy_3->SetEnemy_Gun_NoMagazine(enemy_Gun_NoMagazine_3);
+	enemy_3->SetEnemy_Magazine(enemy_Magazine_3);
+	enemy_Main_3->SetEnemy(enemy_3);
+	enemy_Gun_3->SetEnemy(enemy_3);
+	enemy_Gun_NoMagazine_3->SetEnemy(enemy_3);
+	enemy_Magazine_3->SetEnemy(enemy_3);
 
 	//=================================================================
 	// アイテム関係
@@ -330,7 +412,7 @@ void GameScene::CharaInit(
 	lockedDoor = std::make_shared<LockedDoor>();
 	lockedDoor->Init();
 	m_objList.push_back(lockedDoor);
-	
+
 	//=================================================================
 	// カメラ初期化
 	//=================================================================
@@ -340,7 +422,7 @@ void GameScene::CharaInit(
 	camera = std::make_shared<TPSCamera>();
 	camera->Init();
 	m_objList.push_back(camera);
-	
+
 	//// UI関連初期化 //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 
 	//=================================================================
@@ -376,7 +458,15 @@ void GameScene::CharaInit(
 	m_objList.push_back(reticle);
 
 	//=================================================================
-	// ミニマップUI背景初期化
+	// HPバーUI背景初期化
+	//=================================================================
+	std::shared_ptr<HPBarUIBack> hpBarUIBack;
+	hpBarUIBack = std::make_shared<HPBarUIBack>();
+	hpBarUIBack->Init();
+	m_objList.push_back(hpBarUIBack);
+
+	//=================================================================
+	// HPバーUI初期化
 	//=================================================================
 	std::shared_ptr<HPBarUI> hpBarUI;
 	hpBarUI = std::make_shared<HPBarUI>();
@@ -398,6 +488,14 @@ void GameScene::CharaInit(
 	mapUI = std::make_shared<MiniMapUI>();
 	mapUI->Init();
 	m_objList.push_back(mapUI);
+
+	//=================================================================
+	// メインミッションUI初期化
+	//=================================================================
+	std::shared_ptr<MainMissionUI> missionUI;
+	missionUI = std::make_shared<MainMissionUI>();
+	missionUI->Init();
+	m_objList.push_back(missionUI);
 
 	//=================================================================
 	// 現在地UI初期化
@@ -440,6 +538,30 @@ void GameScene::CharaInit(
 	m_objList.push_back(fileUI);
 
 	//=================================================================
+	// 拘束UI初期化
+	//=================================================================
+	std::shared_ptr<RestraintUI> restraintUI;
+	restraintUI = std::make_shared<RestraintUI>();
+	restraintUI->Init();
+	m_objList.push_back(restraintUI);
+
+	//=================================================================
+	// 殺害UI初期化
+	//=================================================================
+	std::shared_ptr<KillUI> killUI;
+	killUI = std::make_shared<KillUI>();
+	killUI->Init();
+	m_objList.push_back(killUI);
+
+	//=================================================================
+	// 殺害UI初期化
+	//=================================================================
+	std::shared_ptr<InterrogationUI> interrogationUI;
+	interrogationUI = std::make_shared<InterrogationUI>();
+	interrogationUI->Init();
+	m_objList.push_back(interrogationUI);
+
+	//=================================================================
 	// キーロック解除UI初期化
 	//=================================================================
 	std::shared_ptr<PadKeyUI> keyUI;
@@ -449,10 +571,23 @@ void GameScene::CharaInit(
 
 	//// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //
 
+	player->SetPlayer_Main(player_Main);
+	player->SetPlayer_Disarm(player_Disarm);
+	player->SetPlayer_Disarm_Pistol(player_Disarm_Pistol);
+	player->SetPlayer_Ready_Pistol(player_Ready_Pistol);
+
+	player->SetEnemy_1(enemy_1);
+	player->SetEnemy_2(enemy_2);
+	player->SetEnemy_3(enemy_3);
+
 	player->SetCamera(camera);
 	player->SetReticle(reticle);
 	player->SetMiniMapUI(mapUI);
 	player->SetMiniMapUIBack(mapUIBack);
+	player->SetMainMissionUI(missionUI);
+	player->SetRestraintUI(restraintUI);
+	player->SetKillUI(killUI);
+	player->SetInterrogationUI(interrogationUI);
 	player->SetCurrentLocation(currentLocation);
 	player->SetCardKeyLocation(cardKeyLocation);
 	player->SetSecretFileLocation(secretFileLocation);
@@ -460,37 +595,25 @@ void GameScene::CharaInit(
 	player->SetCardKey(card);
 	player->SetSecretFile(file);
 	player->SetGoal(goal);
-	//player->SetPistolReady(pistol_Ready);
-	player->SetPlayer_Main(player_Main);
-	player->SetPlayer_Disarm(player_Disarm);
-	player->SetPlayer_Disarm_Pistol(player_Disarm_Pistol);
-	player->SetPlayer_Ready_Pistol(player_Ready_Pistol);
-	player->SetEnemy(enemy);
+
 	player_Main->SetPlayer(player);
 	player_Disarm->SetPlayer(player);
 	player_Disarm_Pistol->SetPlayer(player);
 	player_Ready_Pistol->SetPlayer(player);
 
-	enemy->SetPlayer(player);
-	enemy->SetEnemy_Main(enemy_Main);
-	enemy->SetEnemy_Gun(enemy_Gun);
-	enemy->SetEnemy_Gun_NoMagazine(enemy_Gun_NoMagazine);
-	enemy->SetEnemy_Magazine(enemy_Magazine);
-	enemy_Main->SetEnemy(enemy);
-	enemy_Gun->SetEnemy(enemy);
-	enemy_Gun_NoMagazine->SetEnemy(enemy);
-	enemy_Magazine->SetEnemy(enemy);
-
 	lockedDoor->SetPlayer(player);
-
-	//player->SetWeapon(assault);
-	//pistol_Disarm->SetPlayer(player);
-	//pistol_Ready->SetPlayer(player);
-	//assault->SetChara(player);
-
+	reticle->SetTPSCamera(camera);
 	bulletNumUI->SetPlayer_Ready_Pistol(player_Ready_Pistol);
 	cardUI->SetCardKey(card);
 	fileUI->SetSecretFile(file);
+	restraintUI->SetPlayer(player);
+	restraintUI->SetEnemy_1(enemy_1);
+	restraintUI->SetEnemy_2(enemy_2);
+	restraintUI->SetEnemy_3(enemy_3);
+	killUI->SetPlayer(player);
+	killUI->SetInterrogationUI(interrogationUI);
+	interrogationUI->SetPlayer(player);
+	interrogationUI->SetKillUI(killUI);
 	keyUI->SetLockedDoor(lockedDoor);
 	currentLocation->SetPlayer(player);
 	cardKeyLocation->SetCardKey(card);
