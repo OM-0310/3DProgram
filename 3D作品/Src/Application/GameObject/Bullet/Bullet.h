@@ -30,4 +30,7 @@ private:
 	const float						m_moveSpeed		= 2.0f;
 
 	KdTrailPolygon					m_tPoly;
+
+	const float						m_hitVol		= 0.5f;
+	std::shared_ptr<KdSoundInstance>m_spHitSound;
 };

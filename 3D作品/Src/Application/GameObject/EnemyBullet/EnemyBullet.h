@@ -29,7 +29,7 @@ private:
 	const short						m_lifeSpanMax	= 100;
 	const short						m_lifeSpanMin	= 0;
 	short							m_lifeSpan		= 0;
-	const float						m_hitArea		= 0.2f;
+	const float						m_hitArea		= 0.4f;
 
 	const float						m_moveSpeed		= 2.0f;
 

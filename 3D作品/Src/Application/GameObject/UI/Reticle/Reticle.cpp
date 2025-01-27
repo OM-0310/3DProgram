@@ -21,13 +21,11 @@ void Reticle::Update()
 	{
 		if (_spCamera->GetCamType() == TPSCamera::CameraType::AimR)
 		{
-			//m_pos = m_aimRPos;
-			m_pos = {};
+			m_pos = m_aimRPos;
 		}
 		else if(_spCamera->GetCamType() == TPSCamera::CameraType::AimL)
 		{
-			//m_pos = m_aimLPos;
-			m_pos = {};
+			m_pos = m_aimLPos;
 		}
 	}
 }

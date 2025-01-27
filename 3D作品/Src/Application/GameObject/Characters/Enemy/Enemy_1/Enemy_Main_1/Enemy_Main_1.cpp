@@ -21,7 +21,7 @@ void Enemy_Main_1::Init()
 	m_objectType	= ObjectType::TypeEnemy_1;
 
 	m_pCollider		= std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("EnemyCollision", m_spModel, KdCollider::TypeDamage);
+	m_pCollider->RegisterCollisionShape("Enemy_Main_1Collision", m_spModel, KdCollider::TypeDamage);
 }
 
 void Enemy_Main_1::Update()

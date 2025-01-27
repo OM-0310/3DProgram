@@ -27,6 +27,8 @@ public:
 	void				Init			()			override;
 	void				Update			()			override;
 
+	void				UpdateCollision	();
+
 	void				ChangeTPSR		();
 	void				ChangeTPSL		();
 	void				ChangeAimR		();

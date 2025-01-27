@@ -65,13 +65,66 @@ void TPSCamera::Update()
 	m_mLocalPos = Math::Matrix::CreateTranslation(m_basePoint);
 	m_mWorld	= (m_mLocalPos * m_mRot) * targetMat;
 
+	UpdateCollision();
+
 	CameraBase::Update();
 }
 
-//void TPSCamera::ChangeFPS()
-//{
-//	m_camType		= CameraType::Fps;
-//}
+void TPSCamera::UpdateCollision()
+{
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+
+	KdCollider::RayInfo ray;
+	ray.m_pos = GetPos();
+	ray.m_dir = Math::Vector3::Down;
+	ray.m_range = 1000.0f;
+	ray.m_type = KdCollider::TypeGround;
+
+	if (spPlayer)
+	{
+		Math::Vector3 targetPos = spPlayer->GetPos();
+		targetPos.y += 0.1f;
+		ray.m_dir = targetPos - GetPos();
+		ray.m_range = ray.m_dir.Length();
+		ray.m_dir.Normalize();
+	}
+
+	// ②HIT判定対象オブジェクトに総当たり
+	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
+	{
+		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
+		if (spGameObj)
+		{
+			std::list<KdCollider::CollisionResult> retResultList;
+			spGameObj->Intersects(ray, & retResultList);
+
+			// ③結果を利用して座標を補完する
+			// レイに当たったリストから一番近いオブジェクトを検出
+			float			maxOverLap = 0.f;
+			Math::Vector3	hitPos = {};
+			bool			hit = false;
+
+			for (auto& ret : retResultList)
+			{
+				// レイを遮断し、オーバーした長さが
+				// 一番長いものを探す
+				if (maxOverLap < ret.m_overlapDistance)
+				{
+					maxOverLap = ret.m_overlapDistance;
+					hitPos = ret.m_hitPos;
+					hit = true;
+				}
+			}
+			// 何かしらの障害物に当たっている
+			if (hit)
+			{
+				Math::Vector3 hoseiPos = hitPos + Math::Vector3{ 0.0f,1.0f,0.1f };
+				//_hoseiPos += _rayInfo.m_dir * 0.4f;
+				SetPos(hoseiPos);
+			}
+		}
+	}
+}
 
 void TPSCamera::ChangeTPSR()
 {

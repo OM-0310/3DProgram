@@ -57,7 +57,7 @@ void Player_Ready_Pistol::Update()
 	sphereInfo.m_sphere.Radius = 0.05f;
 	sphereInfo.m_type = KdCollider::TypeDamage;
 
-	m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, kBlueColor);
+	//m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, kBlueColor);
 
 	KdCollider::RayInfo rayInfo;
 	rayInfo.m_pos = muzzlePos;
@@ -65,7 +65,7 @@ void Player_Ready_Pistol::Update()
 	rayInfo.m_range = 1000.f;
 	rayInfo.m_type = KdCollider::TypeDamage | KdCollider::TypeGround;
 
-	m_pDebugWire->AddDebugLine(rayInfo.m_pos, rayInfo.m_dir, rayInfo.m_range, kBlueColor);
+	//m_pDebugWire->AddDebugLine(rayInfo.m_pos, rayInfo.m_dir, rayInfo.m_range, kBlueColor);
 
 	std::list<KdCollider::CollisionResult> retRayList;
 
@@ -168,7 +168,11 @@ void Player_Ready_Pistol::Update()
 
 void Player_Ready_Pistol::PostUpdate()
 {
-	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	if (spPlayer)
+	{
+		m_spAnimator->AdvanceTime(m_spModel->WorkNodes(), spPlayer->GetAnimeSpeed());
+	}
 }
 
 void Player_Ready_Pistol::DrawUnLit()

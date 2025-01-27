@@ -2,6 +2,10 @@
 
 #include "../../Characters/Player/Player.h"
 
+#include "../../UI/CollectUIBack/CollectUIBack.h"
+#include "../../UI/NeedCardKeyUI/NeedCradKeyUI.h"
+#include "../../UI/SubMissionUI/SubMissionUI.h"
+
 #include "../../../Scene/SceneManager.h"
 
 void LockedDoor::Init()
@@ -12,6 +16,9 @@ void LockedDoor::Init()
 		KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Gimmicks/Door/Door.gltf");
 		m_spModel->SetModelData(KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Gimmicks/Door/Door.gltf"));
 	}
+	
+	m_spOpenSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/OpenDoor.wav");
+	m_spOpenSound->SetVolume(m_openVol);
 
 	m_debugColor	= kRedColor;
 
@@ -21,6 +28,7 @@ void LockedDoor::Init()
 	m_openAbleFlg	= false;
 	m_openFlg		= false;
 	m_lockFlg		= false;
+	m_UIFlg			= false;
 
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
@@ -32,7 +40,8 @@ void LockedDoor::Init()
 
 void LockedDoor::Update()
 {
-	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	const std::shared_ptr<Player>		spPlayer		= m_wpPlayer.lock();
+	const std::shared_ptr<SubMissionUI>	spSubMissionUI	= m_wpSubMissionUI.lock();
 
 	//// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 	// 扉の開閉処理(円判定を用いて実装)										//
@@ -45,7 +54,7 @@ void LockedDoor::Update()
 
 
 	// デバッグ用
-	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
+	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
 
 	bool isHit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())
@@ -83,8 +92,22 @@ void LockedDoor::Update()
 						// falseであれば
 						else
 						{
+							if (!m_UIFlg)
+							{
+								m_UIFlg = true;
+
+								GenerateNeedCardKeyUI();
+
+								if (spSubMissionUI)
+								{
+									spSubMissionUI->Permission();
+								}
+							}
+
 							// 開錠可能フラグをfalseしてループを抜ける
 							m_openAbleFlg = false;
+
+							m_debugColor = kBlueColor;
 						}
 					}
 				}
@@ -93,8 +116,8 @@ void LockedDoor::Update()
 			else
 			{
 				// 開錠可能フラグをfalseにしてループを抜ける
-				m_openAbleFlg = false;
-				m_debugColor = kRedColor;
+				m_openAbleFlg	= false;
+				m_debugColor	= kRedColor;
 			}
 		}
 	}
@@ -107,8 +130,14 @@ void LockedDoor::Update()
 		{
 			// 開錠フラグをtrueにする
 			m_openFlg = true;
+
+			if (m_spOpenSound->IsStopped())
+			{
+				m_spOpenSound->Play();
+			}
 		}
 	}
+
 	// 開錠フラグがtrueであれば
 	if (m_openFlg)
 	{
@@ -119,11 +148,14 @@ void LockedDoor::Update()
 		{
 			// 扉のY座標の値を2.5に留める
 			m_pos.y = m_moveMax;
+
 			// 開錠可能フラグがtrueであれば
-			if (!m_openAbleFlg)
+			if (m_openAbleFlg)
 			{
 				// 開錠フラグをfalseにする
 				m_openFlg = false;
+
+				m_spOpenSound->Play();
 			}
 		}
 	}
@@ -143,6 +175,8 @@ void LockedDoor::Update()
 	// 行列の作成
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mTrans;
+
+	m_spOpenSound->SetPos(GetPos());
 }
 
 void LockedDoor::DrawLit()
@@ -158,4 +192,17 @@ void LockedDoor::GenerateDepthMapFromLight()
 void LockedDoor::Open()
 {
 	m_lockFlg = true;
+}
+
+void LockedDoor::GenerateNeedCardKeyUI()
+{
+	std::shared_ptr<CollectUIBack> back;
+	back = std::make_shared<CollectUIBack>();
+	back->Init();
+	SceneManager::Instance().AddObject(back);
+
+	std::shared_ptr<NeedCardKeyUI> needUI;
+	needUI = std::make_shared<NeedCardKeyUI>();
+	needUI->Init();
+	SceneManager::Instance().AddObject(needUI);
 }

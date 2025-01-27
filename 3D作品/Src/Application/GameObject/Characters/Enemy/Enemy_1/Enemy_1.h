@@ -129,6 +129,27 @@ private:
 
 	SituationType	m_sitType		= SituationType::Idle;
 
+	const float							m_runVol = 0.5f;
+	std::shared_ptr<KdSoundInstance3D>	m_spRunSound;
+
+	const float							m_walkVol = 0.1f;
+	std::shared_ptr<KdSoundInstance3D>	m_spWalkSound;
+
+	const float							m_readyVol = 0.5f;
+	std::shared_ptr<KdSoundInstance3D>	m_spReadySound;
+
+	const float							m_shotVol = 0.8f;
+	std::shared_ptr<KdSoundInstance3D>	m_spShotSound;
+
+	const float							m_mgznSetVol = 0.7f;
+	std::shared_ptr<KdSoundInstance3D>	m_spMgznSetSound;
+
+	const float							m_mgznRlsVol = 0.7f;
+	std::shared_ptr<KdSoundInstance3D>	m_spMgznRlsSound;
+
+	const float							m_discoverVol = 0.5f;
+	std::shared_ptr<KdSoundInstance>	m_spDiscoverSound;
+
 private:
 
 	class ActionStateBase
@@ -162,6 +183,7 @@ private:
 
 		void Enter	(Enemy_1& _owner)	override;
 		void Update	(Enemy_1& _owner)	override;
+		void Exit	(Enemy_1& _owner)	override;
 	};
 
 	class ActionDiscover : public ActionStateBase
@@ -184,6 +206,7 @@ private:
 
 		void Enter	(Enemy_1& _owner)	override;
 		void Update	(Enemy_1& _owner)	override;
+		void Exit	(Enemy_1& _owner)	override;
 	};
 
 	class ActionReady : public ActionStateBase
@@ -206,6 +229,7 @@ private:
 
 		void Enter	(Enemy_1& _owner)	override;
 		void Update	(Enemy_1& _owner)	override;
+		void Exit	(Enemy_1& _owner)	override;
 	};
 
 	class ActionAressted : public ActionStateBase
@@ -239,6 +263,7 @@ private:
 
 		void Enter	(Enemy_1& _owner)	override;
 		void Update	(Enemy_1& _owner)	override;
+		void Exit	(Enemy_1& _owner)	override;
 	};
 
 	class ActionDeath : public ActionStateBase

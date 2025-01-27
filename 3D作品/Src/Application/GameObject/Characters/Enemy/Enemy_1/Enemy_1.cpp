@@ -9,6 +9,10 @@
 
 #include "../../Player/Player.h"
 
+#include "../../../Effect/MuzzleFlash/MuzzleFlash.h"
+
+#include "../../../UI/ExclamationMarkUI/ExclamationMarkUI.h"
+
 #include "../../../../Scene/SceneManager.h"
 #include "../../../../main.h"
 
@@ -17,6 +21,27 @@ void Enemy_1::Init()
 	m_spAnimator	= std::make_shared<KdAnimator>();
 	ChangeActionState(std::make_shared<ActionIdle>());
 	ChangeAnimation("Idle");
+
+	m_spRunSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Run.wav");
+	m_spRunSound->SetVolume(m_runVol);
+
+	m_spWalkSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Walk.wav");
+	m_spWalkSound->SetVolume(m_walkVol);
+
+	m_spReadySound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Enemy_Ready.wav");
+	m_spReadySound->SetVolume(m_readyVol);
+
+	m_spShotSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Enemy_Shot.wav");
+	m_spShotSound->SetVolume(m_shotVol);
+
+	m_spMgznSetSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Magazine_Set.wav");
+	m_spMgznSetSound->SetVolume(m_mgznSetVol);
+
+	m_spMgznRlsSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Magazine_Release.wav");
+	m_spMgznRlsSound->SetVolume(m_mgznRlsVol);
+
+	m_spDiscoverSound = KdAudioManager::Instance().GetSoundInstance("Asset/Sounds/Game/Discover.wav");
+	m_spDiscoverSound->SetVolume(m_discoverVol);
 
 	m_mMuzzle		= Math::Matrix::CreateTranslation(m_muzzlePos);
 	m_mlocalAresst	= Math::Matrix::CreateTranslation(m_localAresstPos);
@@ -87,13 +112,13 @@ void Enemy_1::Update()
 
 	//m_pDebugWire->AddDebugSphere(sphere5.m_sphere.Center, sphere5.m_sphere.Radius, { 0.0f,0.0f,1.0f });
 
-	Math::Vector3 debugPos3 = (m_mMuzzle * m_mWorld).Translation();
-	KdCollider::SphereInfo sphere6;
-	sphere6.m_sphere.Center = debugPos3;
-	sphere6.m_sphere.Radius = 0.05f;
-	sphere6.m_type = KdCollider::TypeBump;
+	//Math::Vector3 debugPos3 = (m_mMuzzle * m_mWorld).Translation();
+	//KdCollider::SphereInfo sphere6;
+	//sphere6.m_sphere.Center = debugPos3;
+	//sphere6.m_sphere.Radius = 0.05f;
+	//sphere6.m_type = KdCollider::TypeBump;
 
-	m_pDebugWire->AddDebugSphere(sphere6.m_sphere.Center, sphere6.m_sphere.Radius, { 1.0f,1.0f,1.0f });
+	//m_pDebugWire->AddDebugSphere(sphere6.m_sphere.Center, sphere6.m_sphere.Radius, { 1.0f,1.0f,1.0f });
 
 	//Application::Instance().m_log.Clear();
 	//Application::Instance().m_log.AddLog("m_lostFlg=%d\n", m_lostFlg);
@@ -118,6 +143,13 @@ void Enemy_1::Update()
 
 void Enemy_1::PostUpdate()
 {
+	m_spReadySound->SetPos(GetPos());
+	m_spRunSound->SetPos(GetPos());
+	m_spShotSound->SetPos(GetPos());
+	m_spWalkSound->SetPos(GetPos());
+	m_spMgznSetSound->SetPos(GetPos());
+	m_spMgznRlsSound->SetPos(GetPos());
+
 	UpdateCollision();
 }
 
@@ -549,6 +581,8 @@ void Enemy_1::ActionWalk::Enter(Enemy_1& _owner)
 		// アニメーションを"Walk"に切り替え
 		_owner.m_sitType = SituationType::Walk;
 		_owner.ChangeAnimation("Walk");
+
+		_owner.m_spWalkSound->Play(true);
 	}
 }
 
@@ -652,8 +686,22 @@ void Enemy_1::ActionWalk::Update(Enemy_1& _owner)
 	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
+void Enemy_1::ActionWalk::Exit(Enemy_1& _owner)
+{
+	_owner.m_spWalkSound->Stop();
+}
+
 void Enemy_1::ActionDiscover::Enter(Enemy_1& _owner)
 {
+	const std::shared_ptr<Player> spPlayer = _owner.m_wpPlayer.lock();
+
+	std::shared_ptr<ExclamationMarkUI> ExMarkUI;
+	ExMarkUI = std::make_shared<ExclamationMarkUI>();
+	ExMarkUI->Init();
+	ExMarkUI->SetPlayer(spPlayer);
+	ExMarkUI->SetPos(_owner.m_pos);
+	SceneManager::Instance().AddObject(ExMarkUI);
+
 	// 敵の状態が"発見状態"でないとき
 	if (_owner.m_sitType != SituationType::Discover)
 	{
@@ -661,6 +709,8 @@ void Enemy_1::ActionDiscover::Enter(Enemy_1& _owner)
 		// アニメーションを"Run"に切り替え
 		_owner.m_sitType = SituationType::Discover;
 		_owner.ChangeAnimation("Discover", false);
+
+		_owner.m_spDiscoverSound->Play();
 	}
 
 	// 現在のアニメーションフレームが0以外であれば
@@ -679,7 +729,7 @@ void Enemy_1::ActionDiscover::Update(Enemy_1& _owner)
 	if (spPlayer)
 	{
 		// 敵とプレイヤーの差ベクトルを算出
-		_owner.m_moveDir = spPlayer->GetPos() = _owner.m_pos;
+		_owner.m_moveDir = spPlayer->GetPos() - _owner.m_pos;
 	}
 
 	// アニメーションフレームを更新
@@ -723,6 +773,8 @@ void Enemy_1::ActionRun::Enter(Enemy_1& _owner)
 		// アニメーションを"Run"に切り替え
 		_owner.m_sitType = SituationType::Run;
 		_owner.ChangeAnimation("Run");
+
+		_owner.m_spRunSound->Play(true);
 	}
 }
 
@@ -800,6 +852,11 @@ void Enemy_1::ActionRun::Update(Enemy_1& _owner)
 	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
 }
 
+void Enemy_1::ActionRun::Exit(Enemy_1& _owner)
+{
+	_owner.m_spRunSound->Stop();
+}
+
 void Enemy_1::ActionReady::Enter(Enemy_1& _owner)
 {
 	// 敵の状態が"構え状態"でないとき
@@ -809,6 +866,8 @@ void Enemy_1::ActionReady::Enter(Enemy_1& _owner)
 		// アニメーションを"Ready"に切り替え
 		_owner.m_sitType = SituationType::Ready;
 		_owner.ChangeAnimation("Ready");
+
+		_owner.m_spReadySound->Play();
 	}
 
 	// アクションカウントを初期化
@@ -906,6 +965,8 @@ void Enemy_1::ActionShot::Enter(Enemy_1& _owner)
 		// アニメーションを"Shot"に切り替え
 		_owner.m_sitType = SituationType::Shot;
 		_owner.ChangeAnimation("Shot");
+
+		_owner.m_spShotSound->Play(true);
 	}
 
 	// アクションカウントを初期化
@@ -994,6 +1055,13 @@ void Enemy_1::ActionShot::Update(Enemy_1& _owner)
 				bullet->Shot(muzzlePos, dir);
 				SceneManager::Instance().AddObject(bullet);
 
+				// マズルフラッシュを生成
+				std::shared_ptr<MuzzleFlash> muzzleFlash;
+				muzzleFlash = std::make_shared<MuzzleFlash>();
+				muzzleFlash->Init();
+				muzzleFlash->SetPos(muzzlePos);
+				SceneManager::Instance().AddObject(muzzleFlash);
+
 				// 残弾数を減らす
 				spGun->BulletDec();
 			}
@@ -1034,6 +1102,11 @@ void Enemy_1::ActionShot::Update(Enemy_1& _owner)
 	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
 	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
+}
+
+void Enemy_1::ActionShot::Exit(Enemy_1& _owner)
+{
+	_owner.m_spShotSound->Stop();
 }
 
 void Enemy_1::ActionAressted::Enter(Enemy_1& _owner)
@@ -1132,6 +1205,8 @@ void Enemy_1::ActionReload::Enter(Enemy_1& _owner)
 		// アニメーションを"Reload"に切り替え
 		_owner.m_sitType = SituationType::Reload;
 		_owner.ChangeAnimation("Reload", false);
+
+		_owner.m_spMgznSetSound->Play();
 	}
 
 	// 現在のアニメーションフレームが0以外であれば
@@ -1198,6 +1273,11 @@ void Enemy_1::ActionReload::Update(Enemy_1& _owner)
 	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
 	_owner.m_mWorld = _owner.m_mRot * _owner.m_mTrans;
+}
+
+void Enemy_1::ActionReload::Exit(Enemy_1& _owner)
+{
+	_owner.m_spMgznRlsSound->Play();
 }
 
 void Enemy_1::ActionDeath::Enter(Enemy_1& _owner)

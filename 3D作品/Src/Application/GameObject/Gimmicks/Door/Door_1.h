@@ -33,4 +33,7 @@ private:
 
 	bool							m_openAbleFlg	= false;
 	bool							m_openFlg		= false;
+
+	const float							m_openVol = 1.0f;
+	std::shared_ptr<KdSoundInstance3D>	m_spOpenSound;
 };

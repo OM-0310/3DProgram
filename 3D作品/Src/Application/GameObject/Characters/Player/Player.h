@@ -22,6 +22,7 @@ class InterrogationUI;
 class MiniMapUI;
 class MiniMapUIBack;
 class MainMissionUI;
+class SubMissionUI;
 class CurrentLocation;
 class CardKeyLocation;
 class SecretFileLocation;
@@ -87,6 +88,9 @@ public:
 	// アニメーション切り替え処理
 	void ChangeAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);
 
+	// クリアフラグセット
+	void SetClearFlg(const bool& _clearFlg) { m_clearFlg = _clearFlg; }
+
 	void SetCamera					// カメラ情報セット		
 	(const std::shared_ptr<TPSCamera>& _spCamera) { m_wpCamera = _spCamera; }
 
@@ -144,6 +148,9 @@ public:
 	void SetMainMissionUI			// メインミッションUI情報セット
 	(const std::shared_ptr<MainMissionUI>& _spMainMissionUI) { m_wpMainMissionUI = _spMainMissionUI; }
 
+	void SetSubMissionUI			// サブミッションUI情報セット
+	(const std::shared_ptr<SubMissionUI>& _spSubMissionUI) { m_wpSubMissionUI = _spSubMissionUI; }
+
 	void SetCurrentLocation			// 現在地UI情報セット
 	(const std::shared_ptr<CurrentLocation>& _spCurrentLocation) { m_wpCurrentLocation = _spCurrentLocation; }
 
@@ -159,6 +166,8 @@ public:
 	const PostureType&		GetPostureType		() const	{ return m_posType;			}
 	const Math::Vector3&	GetDiffVec			() const	{ return m_diffVec;			}
 	const float&			GetTightArea		() const	{ return m_tightArea;		}
+	const bool&				GetClearFlg			() const	{ return m_clearFlg;		}
+	const float&			GetAnimeSpeed		() const	{ return m_animeSpeed;		}
 
 private:
 
@@ -180,6 +189,7 @@ private:
 	std::weak_ptr<MiniMapUI>			m_wpMiniMapUI;				// ミニマップ情報
 	std::weak_ptr<MiniMapUIBack>		m_wpMiniMapUIBack;			// ミニマップ背景情報
 	std::weak_ptr<MainMissionUI>		m_wpMainMissionUI;			// メインミッションUI情報
+	std::weak_ptr<SubMissionUI>			m_wpSubMissionUI;			// サブミッションUI情報
 	std::weak_ptr<CurrentLocation>		m_wpCurrentLocation;		// 現在地UI情報
 	std::weak_ptr<CardKeyLocation>		m_wpCardKeyLocation;		// カードキー位置UI情報
 	std::weak_ptr<SecretFileLocation>	m_wpSecretFileLocation;		// 機密ファイルUI情報
@@ -191,6 +201,9 @@ private:
 	std::shared_ptr<KdAnimator>			m_spAnimator;				// アニメーション
 	float								m_nowAnimeFrm	= 0.0f;		// 現在のアニメーションフレーム
 	float								m_animFrmSpd	= 1.0f;		// アニメーションの1フレーム(blender側では24fpsでのアニメーション実装のため)
+	float								m_animeSpeed	= 1.0f;		// アニメーション速度
+	const float							m_normalAnimSpd = 1.0f;		// 基本のアニメーション速度 1.0f
+	const float							m_runAnimSpd	= 1.2f;		// 走行時のアニメーション速度 1.2f
 
 	const float							m_reloadFrmMax	= 60.0f;	// リロードフレーム最大値 60.0f
 	const float							m_standFrmMax	= 15.0f;	// 立ち上がりフレーム最大値 15.0f
@@ -200,6 +213,7 @@ private:
 	const float							m_restFrmMax	= 32.5f;	// 拘束フレーム最大値 32.5f
 	const float							m_grabFrm		= 7.5f;		// 掴み時フレーム 17.5f
 	const float							m_killFrmMax	= 45.0f;	// 処刑時フレーム最大値 45.0f
+	const float							m_exeFrm		= 21.0f;	// 処刑時フレーム 22.5f
 
 	const float							m_zeroMoveSpd	= 0.0f;		// 停止速度 0.0f
 	const float							m_walkMoveSpd	= 0.05f;	// 歩行速度 0.05f
@@ -209,15 +223,48 @@ private:
 	const float							m_tightArea		= 1.25f;	// 拘束エリア 1.25f
 
 	std::bitset<TOTALKEYNUM>			m_bitsKeyFlg	= false;
+	bool								m_clearFlg		= false;
+	bool								m_miniMapFlg	= false;
 	bool								m_restEnemy1Flg	= false;
 	bool								m_restEnemy2Flg = false;
 	bool								m_restEnemy3Flg = false;
+	bool								m_exeFlg		= false;
 
 	Math::Vector3						m_diffVec		= Math::Vector3::Zero;			// 敵とプレイヤーの差ベクトル
 
 	UINT								m_sType			= SituationType::Idle;			// プレイヤーの状態タイプ
 	PostureType							m_posType		= PostureType::Stand;			// プレイヤーの体勢タイプ
 	ItemCollectType						m_itemCollType	= ItemCollectType::NoCollect;	// アイテム所持タイプ
+
+	const float							m_openMapVol	= 0.5f;
+	std::shared_ptr<KdSoundInstance>	m_spOpenMapSound;
+
+	const float							m_closeMapVol	= 0.5f;
+	std::shared_ptr<KdSoundInstance>	m_spCloseMapSound;
+
+	const float							m_itemCollVol	= 0.5f;
+	std::shared_ptr<KdSoundInstance>	m_spItemCollectSound;
+
+	const float							m_shotVol		= 0.5f;
+	std::shared_ptr<KdSoundInstance3D>	m_spShotSound;
+
+	const float							m_readyVol		= 0.3f;
+	std::shared_ptr<KdSoundInstance3D>	m_spReadySound;
+
+	const float							m_reloadVol		= 0.9f;
+	std::shared_ptr<KdSoundInstance3D>	m_spReloadSound;
+
+	const float							m_restraintVol	= 0.5f;
+	std::shared_ptr<KdSoundInstance3D>	m_spRestraintSound;
+
+	const float							m_runVol		= 0.5f;
+	std::shared_ptr<KdSoundInstance3D>	m_spRunSound;
+
+	const float							m_walkVol		= 0.1f;
+	std::shared_ptr<KdSoundInstance3D>	m_spWalkSound;
+
+	const float							m_exeVol		= 0.2f;
+	std::shared_ptr<KdSoundInstance3D>	m_spExeSound;
 
 private:
 

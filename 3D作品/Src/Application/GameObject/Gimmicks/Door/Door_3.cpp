@@ -11,6 +11,9 @@ void Door_3::Init()
 		m_spModel->SetModelData(KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Gimmicks/Door/Door.gltf"));
 	}
 
+	m_spOpenSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/OpenDoor.wav");
+	m_spOpenSound->SetVolume(m_openVol);
+
 	m_debugColor = kRedColor;
 
 	m_pos = { -3.8f,-0.9f,10.f };
@@ -60,6 +63,11 @@ void Door_3::Update()
 	if (m_openAbleFlg)
 	{
 		m_openFlg = true;
+
+		if (m_spOpenSound->IsStopped())
+		{
+			m_spOpenSound->Play();
+		}
 	}
 	if (m_openFlg)
 	{
@@ -70,6 +78,9 @@ void Door_3::Update()
 			if (!m_openAbleFlg)
 			{
 				m_openFlg = false;
+
+				m_spOpenSound->Play();
+				
 			}
 		}
 	}
@@ -84,6 +95,8 @@ void Door_3::Update()
 
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mTrans;
+
+	m_spOpenSound->SetPos(GetPos());
 }
 
 void Door_3::DrawLit()

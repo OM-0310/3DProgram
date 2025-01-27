@@ -11,6 +11,9 @@ void Bullet::Init()
 		m_spModel = KdAssets::Instance().m_modeldatas.GetData("Asset/Models/Bullet/Bullet.gltf");
 	}
 
+	m_spHitSound = KdAudioManager::Instance().GetSoundInstance("Asset/Sounds/Game/Hit.wav");
+	m_spHitSound->SetVolume(m_hitVol);
+
 	m_tPoly.SetMaterial("Asset/Textures/Orbit/Orbit.png");
 	m_tPoly.SetLength(25);
 
@@ -42,13 +45,14 @@ void Bullet::Update()
 	sphere.m_type			= KdCollider::TypeDamage | KdCollider::TypeGround;
 
 	// デバッグ確認用
-	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
+	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
 
 	bool hit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy_1 ||
-			obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy_2)
+			obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy_2 ||
+			obj->GetObjectType() == KdGameObject::ObjectType::TypeEnemy_3)
 		{
 			hit = obj->Intersects(sphere, nullptr);
 
@@ -57,6 +61,11 @@ void Bullet::Update()
 				obj->SetHPDec(m_bulletPow);
 
 				ClassDestruction();
+
+				if (m_spHitSound->IsStopped())
+				{
+					m_spHitSound->Play();
+				}
 
 				break;
 			}

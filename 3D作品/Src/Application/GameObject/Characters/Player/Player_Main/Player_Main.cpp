@@ -35,6 +35,10 @@ void Player_Main::Update()
 
 void Player_Main::PostUpdate()
 {
-	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	if (spPlayer)
+	{
+		m_spAnimator->AdvanceTime(m_spModel->WorkNodes(), spPlayer->GetAnimeSpeed());
+	}
 	m_spModel->CalcNodeMatrices();
 }

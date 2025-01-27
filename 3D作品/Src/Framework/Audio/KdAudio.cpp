@@ -114,6 +114,36 @@ std::shared_ptr<KdSoundInstance3D> KdAudioManager::Play3D(std::string_view rName
 	return instance;
 }
 
+std::shared_ptr<KdSoundInstance> KdAudioManager::GetSoundInstance(std::string_view rName)
+{
+	if (!m_audioEng) { return nullptr; }
+
+	std::shared_ptr<KdSoundEffect> soundData = GetSound(rName);
+
+	if (!soundData) { return nullptr; }
+
+	std::shared_ptr<KdSoundInstance> instance = std::make_shared<KdSoundInstance>(soundData);
+
+	if (!instance->CreateInstance()) { return nullptr; }
+
+	return instance;
+}
+
+std::shared_ptr<KdSoundInstance3D> KdAudioManager::GetSoundInstance3D(std::string_view rName)
+{
+	if (!m_audioEng) { return nullptr; }
+
+	std::shared_ptr<KdSoundEffect> soundData = GetSound(rName);
+
+	if (!soundData) { return nullptr; }
+
+	std::shared_ptr<KdSoundInstance3D> instance = std::make_shared<KdSoundInstance3D>(soundData, m_listener);
+
+	if (!instance->CreateInstance()) { return nullptr; }
+
+	return instance;
+}
+
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // 再生リストの全ての音を停止する
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

@@ -27,7 +27,9 @@ private:
 	std::weak_ptr<TPSCamera>	m_wpTPSCamera;
 
 	const Math::Vector2			m_aimRPos = { -15.0f,0.0f };
+	//const Math::Vector2			m_aimRPos = Math::Vector2::Zero;
 	const Math::Vector2			m_aimLPos = { 18.5f,0.0f };
+	//const Math::Vector2			m_aimLPos = Math::Vector2::Zero;
 
 	bool						m_Active = false;
 };

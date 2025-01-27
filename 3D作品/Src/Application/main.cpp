@@ -306,7 +306,7 @@ void Application::Execute()
 
 		m_fpsController.Update();		
 
-		std::string titleBar = "ステルスゲーム fps:" + std::to_string(m_fpsController.m_nowfps);
+		std::string titleBar = "Infiltration Mission fps:" + std::to_string(m_fpsController.m_nowfps);
 		SetWindowTextA(m_window.GetWndHandle(), titleBar.c_str());
 	}
 
@@ -379,7 +379,7 @@ void Application::ImGuiProcess()
 	//ImGui::End();
 
 	// ログウィンドウ
-	m_log.Draw("Log Window");
+	//m_log.Draw("Log Window");
 
 	//=====================================================
 	// ログ出力 ・・・ AddLog("～") で追加

@@ -26,6 +26,7 @@
 #include "../../UI/MiniMapUI/MiniMapUI.h"
 #include "../../UI/MiniMapUIBack/MiniMapUIBack.h"
 #include "../../UI/MainMissionUI/MainMissionUI.h"
+#include "../../UI/SubMissionUI/SubMissionUI.h"
 #include "../../UI/CurrentLocation/CurrentLocation.h"
 #include "../../UI/CardKeyLocation/CardKeyLocation.h"
 #include "../../UI/SecretFileLocation/SecretFileLocation.h"
@@ -46,8 +47,38 @@ void Player::Init()
 {
 	m_spAnimator	= std::make_shared<KdAnimator>();
 	m_nowAnimeFrm	= 0.0f;
+	m_animeSpeed	= m_normalAnimSpd;
 
 	ChangeActionState(std::make_shared<ActionIdle>());
+
+	m_spOpenMapSound = KdAudioManager::Instance().GetSoundInstance("Asset/Sounds/Game/OpenMiniMap.wav");
+	m_spOpenMapSound->SetVolume(m_openMapVol);
+
+	m_spCloseMapSound = KdAudioManager::Instance().GetSoundInstance("Asset/Sounds/Game/CloseMiniMap.wav");
+	m_spCloseMapSound->SetVolume(m_closeMapVol);
+
+	m_spReadySound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Pistol_Ready.wav");
+	m_spReadySound->SetVolume(m_readyVol);
+
+	m_spShotSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Pistol_Shot.wav");
+	m_spShotSound->SetVolume(m_shotVol);
+
+	m_spReloadSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Reload.wav");
+	m_spReloadSound->SetVolume(m_reloadVol);
+
+	m_spRestraintSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Restraint.wav");
+	m_spRestraintSound->SetVolume(m_restraintVol);
+
+	m_spRunSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Run.wav");
+	m_spRunSound->SetVolume(m_runVol);
+
+	m_spWalkSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Walk.wav");
+	m_spWalkSound->SetVolume(m_walkVol);
+
+	m_spItemCollectSound = KdAudioManager::Instance().GetSoundInstance("Asset/Sounds/Game/ItemCollect.wav");
+	m_spItemCollectSound->SetVolume(m_itemCollVol);
+
+	m_spExeSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Execution.wav");
 
 	m_pos			= { 0.0f,-0.9f,-50.0f };
 	m_moveDir		= Math::Vector3::Zero;
@@ -57,6 +88,9 @@ void Player::Init()
 	{
 		m_bitsKeyFlg[i] = false;
 	}
+	m_clearFlg		= false;
+	m_miniMapFlg	= false;
+	m_exeFlg		= false;
 	m_restEnemy1Flg = false;
 	m_restEnemy2Flg = false;
 	m_restEnemy3Flg = false;
@@ -102,6 +136,14 @@ void Player::Update()
 
 void Player::PostUpdate()
 {
+	m_spReadySound->SetPos(GetPos());
+	m_spShotSound->SetPos(GetPos());
+	m_spReloadSound->SetPos(GetPos());
+	m_spRestraintSound->SetPos(GetPos());
+	m_spRunSound->SetPos(GetPos());
+	m_spWalkSound->SetPos(GetPos());
+	m_spExeSound->SetPos(GetPos());
+	
 	// 当たり判定(地面判定はレイ判定、衝突判定は球判定)
 	UpdateCollision();
 }
@@ -200,6 +242,7 @@ void Player::OpneMapProc()
 	const std::shared_ptr<MiniMapUI>			spMiniMapUI			= m_wpMiniMapUI.lock();
 	const std::shared_ptr<MiniMapUIBack>		spMiniMapUIBack		= m_wpMiniMapUIBack.lock();
 	const std::shared_ptr<MainMissionUI>		spMainMissionUI		= m_wpMainMissionUI.lock();
+	const std::shared_ptr<SubMissionUI>			spSubMissionUI		= m_wpSubMissionUI.lock();
 	const std::shared_ptr<CurrentLocation>		spCurrentLocation	= m_wpCurrentLocation.lock();
 	const std::shared_ptr<CardKeyLocation>		spCardKeyLocation	= m_wpCardKeyLocation.lock();
 	const std::shared_ptr<SecretFileLocation>	spSecretFileLocation = m_wpSecretFileLocation.lock();
@@ -208,6 +251,35 @@ void Player::OpneMapProc()
 	{
 		if (!m_bitsKeyFlg[KeyFlgType::OpenMapKey])
 		{
+			if (!m_miniMapFlg)
+			{
+				m_miniMapFlg = true;
+
+				if (m_spOpenMapSound->IsStopped())
+				{
+					m_spOpenMapSound->Play();
+				}
+
+				if (m_spCloseMapSound->IsPlaying())
+				{
+					m_spCloseMapSound->Stop();
+				}
+			}
+			else
+			{
+				m_miniMapFlg = false;
+
+				if (m_spCloseMapSound->IsStopped())
+				{
+					m_spCloseMapSound->Play();
+				}
+
+				if (m_spOpenMapSound->IsPlaying())
+				{
+					m_spOpenMapSound->Stop();
+				}
+			}
+
 			m_bitsKeyFlg[KeyFlgType::OpenMapKey] = true;
 
 			// ミニマップUIの情報があるとき
@@ -258,6 +330,23 @@ void Player::OpneMapProc()
 				{
 					// 表示フラグをfalseにする
 					spMainMissionUI->Open(false);
+				}
+			}
+
+			// サブミッションUI情報があるとき
+			if (spSubMissionUI)
+			{
+				// サブミッションUIの表示フラグがfalseのとき
+				if (!spSubMissionUI->GetActive())
+				{
+					// 表示フラグをtrueにする
+					spSubMissionUI->Open(true);
+				}
+				// trueのとき
+				else
+				{
+					// 表示フラグをfalseにする
+					spSubMissionUI->Open(false);
 				}
 			}
 
@@ -366,6 +455,8 @@ void Player::CollectItemProc()
 					// アイテム取得状態を"カードキー取得状態"にし、CardKeyクラスを破棄する
 					m_itemCollType = ItemCollectType::CardKeyCollect;
 					spCard->Extinction();
+
+					m_spItemCollectSound->Play();
 				}
 			}
 			// 鍵のかかったドアの情報があるとき
@@ -376,6 +467,8 @@ void Player::CollectItemProc()
 				{
 					// ドアを開錠する
 					spLockDoor->Open();
+
+					m_spItemCollectSound->Play();
 				}
 			}
 			// 機密ファイルの情報があるとき
@@ -399,6 +492,8 @@ void Player::CollectItemProc()
 					// アイテム取得状態を"機密ファイル取得状態"にし、SecretFileクラスを破棄する
 					m_itemCollType = ItemCollectType::SecretFileCollect;
 					spFile->Extinction();
+
+					m_spItemCollectSound->Play();
 
 					// ゴールの情報があるとき
 					if (spGoal)
@@ -668,6 +763,7 @@ void Player::ActionIdle::Enter(Player& _owner)
 			_owner.m_sType = SituationType::Idle;
 			// プレイヤーの上半身と下半身のアニメーションを"Idle"に切り替え
 			_owner.ChangeAnimation("Idle", _owner.m_nowAnimeFrm);
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 		}
 	}
 	else
@@ -682,6 +778,7 @@ void Player::ActionIdle::Enter(Player& _owner)
 			_owner.m_sType = SituationType::Idle;
 			// プレイヤーの上半身と下半身のアニメーションを"Idle"に切り替え
 			_owner.ChangeAnimation("Idle");
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 		}
 	}
 }
@@ -798,6 +895,8 @@ void Player::ActionWalk::Enter(Player& _owner)
 		_owner.m_sType = SituationType::Walk;
 		// アニメーションを"Walk"に切り替え
 		_owner.ChangeAnimation("Walk");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+		_owner.m_spWalkSound->Play(true);
 	}
 }
 
@@ -935,6 +1034,8 @@ void Player::ActionWalk::Exit(Player& _owner)
 {
 	// 現在のアニメーションフレームを初期化する
 	_owner.m_nowAnimeFrm = 0.0f;
+
+	_owner.m_spWalkSound->Stop();
 }
 
 void Player::ActionRun::Enter(Player& _owner)
@@ -946,6 +1047,9 @@ void Player::ActionRun::Enter(Player& _owner)
 		// アニメーションを"Run"に切り替え
 		_owner.m_sType = SituationType::Run;
 		_owner.ChangeAnimation("Run");
+
+		_owner.m_animeSpeed = _owner.m_runAnimSpd;
+		_owner.m_spRunSound->Play(true);
 	}
 }
 
@@ -1080,6 +1184,8 @@ void Player::ActionRun::Exit(Player& _owner)
 {
 	// 現在のアニメーションフレームを初期化する
 	_owner.m_nowAnimeFrm = 0.0f;
+
+	_owner.m_spRunSound->Stop();
 }
 
 void Player::ActionReady::Enter(Player& _owner)
@@ -1091,6 +1197,9 @@ void Player::ActionReady::Enter(Player& _owner)
 		// アニメーションを"Ready"に切り替え
 		_owner.m_sType = SituationType::Ready;
 		_owner.ChangeAnimation("Ready");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+		_owner.m_spReadySound->Play();
 	}
 }
 
@@ -1125,6 +1234,17 @@ void Player::ActionReady::Update(Player& _owner)
 	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
 	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
 	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
+	if (_owner.m_moveDir.LengthSquared() != 0)
+	{
+		if (_owner.m_spRunSound->IsStopped())
+		{
+			_owner.m_spRunSound->Play(true);
+		}
+	}
+	else
+	{
+		_owner.m_spRunSound->Stop();
+	}
 
 	// 右クリックされたとき
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
@@ -1208,8 +1328,12 @@ void Player::ActionReady::Update(Player& _owner)
 		}
 	}
 
-	// ベクトルの向きをY軸の回転行列で変換
-	_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+	// カメラの情報があるとき
+	if (spCamera)
+	{
+		// ベクトルの向きをY軸の回転行列で変換
+		_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
+	}
 
 	// 移動方向を正規化
 	_owner.m_moveDir.Normalize();
@@ -1239,6 +1363,9 @@ void Player::ActionShot::Enter(Player& _owner)
 		// アニメーションを"Shot"に切り替え
 		_owner.m_sType = SituationType::Shot;
 		_owner.ChangeAnimation("Shot", false);
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+		_owner.m_spShotSound->Play();
 	}
 }
 
@@ -1326,6 +1453,9 @@ void Player::ActionRestraint::Enter(Player& _owner)
 		// アニメーションを"Reload"に切り替え
 		_owner.m_sType = Player::SituationType::Restraint;
 		_owner.ChangeAnimation("Restraint", false);
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+		_owner.m_spRestraintSound->Play();
 	}
 }
 
@@ -1348,6 +1478,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 	// アニメーションフレームが掴み時のフレームのとき
 	if (_owner.m_nowAnimeFrm >= _owner.m_grabFrm)
 	{
+
 		if (_owner.m_restEnemy1Flg)
 		{
 			if (spEnemy_1)
@@ -1397,6 +1528,7 @@ void Player::ActionRestraint_Idle::Enter(Player& _owner)
 		// アニメーションを"Restraint_Idle"に切り替え
 		_owner.m_sType = Player::SituationType::Restraint_Idle;
 		_owner.ChangeAnimation("Restraint_Idle");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 	}
 }
 
@@ -1433,6 +1565,8 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 						if (spKillUI)
 						{
 							spKillUI->SetUseFlg(true);
+
+							_owner.m_spItemCollectSound->Play();
 						}
 
 						if (_owner.m_restEnemy1Flg)
@@ -1491,6 +1625,8 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 						if (spInterrogationUI)
 						{
 							spInterrogationUI->SetUseFlg(true);
+
+							_owner.m_spItemCollectSound->Play();
 						}
 
 						if (_owner.m_restEnemy1Flg)
@@ -1695,6 +1831,7 @@ void Player::ActionKill::Enter(Player& _owner)
 		// アニメーションを"Kill"に切り替え
 		_owner.m_sType = Player::SituationType::Kill;
 		_owner.ChangeAnimation("Kill");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 	}
 }
 
@@ -1702,6 +1839,19 @@ void Player::ActionKill::Update(Player& _owner)
 {
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+
+	if (_owner.m_nowAnimeFrm >= _owner.m_exeFrm)
+	{
+		if (!_owner.m_exeFlg)
+		{
+			_owner.m_exeFlg = true;
+
+			if (_owner.m_spExeSound->IsStopped())
+			{
+				_owner.m_spExeSound->Play();
+			}
+		}
+	}
 
 	// アニメーションが終了していたら
 	if (_owner.m_nowAnimeFrm >= _owner.m_killFrmMax)
@@ -1720,6 +1870,11 @@ void Player::ActionKill::Exit(Player& _owner)
 		// アニメーションフレームを初期化
 		_owner.m_nowAnimeFrm = 0.0f;
 	}
+
+	if (_owner.m_exeFlg)
+	{
+		_owner.m_exeFlg = false;
+	}
 }
 
 void Player::ActionReload_Idle::Enter(Player& _owner)
@@ -1731,6 +1886,9 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 		// アニメーションを"Reload"に切り替え
 		_owner.m_sType = Player::SituationType::Reload;
 		_owner.ChangeAnimation("Reload", false);
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+		_owner.m_spReloadSound->Play();
 	}
 	// "リロード状態"であるとき
 	else
@@ -1740,6 +1898,7 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 		{
 			// アニメーションを"Reload"に切り替え
 			_owner.ChangeAnimation("Reload", false, _owner.m_nowAnimeFrm);
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 		}
 		// 0.0fであるとき
 		else
@@ -1748,6 +1907,9 @@ void Player::ActionReload_Idle::Enter(Player& _owner)
 			// アニメーションを"Reload"に切り替え
 			_owner.m_nowAnimeFrm = 0.0f;
 			_owner.ChangeAnimation("Reload", false);
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+			_owner.m_spReloadSound->Play();
 		}
 	}
 }
@@ -1847,6 +2009,10 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 		// アニメーションを"Reload_Walk"に切り替え
 		_owner.m_sType = Player::SituationType::Reload;
 		_owner.ChangeAnimation("Reload_Walk", false);
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+		_owner.m_spReloadSound->Play();
+		_owner.m_spWalkSound->Play(true);
 	}
 	// "リロード状態"であるとき
 	else
@@ -1856,6 +2022,7 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 		{
 			// アニメーションを"Reload_Walk"に切り替え
 			_owner.ChangeAnimation("Reload_Walk", false, _owner.m_nowAnimeFrm);
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 		}
 		// 0.0fであるとき
 		else
@@ -1864,6 +2031,10 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 			// アニメーションを"Reload_Walk"に切り替え
 			_owner.m_nowAnimeFrm = 0.0f;
 			_owner.ChangeAnimation("Reload_Walk", false);
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+			_owner.m_spReloadSound->Play();
+			_owner.m_spWalkSound->Play(true);
 		}
 	}
 }
@@ -2037,6 +2208,10 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 		// アニメーションを"Reload_Run"に切り替え
 		_owner.m_sType = Player::SituationType::Reload;
 		_owner.ChangeAnimation("Reload_Run", false);
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+		_owner.m_spReloadSound->Play();
+		_owner.m_spRunSound->Play(true);
 	}
 	// "リロード状態"であるとき
 	else
@@ -2046,6 +2221,19 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 		{
 			// アニメーションを"Reload_Run"に切り替え
 			_owner.ChangeAnimation("Reload_Run", false, _owner.m_nowAnimeFrm);
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+		}
+		// 0.0fであるとき
+		else
+		{
+			// 現在のアニメーションフレームを初期化し、
+			// アニメーションを"Reload_Walk"に切り替え
+			_owner.m_nowAnimeFrm = 0.0f;
+			_owner.ChangeAnimation("Reload_Run", false);
+			_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+
+			_owner.m_spReloadSound->Play();
+			_owner.m_spRunSound->Play(true);
 		}
 	}
 }
@@ -2148,6 +2336,7 @@ void Player::ActionSit::Enter(Player& _owner)
 		// アニメーションを"Sit"に切り替え
 		_owner.m_nowAnimeFrm = 0.0f;
 		_owner.ChangeAnimation("Sit", false);
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 	}
 }
 
@@ -2184,6 +2373,7 @@ void Player::ActionStand::Enter(Player& _owner)
 		// アニメーションを"Stand"に切り替え
 		_owner.m_nowAnimeFrm = 0.0f;
 		_owner.ChangeAnimation("Stand");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 	}
 }
 
@@ -2225,6 +2415,7 @@ void Player::ActionSit_Idle::Enter(Player& _owner)
 		_owner.m_posType		= PostureType::Sit;
 		// アニメーションを"Sit_Idle"に切り替え
 		_owner.ChangeAnimation("Sit_Idle");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 	}
 }
 
@@ -2311,6 +2502,7 @@ void Player::ActionSit_Walk::Enter(Player& _owner)
 		_owner.m_sType = SituationType::Walk;
 		// アニメーションを"Sit_Walk"に切り替え
 		_owner.ChangeAnimation("Sit_Walk");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 	}
 }
 
@@ -2422,6 +2614,7 @@ void Player::ActionSit_Ready::Enter(Player& _owner)
 		_owner.m_posType		= PostureType::Sit;
 		// アニメーションを"Sit_Ready"に切り替え
 		_owner.ChangeAnimation("Sit_Ready");
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
 	}
 }
 

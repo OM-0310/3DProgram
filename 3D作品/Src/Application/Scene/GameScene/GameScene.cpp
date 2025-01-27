@@ -2,7 +2,6 @@
 #include"../SceneManager.h"
 
 #include "../../GameObject/Camera/TPSCamera/TPSCamera.h"
-#include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
 
 #include "../../GameObject/Sky/Sky.h"
 #include "../../GameObject/Terrains/Ground/Ground_UP/Ground_UP.h"
@@ -10,6 +9,7 @@
 #include "../../GameObject/Terrains/RockWall/RockWall.h"
 #include "../../GameObject/Terrains/Building/Building_Main/Building_Main.h"
 #include "../../GameObject/Terrains/Building/Building_Roof/Building_Roof.h"
+#include "../../GameObject/Terrains/Building/Light/Light.h"
 #include "../../GameObject/Terrains/ArmoredCar/ArmoredCar.h"
 #include "../../GameObject/Terrains/Grass/Grass.h"
 
@@ -21,6 +21,7 @@
 #include "../../GameObject/Item/SecretFile/SecretFile.h"
 #include "../../GameObject/Item/CardKey/CardKey.h"
 #include "../../GameObject/Goal/Goal.h"
+#include "../../GameObject/UI/GoalUI/GoalUI.h"
 
 #include "../../GameObject/Characters/Player/Player.h"
 #include "../../GameObject/Characters/Player/Player_Main/Player_Main.h"
@@ -63,16 +64,18 @@
 #include "../../GameObject/UI/MiniMapUIBack/MiniMapUIBack.h"
 #include "../../GameObject/UI/MiniMapUI/MiniMapUI.h"
 #include "../../GameObject/UI/MainMissionUI/MainMissionUI.h"
+#include "../../GameObject/UI/SubMissionUI/SubMissionUI.h"
 #include "../../GameObject/UI/CurrentLocation/CurrentLocation.h"
 #include "../../GameObject/UI/CardKeyLocation/CardKeyLocation.h"
 #include "../../GameObject/UI/SecretFileLocation/SecretFileLocation.h"
+#include "../../GameObject/Game_Back/Game_Back.h"
 
 void GameScene::Event()
 {
-	std::shared_ptr<Goal> spGoal = m_wpGoal.lock();
-	if (spGoal)
+	const std::shared_ptr<Game_Back> spBack = m_wpBack.lock();
+	if (spBack)
 	{
-		if (spGoal->GetClearFlg())
+		if (spBack->GetAlpha() >= spBack->GetAlphaMax())
 		{
 			SceneManager::Instance().SetNextScene
 			(
@@ -85,6 +88,9 @@ void GameScene::Event()
 void GameScene::Init()
 {
 	ShowCursor(false);
+
+	KdShaderManager::Instance().WorkAmbientController().SetDirLight({ 1,-1,1 }, { 0,0,0 });
+	KdShaderManager::Instance().WorkAmbientController().SetAmbientLight({ 0.2f,0.2f,0.2f,1 });
 
 	//=================================================================
 	// マルチスレッド
@@ -126,40 +132,129 @@ void GameScene::StageInit(
 	ground_Up = std::make_shared<Ground_UP>();
 	ground_Up->Init();
 	m_objList.push_back(ground_Up);
+	m_wpGround_Up = ground_Up;
 
 	std::shared_ptr<Ground_Bottom> ground_Bottom;
 	ground_Bottom = std::make_shared<Ground_Bottom>();
 	ground_Bottom->Init();
 	m_objList.push_back(ground_Bottom);
+	m_wpGround_Bottom = ground_Bottom;
 
 	// 岩初期化
 	std::shared_ptr<RockWall> rock;
 	rock = std::make_shared<RockWall>();
 	rock->Init();
 	m_objList.push_back(rock);
-
-	//std::shared_ptr<Ground> ground;
-	//ground = std::make_shared<Ground>();
-	//ground->Init();
-	//m_objList.push_back(ground);
-
-	// 建物　メイン
-	std::shared_ptr<Building_Main> build_main;
-	build_main = std::make_shared<Building_Main>();
-	build_main->Init();
-	m_objList.push_back(build_main);
+	m_wpRock_Wall = rock;
 
 	// 建物　屋根
 	std::shared_ptr<Building_Roof> build_roof;
 	build_roof = std::make_shared<Building_Roof>();
 	build_roof->Init();
 	m_objList.push_back(build_roof);
+	m_wpBuild_Roof = build_roof;
+
+	// 建物　メイン
+	std::shared_ptr<Building_Main> build_main;
+	build_main = std::make_shared<Building_Main>();
+	build_main->Init();
+	m_objList.push_back(build_main);
+	m_wpBuild_Main = build_main;
+
+	// ライト
+	{
+		std::shared_ptr<Light> light;
+		for (int i = -1; i <= 1; i++)
+		{
+			for (int j = -4; j <= 4; j++)
+			{
+				light = std::make_shared<Light>();
+				light->Init();
+				light->SetPos({ 22.0f * i,3.45f,6.0f * j });
+				m_objList.push_back(light);
+			}
+		}
+
+		for (int i = -4; i <= 4; i++)
+		{
+			light = std::make_shared<Light>();
+			light->Init();
+			light->SetPos({ 5.5f * i,3.45f,-27.0f });
+			m_objList.push_back(light);
+		}
+
+		for (int i = -4; i <= 4; i++)
+		{
+			light = std::make_shared<Light>();
+			light->Init();
+			light->SetPos({ 5.5f * i,3.45f,27.0f });
+			m_objList.push_back(light);
+		}
+
+		for (int i = 1; i <= 2; i++)
+		{
+			light = std::make_shared<Light>();
+			light->Init();
+			light->SetPos({ -6.0f * i,3.45f,-19.0f });
+			m_objList.push_back(light);
+		}
+
+		for (int i = 1; i <= 2; i++)
+		{
+			light = std::make_shared<Light>();
+			light->Init();
+			light->SetPos({ -7.0f * i,3.45f,-14.0f });
+			m_objList.push_back(light);
+		}
+
+		for (int i = 1; i <= 3; i++)
+		{
+			for (int j = 1; j <= 2; j++)
+			{
+				light = std::make_shared<Light>();
+				light->Init();
+				light->SetPos({ -7.0f * j,3.45f,-3.3f * i });
+				m_objList.push_back(light);
+			}
+		}
+
+		for (int i = 1; i <= 2; i++)
+		{
+			light = std::make_shared<Light>();
+			light->Init();
+			light->SetPos({ -7.0f * i,3.45f,6.0f });
+			m_objList.push_back(light);
+		}
+
+		for (int i = 1; i <= 3; i++)
+		{
+			for (int j = 1; j <= 2; j++)
+			{
+				light = std::make_shared<Light>();
+				light->Init();
+				light->SetPos({ -7.0f * j,3.45f,10 + (i * 3.3f) });
+				m_objList.push_back(light);
+			}
+		}
+
+		for (int i = 1; i <= 2; i++)
+		{
+			for (int j = -4; j <= 4; j++)
+			{
+				light = std::make_shared<Light>();
+				light->Init();
+				light->SetPos({ 7.0f * i,3.45f,6.0f * j });
+				m_objList.push_back(light);
+			}
+		}
+	}
 
 	// 装甲車&戦車
 	std::shared_ptr<ArmoredCar> car;
 	car = std::make_shared<ArmoredCar>();
 	car->Init();
 	m_objList.push_back(car);
+	m_wpArmoredCar = car;
 
 	{
 		// 初期化完了を通知
@@ -387,6 +482,12 @@ void GameScene::CharaInit(
 	m_objList.push_back(goal);
 	m_wpGoal = goal;
 
+	// ゴールUI
+	std::shared_ptr<GoalUI> goalUI;
+	goalUI = std::make_shared<GoalUI>();
+	goalUI->Init();
+	m_objList.push_back(goalUI);
+
 	//=================================================================
 	// ギミック関係
 	//=================================================================
@@ -498,6 +599,14 @@ void GameScene::CharaInit(
 	m_objList.push_back(missionUI);
 
 	//=================================================================
+	// サブミッションUI初期化
+	//=================================================================
+	std::shared_ptr<SubMissionUI> subMissionUI;
+	subMissionUI = std::make_shared<SubMissionUI>();
+	subMissionUI->Init();
+	m_objList.push_back(subMissionUI);
+
+	//=================================================================
 	// 現在地UI初期化
 	//=================================================================
 	std::shared_ptr<CurrentLocation> currentLocation;
@@ -569,6 +678,15 @@ void GameScene::CharaInit(
 	keyUI->Init();
 	m_objList.push_back(keyUI);
 
+	//=================================================================
+	// 黒画面初期化
+	//=================================================================
+	std::shared_ptr<Game_Back> back;
+	back = std::make_shared<Game_Back>();
+	back->Init();
+	m_objList.push_back(back);
+	m_wpBack = back;
+
 	//// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //
 
 	player->SetPlayer_Main(player_Main);
@@ -585,6 +703,7 @@ void GameScene::CharaInit(
 	player->SetMiniMapUI(mapUI);
 	player->SetMiniMapUIBack(mapUIBack);
 	player->SetMainMissionUI(missionUI);
+	player->SetSubMissionUI(subMissionUI);
 	player->SetRestraintUI(restraintUI);
 	player->SetKillUI(killUI);
 	player->SetInterrogationUI(interrogationUI);
@@ -601,7 +720,12 @@ void GameScene::CharaInit(
 	player_Disarm_Pistol->SetPlayer(player);
 	player_Ready_Pistol->SetPlayer(player);
 
+	goal->SetPlayer(player);
+	goalUI->SetCamera(camera);
+	goalUI->SetGoal(goal);
+
 	lockedDoor->SetPlayer(player);
+	lockedDoor->SetSubMissionUI(subMissionUI);
 	reticle->SetTPSCamera(camera);
 	bulletNumUI->SetPlayer_Ready_Pistol(player_Ready_Pistol);
 	cardUI->SetCardKey(card);
@@ -619,8 +743,15 @@ void GameScene::CharaInit(
 	cardKeyLocation->SetCardKey(card);
 	secretFileLocation->SetSecretFile(file);
 	hpBarUI->SetPlayer_Main(player_Main);
+	back->SetPlayer(player);
 
 	camera->SetPlayer(player);
+	camera->RegistHitObject(m_wpGround_Up.lock());
+	camera->RegistHitObject(m_wpGround_Bottom.lock());
+	camera->RegistHitObject(m_wpRock_Wall.lock());
+	camera->RegistHitObject(m_wpBuild_Main.lock());
+	camera->RegistHitObject(m_wpBuild_Roof.lock());
+	camera->RegistHitObject(m_wpArmoredCar.lock());
 
 	done = true;
 }

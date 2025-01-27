@@ -69,6 +69,7 @@ void SceneManager::ChangeScene(SceneType sceneType)
 		break;
 	case SceneType::Result:
 		m_currentScene = std::make_shared<ResultScene>();
+		break;
 	}
 
 	// 現在のシーン情報を更新

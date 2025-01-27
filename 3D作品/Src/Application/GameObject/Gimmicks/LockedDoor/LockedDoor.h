@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class Player;
+class SubMissionUI;
 
 class LockedDoor : public KdGameObject
 {
@@ -15,10 +16,16 @@ public:
 	void GenerateDepthMapFromLight	()	override;
 
 	void Open();
+	void GenerateNeedCardKeyUI();
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{
 		m_wpPlayer = _spPlayer;
+	}
+
+	void SetSubMissionUI(const std::shared_ptr<SubMissionUI>& _spSubMissionUI)
+	{
+		m_wpSubMissionUI = _spSubMissionUI;
 	}
 
 	const bool& GetOpeAbleFlg	() { return m_openAbleFlg; }
@@ -27,23 +34,28 @@ public:
 
 private:
 
-	std::shared_ptr<KdModelWork>	m_spModel		= nullptr;					// モデル情報
-	std::weak_ptr<Player>			m_wpPlayer;									// プレイヤー情報
+	std::shared_ptr<KdModelWork>		m_spModel		= nullptr;					// モデル情報
+	std::weak_ptr<Player>				m_wpPlayer;									// プレイヤー情報
+	std::weak_ptr<SubMissionUI>			m_wpSubMissionUI;							// サブミッションUI情報
 
-	Math::Color						m_debugColor	= kWhiteColor;				// デバッグワイヤー用カラー
+	Math::Color							m_debugColor	= kWhiteColor;				// デバッグワイヤー用カラー
 
-	Math::Matrix					m_mTrans		= Math::Matrix::Identity;	// 座標行列
+	Math::Matrix						m_mTrans		= Math::Matrix::Identity;	// 座標行列
 
-	Math::Vector3					m_pos			= Math::Vector3::Zero;		// 座標
-	Math::Vector3					m_eventPos		= Math::Vector3::Zero;		// 座標(円判定用)
+	Math::Vector3						m_pos			= Math::Vector3::Zero;		// 座標
+	Math::Vector3						m_eventPos		= Math::Vector3::Zero;		// 座標(円判定用)
 
-	const float						m_moveMax		= 2.5f;						// Y座標のMAX値 = 2.5f
-	const float						m_moveMin		= -0.9f;					// Y座標のMin値 = -0.9f
-	const float						m_moveSpeed		= 0.1f;						// 移動量
+	const float							m_moveMax		= 2.5f;						// Y座標のMAX値 = 2.5f
+	const float							m_moveMin		= -0.9f;					// Y座標のMin値 = -0.9f
+	const float							m_moveSpeed		= 0.1f;						// 移動量
 
-	const float						m_openArea		= 1.4f;						// 扉が開閉するアクティブが起こる範囲
+	const float							m_openArea		= 1.4f;						// 扉が開閉するアクティブが起こる範囲
 
-	bool							m_openAbleFlg	= false;					// 開錠可能フラグ
-	bool							m_openFlg		= false;					// 開錠フラグ
-	bool							m_lockFlg		= false;					// ロックフラグ
+	bool								m_openAbleFlg	= false;					// 開錠可能フラグ
+	bool								m_openFlg		= false;					// 開錠フラグ
+	bool								m_lockFlg		= false;					// ロックフラグ
+	bool								m_UIFlg			= false;
+
+	const float							m_openVol		= 1.0f;
+	std::shared_ptr<KdSoundInstance3D>	m_spOpenSound;
 };

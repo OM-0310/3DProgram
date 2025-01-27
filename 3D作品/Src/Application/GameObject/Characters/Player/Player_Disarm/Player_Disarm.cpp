@@ -28,7 +28,11 @@ void Player_Disarm::Update()
 
 void Player_Disarm::PostUpdate()
 {
-	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
+	if (spPlayer)
+	{
+		m_spAnimator->AdvanceTime(m_spModel->WorkNodes(), spPlayer->GetAnimeSpeed());
+	}
 }
 
 void Player_Disarm::DrawUnLit()

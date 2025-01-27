@@ -76,9 +76,6 @@
     <Filter Include="Src\Application\GameObject\Camera">
       <UniqueIdentifier>{781882e7-a4ba-44ae-b14e-75844a3802df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Camera\FPSCamera">
-      <UniqueIdentifier>{cab66d5f-b9d3-40bd-ae9d-57120eb6c79c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Camera\TPSCamera">
       <UniqueIdentifier>{c8cf7720-4d00-4c0b-a1cf-bc64280b295f}</UniqueIdentifier>
     </Filter>
@@ -292,6 +289,54 @@
     <Filter Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_Main_3">
       <UniqueIdentifier>{1ad41c6c-2a63-4887-8f81-0b1b6e1987c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ExclamationMarkUI">
+      <UniqueIdentifier>{04d23ea5-f5ad-4349-a213-3649a5f53a27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect">
+      <UniqueIdentifier>{ad42c0e9-b019-4ac8-82f2-60fd069433b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\MuzzleFlash">
+      <UniqueIdentifier>{74650cd5-46fd-442e-bef1-1cda54b6f81f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Building\Light">
+      <UniqueIdentifier>{f013a78b-2e15-4e4e-9889-d058baf2a768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\TitleCamera">
+      <UniqueIdentifier>{cab66d5f-b9d3-40bd-ae9d-57120eb6c79c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Title_Sky">
+      <UniqueIdentifier>{abc32639-c6d3-4be0-8a60-c5e04a36cd39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Helicopter">
+      <UniqueIdentifier>{6077e4eb-4595-427a-a3d2-fc462eb981d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\TitleLogo">
+      <UniqueIdentifier>{29eb895a-fb24-4f0e-8387-290cd8432b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Title_Back">
+      <UniqueIdentifier>{796845fd-edc0-4de2-a855-90827463dcc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\PressEnterUI">
+      <UniqueIdentifier>{702036ad-3fd9-45c0-95f5-a970480b8b53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Game_Back">
+      <UniqueIdentifier>{43fff4b5-1582-4cf8-952d-e509277acf05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\ResultBack">
+      <UniqueIdentifier>{34ffe151-4d74-44f5-87b2-b08394e90da4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Result_Logo">
+      <UniqueIdentifier>{f90d1301-dd65-434a-b831-7dd771c8ccb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GoalUI">
+      <UniqueIdentifier>{998c877e-7526-491b-b4c5-d6ae5caa88b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\NeedCardKeuUI">
+      <UniqueIdentifier>{8a898c28-332f-46b6-b164-b4737d81b6f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\SubMissionUI">
+      <UniqueIdentifier>{1fb651ed-b875-4778-9732-171867cf36d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -464,9 +509,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.h">
       <Filter>Src\Application\GameObject\Camera\TPSCamera</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.h">
-      <Filter>Src\Application\GameObject\Camera\FPSCamera</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Characters\CharaBase.h">
       <Filter>Src\Application\GameObject\Characters</Filter>
@@ -672,6 +714,51 @@
     <ClInclude Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_3.h">
       <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\ExclamationMarkUI\ExclamationMarkUI.h">
+      <Filter>Src\Application\GameObject\UI\ExclamationMarkUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\MuzzleFlash\MuzzleFlash.h">
+      <Filter>Src\Application\GameObject\Effect\MuzzleFlash</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Building\Light\Light.h">
+      <Filter>Src\Application\GameObject\Terrains\Building\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\TitleCamera\TitleCamera.h">
+      <Filter>Src\Application\GameObject\Camera\TitleCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Title_Sky\Title_Sky.h">
+      <Filter>Src\Application\GameObject\Title_Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Helicopter\Helicopter.h">
+      <Filter>Src\Application\GameObject\Helicopter</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\TitleLogo\TitleLogo.h">
+      <Filter>Src\Application\GameObject\TitleLogo</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Title_Back\Title_Back.h">
+      <Filter>Src\Application\GameObject\Title_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\PressEnterUI\PressEnterUI.h">
+      <Filter>Src\Application\GameObject\UI\PressEnterUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Game_Back\Game_Back.h">
+      <Filter>Src\Application\GameObject\Game_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Result_Back\Result_Back.h">
+      <Filter>Src\Application\GameObject\ResultBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\ResultLogo\ResultLogo.h">
+      <Filter>Src\Application\GameObject\Result_Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GoalUI\GoalUI.h">
+      <Filter>Src\Application\GameObject\UI\GoalUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\NeedCardKeyUI\NeedCradKeyUI.h">
+      <Filter>Src\Application\GameObject\UI\NeedCardKeuUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\SubMissionUI\SubMissionUI.h">
+      <Filter>Src\Application\GameObject\UI\SubMissionUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -817,9 +904,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\TPSCamera\TPSCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\TPSCamera</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Camera\FPSCamera\FPSCamera.cpp">
-      <Filter>Src\Application\GameObject\Camera\FPSCamera</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Characters\CharaBase.cpp">
       <Filter>Src\Application\GameObject\Characters</Filter>
@@ -1024,6 +1108,51 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Characters\Enemy\Enemy_3\Enemy_3.cpp">
       <Filter>Src\Application\GameObject\Characters\Enemy\Enemy_3</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ExclamationMarkUI\ExclamationMarkUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ExclamationMarkUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\MuzzleFlash\MuzzleFlash.cpp">
+      <Filter>Src\Application\GameObject\Effect\MuzzleFlash</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Building\Light\Light.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Building\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\TitleCamera\TitleCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\TitleCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Title_Sky\Title_Sky.cpp">
+      <Filter>Src\Application\GameObject\Title_Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Helicopter\Helicopter.cpp">
+      <Filter>Src\Application\GameObject\Helicopter</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\TitleLogo\TitleLogo.cpp">
+      <Filter>Src\Application\GameObject\TitleLogo</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Title_Back\Title_Back.cpp">
+      <Filter>Src\Application\GameObject\Title_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\PressEnterUI\PressEnterUI.cpp">
+      <Filter>Src\Application\GameObject\UI\PressEnterUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Game_Back\Game_Back.cpp">
+      <Filter>Src\Application\GameObject\Game_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Result_Back\Result_Back.cpp">
+      <Filter>Src\Application\GameObject\ResultBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\ResultLogo\ResultLogo.cpp">
+      <Filter>Src\Application\GameObject\Result_Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GoalUI\GoalUI.cpp">
+      <Filter>Src\Application\GameObject\UI\GoalUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\NeedCardKeyUI\NeedCradKeyUI.cpp">
+      <Filter>Src\Application\GameObject\UI\NeedCardKeuUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\SubMissionUI\SubMissionUI.cpp">
+      <Filter>Src\Application\GameObject\UI\SubMissionUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

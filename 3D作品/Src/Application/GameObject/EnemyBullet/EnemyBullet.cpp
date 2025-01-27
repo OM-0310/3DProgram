@@ -44,7 +44,7 @@ void EnemyBullet::Update()
 	sphere.m_type = KdCollider::TypeDamage | KdCollider::TypeGround;
 
 	// デバッグ確認用
-	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
+	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, kRedColor);
 
 	bool hit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())
