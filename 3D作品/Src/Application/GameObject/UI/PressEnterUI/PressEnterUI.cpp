@@ -8,7 +8,7 @@ void PressEnterUI::Init()
 
 	m_pos = { 0.0f,-200.0f };
 
-	m_bitsEachFlg[FeedOutFlg] = false;
+	m_bitsEachFlg.reset();
 
 	m_alpha = m_alphaMax;
 
@@ -17,7 +17,7 @@ void PressEnterUI::Init()
 
 void PressEnterUI::Update()
 {
-	if (m_bitsEachFlg[FeedOutFlg])
+	if (m_bitsEachFlg.test(FeedOutFlg))
 	{
 		m_alpha += m_alphaSpd;
 
@@ -25,7 +25,7 @@ void PressEnterUI::Update()
 		{
 			m_alpha = m_alphaMax;
 
-			m_bitsEachFlg[FeedOutFlg] = false;
+			m_bitsEachFlg.set(FeedOutFlg, false);
 		}
 	}
 	else
@@ -36,7 +36,7 @@ void PressEnterUI::Update()
 		{
 			m_alpha = m_alphaMin;
 
-			m_bitsEachFlg[FeedOutFlg] = true;
+			m_bitsEachFlg.set(FeedOutFlg, true);
 		}
 	}
 

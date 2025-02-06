@@ -18,7 +18,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void SetRestraintFlg(const bool _restraintFlg);
+	void SetRestraintFlg(const bool _restraintFlg) { m_bitsEachFlg.set(RestraintFlg, _restraintFlg); }
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{

@@ -258,9 +258,9 @@ void Player::OpneMapProc()
 
 	if (GetAsyncKeyState(VK_TAB) & 0x8000)
 	{
-		if (!m_bitsKeyFlg[KeyFlgType::OpenMapKey])
+		if (!m_bitsKeyFlg.test(KeyFlgType::OpenMapKey))
 		{
-			if (!m_bitsEachFlg[EachFlgType::MiniMapFlg])
+			if (!m_bitsEachFlg.test(EachFlgType::MiniMapFlg))
 			{
 				m_bitsEachFlg.set(EachFlgType::MiniMapFlg, true);
 
@@ -421,7 +421,7 @@ void Player::OpneMapProc()
 	}
 	else
 	{
-		m_bitsKeyFlg[KeyFlgType::OpenMapKey] = false;
+		m_bitsKeyFlg.set(KeyFlgType::OpenMapKey, false);
 	}
 }
 
@@ -439,10 +439,10 @@ void Player::CollectItemProc()
 	if (GetAsyncKeyState('E') & 0x8000)
 	{
 		// キーフラグがfalseのとき
-		if (!m_bitsKeyFlg[KeyFlgType::CollectKey])
+		if (!m_bitsKeyFlg.test(KeyFlgType::CollectKey))
 		{
 			// キーフラグをtrueにする
-			m_bitsKeyFlg[KeyFlgType::CollectKey] = true;
+			m_bitsKeyFlg.set(KeyFlgType::CollectKey, true);
 
 			// カードキーの情報があるとき
 			if (spCard)
@@ -518,7 +518,7 @@ void Player::CollectItemProc()
 	else
 	{
 		// キーフラグをfalseにする
-		m_bitsKeyFlg[KeyFlgType::CollectKey] = false;
+		m_bitsKeyFlg.set(KeyFlgType::CollectKey, false);
 	}
 }
 
@@ -587,30 +587,30 @@ void Player::ChanegeViewPointProc()
 		switch (spCamera->GetCamType())
 		{
 		case TPSCamera::CameraType::TpsR:
-			if (!m_bitsKeyFlg[KeyFlgType::ChangeKey])
+			if (!m_bitsKeyFlg.test(KeyFlgType::ChangeKey))
 			{
-				m_bitsKeyFlg[KeyFlgType::ChangeKey] = true;
+				m_bitsKeyFlg.set(KeyFlgType::ChangeKey, true);
 				spCamera->ChangeTPSL();
 			}
 			break;
 		case TPSCamera::CameraType::TpsL:
-			if (!m_bitsKeyFlg[KeyFlgType::ChangeKey])
+			if (!m_bitsKeyFlg.test(KeyFlgType::ChangeKey))
 			{
-				m_bitsKeyFlg[KeyFlgType::ChangeKey] = true;
+				m_bitsKeyFlg.set(KeyFlgType::ChangeKey, true);
 				spCamera->ChangeTPSR();
 			}
 			break;
 		case TPSCamera::CameraType::AimR:
-			if (!m_bitsKeyFlg[KeyFlgType::ChangeKey])
+			if (!m_bitsKeyFlg.test(KeyFlgType::ChangeKey))
 			{
-				m_bitsKeyFlg[KeyFlgType::ChangeKey] = true;
+				m_bitsKeyFlg.set(KeyFlgType::ChangeKey, true);
 				spCamera->ChangeAimL();
 			}
 			break;
 		case TPSCamera::CameraType::AimL:
-			if (!m_bitsKeyFlg[KeyFlgType::ChangeKey])
+			if (!m_bitsKeyFlg.test(KeyFlgType::ChangeKey))
 			{
-				m_bitsKeyFlg[KeyFlgType::ChangeKey] = true;
+				m_bitsKeyFlg.set(KeyFlgType::ChangeKey, true);
 				spCamera->ChangeAimR();
 			}
 			break;
@@ -620,7 +620,7 @@ void Player::ChanegeViewPointProc()
 	else
 	{
 		// 視点切り替えキーフラグをfalseにする
-		m_bitsKeyFlg[KeyFlgType::ChangeKey] = false;
+		m_bitsKeyFlg.set(KeyFlgType::ChangeKey, false);
 	}
 }
 
@@ -650,7 +650,7 @@ void Player::RestraintProc()
 				// 左クリックしたとき
 				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 				{
-					m_bitsEachFlg[EachFlgType::RestEnemy1Flg] = true;
+					m_bitsEachFlg.set(EachFlgType::RestEnemy1Flg, true);
 
 					// 拘束UI情報があるとき
 					if (spRestraintUI)
@@ -683,7 +683,7 @@ void Player::RestraintProc()
 				// 左クリックしたとき
 				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 				{
-					m_bitsEachFlg[EachFlgType::RestEnemy2Flg] = true;
+					m_bitsEachFlg.set(EachFlgType::RestEnemy2Flg, true);
 
 					// 拘束UI情報があるとき
 					if (spRestraintUI)
@@ -716,7 +716,7 @@ void Player::RestraintProc()
 				// 左クリックしたとき
 				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 				{
-					m_bitsEachFlg[EachFlgType::RestEnemy3Flg] = true;
+					m_bitsEachFlg.set(EachFlgType::RestEnemy3Flg, true);
 
 					// 拘束UI情報があるとき
 					if (spRestraintUI)
@@ -825,10 +825,10 @@ void Player::ActionIdle::Update(Player& _owner)
 			if (spReady_Pistol->GetNowBullet() < spReady_Pistol->GetMagazinSize())
 			{
 				// リロードキーフラグがfalseのとき
-				if (!_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey])
+				if (!_owner.m_bitsKeyFlg.test(KeyFlgType::ReloadKey))
 				{
 					// リロードフラグをtrueにし、ActionReload_Idleに切り替え
-					_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = true;
+					_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, true);
 					_owner.ChangeActionState(std::make_shared<ActionReload_Idle>());
 				}
 			}
@@ -836,7 +836,7 @@ void Player::ActionIdle::Update(Player& _owner)
 		// キーが離されたとき
 		else
 		{
-			_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = false;
+			_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, false);
 		}
 	}
 
@@ -935,10 +935,10 @@ void Player::ActionWalk::Update(Player& _owner)
 			if (spReady_Pistol->GetNowBullet() < spReady_Pistol->GetMagazinSize())
 			{
 				// リロードキーフラグがfalseのとき
-				if (!_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey])
+				if (!_owner.m_bitsKeyFlg.test(KeyFlgType::ReloadKey))
 				{
 					// リロードキーフラグをtrueにし、ActionReload_Walkに切り替え
-					_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = true;
+					_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, true);
 					_owner.ChangeActionState(std::make_shared<ActionReload_Walk>());
 					return;
 				}
@@ -948,7 +948,7 @@ void Player::ActionWalk::Update(Player& _owner)
 		else
 		{
 			// リロードキーフラグをfalseにする
-			_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = false;
+			_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, false);
 		}
 	}
 
@@ -1053,10 +1053,10 @@ void Player::ActionRun::Update(Player& _owner)
 			if (spReady_Pistol->GetNowBullet() < spReady_Pistol->GetMagazinSize())
 			{
 				// リロードキーフラグがfalseのとき
-				if (!_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey])
+				if (!_owner.m_bitsKeyFlg.test(KeyFlgType::ReloadKey))
 				{
 					// リロードキーフラグをtrueにし、ActionReload_Runに切り替え
-					_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = true;
+					_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, true);
 					_owner.ChangeActionState(std::make_shared<ActionReload_Run>());
 				}
 			}
@@ -1065,7 +1065,7 @@ void Player::ActionRun::Update(Player& _owner)
 		else
 		{
 			// リロードキーフラグをfalseにする
-			_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = false;
+			_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, false);
 		}
 	}
 
@@ -1181,10 +1181,10 @@ void Player::ActionReady::Update(Player& _owner)
 		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 		{
 			// 発射キーフラグがfalseのとき
-			if (!_owner.m_bitsKeyFlg[KeyFlgType::ShotKey])
+			if (!_owner.m_bitsKeyFlg.test(KeyFlgType::ShotKey))
 			{
 				// 発射キーフラグをtrueにし、ActionShotに切り替え
-				_owner.m_bitsKeyFlg[KeyFlgType::ShotKey] = true;
+				_owner.m_bitsKeyFlg.set(KeyFlgType::ShotKey, true);
 				_owner.ChangeActionState(std::make_shared<ActionShot>());
 			}
 		}
@@ -1192,7 +1192,7 @@ void Player::ActionReady::Update(Player& _owner)
 		else
 		{
 			// 発射キーフラグをfalseにする
-			_owner.m_bitsKeyFlg[KeyFlgType::ShotKey] = false;
+			_owner.m_bitsKeyFlg.set(KeyFlgType::ShotKey, false);
 		}
 	}
 	// クリックが離されたとき
@@ -1228,10 +1228,10 @@ void Player::ActionReady::Update(Player& _owner)
 			if (spReady_Pistol->GetNowBullet() < spReady_Pistol->GetMagazinSize())
 			{
 				// リロードキーフラグがfalseのとき
-				if (!_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey])
+				if (!_owner.m_bitsKeyFlg.test(KeyFlgType::ReloadKey))
 				{
 					// リロードフラグをtrueにし、ActionReload_Idleに切り替え
-					_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = true;
+					_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, true);
 					_owner.ChangeActionState(std::make_shared<ActionReload_Idle>());
 				}
 			}
@@ -1239,7 +1239,7 @@ void Player::ActionReady::Update(Player& _owner)
 		// キーが離されたとき
 		else
 		{
-			_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = false;
+			_owner.m_bitsKeyFlg.set(KeyFlgType::ReloadKey, false);
 		}
 	}
 
@@ -1394,7 +1394,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 	if (_owner.m_nowAnimeFrm >= _owner.m_grabFrm)
 	{
 
-		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
+		if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy1Flg))
 		{
 			if (spEnemy_1)
 			{
@@ -1402,7 +1402,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
+		if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy2Flg))
 		{
 			if (spEnemy_2)
 			{
@@ -1410,7 +1410,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
+		if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy3Flg))
 		{
 			if (spEnemy_3)
 			{
@@ -1471,10 +1471,10 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 				if (GetAsyncKeyState('E') & 0x8000)
 				{
 					// 殺害キーフラグがfalseのとき
-					if (!_owner.m_bitsKeyFlg[KeyFlgType::KillKey])
+					if (!_owner.m_bitsKeyFlg.test(KeyFlgType::KillKey))
 					{
-						// 殺害キーフラグをreuwにする
-						_owner.m_bitsKeyFlg[KeyFlgType::KillKey] = true;
+						// 殺害キーフラグをtrueにする
+						_owner.m_bitsKeyFlg.set(KeyFlgType::KillKey, true);
 
 						// 殺害UIの情報があるとき
 						if (spKillUI)
@@ -1484,7 +1484,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							_owner.m_spItemCollectSound->Play();
 						}
 
-						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
+						if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy1Flg))
 						{
 							if (spEnemy_1)
 							{
@@ -1492,7 +1492,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
+						if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy2Flg))
 						{
 							if (spEnemy_2)
 							{
@@ -1500,7 +1500,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
+						if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy3Flg))
 						{
 							if (spEnemy_3)
 							{
@@ -1517,7 +1517,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 				else
 				{
 					// 殺害キーフラグをfalseにする
-					_owner.m_bitsKeyFlg[KeyFlgType::KillKey] = false;
+					_owner.m_bitsKeyFlg.set(KeyFlgType::KillKey, false);
 				}
 			}
 		}
@@ -1531,10 +1531,10 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 				if (GetAsyncKeyState('Q') & 0x8000)
 				{
 					// 尋問キーフラグがfalseのとき
-					if (!_owner.m_bitsKeyFlg[KeyFlgType::InterKey])
+					if (!_owner.m_bitsKeyFlg.test(KeyFlgType::InterKey))
 					{
 						// 尋問キーフラグをtrueにする
-						_owner.m_bitsKeyFlg[KeyFlgType::InterKey] = true;
+						_owner.m_bitsKeyFlg.set(KeyFlgType::InterKey, true);
 
 						// 尋問UIの情報があるとき
 						if (spInterrogationUI)
@@ -1544,7 +1544,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							_owner.m_spItemCollectSound->Play();
 						}
 
-						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
+						if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy1Flg))
 						{
 							if (spEnemy_1)
 							{
@@ -1589,7 +1589,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
+						if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy2Flg))
 						{
 							if (spEnemy_2)
 							{
@@ -1634,7 +1634,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
+						if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy3Flg))
 						{
 							if (spEnemy_3)
 							{
@@ -1684,16 +1684,16 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 				else
 				{
 					// 尋問キーフラグをfalseにする
-					_owner.m_bitsKeyFlg[KeyFlgType::InterKey] = false;
+					_owner.m_bitsKeyFlg.set(KeyFlgType::InterKey, false);
 				}
 			}
 		}
 	}
 	else
 	{
-		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
+		if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy1Flg))
 		{
-			_owner.m_bitsEachFlg[RestEnemy1Flg] = false;
+			_owner.m_bitsEachFlg.set(RestEnemy1Flg, false);
 
 			if (spEnemy_1)
 			{
@@ -1701,9 +1701,9 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
+		if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy2Flg))
 		{
-			_owner.m_bitsEachFlg[RestEnemy2Flg] = false;
+			_owner.m_bitsEachFlg.set(RestEnemy2Flg, false);
 
 			if (spEnemy_2)
 			{
@@ -1711,9 +1711,9 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
+		if (_owner.m_bitsEachFlg.test(EachFlgType::RestEnemy3Flg))
 		{
-			_owner.m_bitsEachFlg[RestEnemy3Flg] = false;
+			_owner.m_bitsEachFlg.set(RestEnemy3Flg, false);
 
 			if (spEnemy_3)
 			{
@@ -1757,9 +1757,9 @@ void Player::ActionKill::Update(Player& _owner)
 
 	if (_owner.m_nowAnimeFrm >= _owner.m_exeFrm)
 	{
-		if (!_owner.m_bitsEachFlg[EachFlgType::ExeFlg])
+		if (!_owner.m_bitsEachFlg.test(EachFlgType::ExeFlg))
 		{
-			_owner.m_bitsEachFlg[EachFlgType::ExeFlg] = true;
+			_owner.m_bitsEachFlg.set(EachFlgType::ExeFlg, true);
 
 			if (_owner.m_spExeSound->IsStopped())
 			{
@@ -1786,9 +1786,9 @@ void Player::ActionKill::Exit(Player& _owner)
 		_owner.m_nowAnimeFrm = 0.0f;
 	}
 
-	if (_owner.m_bitsEachFlg[EachFlgType::ExeFlg])
+	if (_owner.m_bitsEachFlg.test(EachFlgType::ExeFlg))
 	{
-		_owner.m_bitsEachFlg[EachFlgType::ExeFlg] = false;
+		_owner.m_bitsEachFlg.set(EachFlgType::ExeFlg, false);
 	}
 }
 
@@ -2300,8 +2300,8 @@ void Player::ActionDeath::Update(Player& _owner)
 	{
 		_owner.m_spDeathSound->Play();
 
-		_owner.m_bitsEachFlg[EachFlgType::FeedOutFlg]	= true;
-		_owner.m_bitsEachFlg[EachFlgType::DeathFlg]		= true;
+		_owner.m_bitsEachFlg.set(EachFlgType::FeedOutFlg, true);
+		_owner.m_bitsEachFlg.set(EachFlgType::DeathFlg, true);
 	}
 }
 //================================================================================================================================

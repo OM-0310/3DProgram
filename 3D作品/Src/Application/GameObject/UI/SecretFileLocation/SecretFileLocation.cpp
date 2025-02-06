@@ -11,9 +11,9 @@ void SecretFileLocation::Init()
 	m_pos			= {};
 	m_color			= { 0.0f,1.0f,0.0f,1.0f };
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 }
 
@@ -37,9 +37,9 @@ void SecretFileLocation::Update()
 
 void SecretFileLocation::DrawSprite()
 {
-	if (m_bitsEachFlg[PermissionFlg])
+	if (m_bitsEachFlg.test(PermissionFlg))
 	{
-		if (!m_bitsEachFlg[ActiveFlg])return;
+		if (!m_bitsEachFlg.test(ActiveFlg))return;
 		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), m_rect.width, m_rect.height, &m_rect, &m_color);
 	}
 }

@@ -20,9 +20,9 @@ void Title_Back::Init()
 
 	m_color		= { 1.0f,1.0f,1.0f,m_alpha };
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 }
 
@@ -30,21 +30,21 @@ void Title_Back::Update()
 {
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
 	{
-		if (!m_bitsEachFlg[KeyFlg])
+		if (!m_bitsEachFlg.test(KeyFlg))
 		{
-			m_bitsEachFlg[KeyFlg] = true;
+			m_bitsEachFlg.set(KeyFlg, true);
 
-			m_bitsEachFlg[FeedOutFlg] = true;
+			m_bitsEachFlg.set(FeedOutFlg, true);
 
 			m_spSound->Play();
 		}
 	}
 	else
 	{
-		m_bitsEachFlg[KeyFlg] = false;
+		m_bitsEachFlg.set(KeyFlg, false);
 	}
 
-	if (m_bitsEachFlg[FeedOutFlg])
+	if (m_bitsEachFlg.test(FeedOutFlg))
 	{
 		m_alpha += m_alphaSpd;
 

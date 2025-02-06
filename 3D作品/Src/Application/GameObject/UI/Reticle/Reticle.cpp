@@ -10,7 +10,7 @@ void Reticle::Init()
 
 	m_color = kWhiteColor;
 
-	m_bitsEachFlg[ActiveFlg] = false;
+	m_bitsEachFlg.reset();
 }
 
 void Reticle::Update()
@@ -32,7 +32,7 @@ void Reticle::Update()
 
 void Reticle::DrawSprite()
 {
-	if (!m_bitsEachFlg[ActiveFlg])return;
+	if (!m_bitsEachFlg.test(ActiveFlg))return;
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, (int)m_pos.x, (int)m_pos.y);
 }

@@ -22,9 +22,17 @@ public:
 
 private:
 
+	enum
+	{
+		UseFlg
+	};
+
+private:
+
 	std::weak_ptr<LockedDoor>	m_wpLockedDoor;				// 鍵のかかったドア情報
 
-	bool						m_useFlg		= false;	// フラグ
+	static constexpr short		m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg>	m_bitsEachFlg;
 
 	static constexpr short		m_lifeSpanMax	= 35;		// 生存期間最大値 35
 	static constexpr short		m_lifeSpanMin	= 0;		// 生存期間最小値 0

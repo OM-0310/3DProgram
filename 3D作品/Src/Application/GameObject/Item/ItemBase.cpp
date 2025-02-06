@@ -4,9 +4,9 @@
 
 void ItemBase::Init()
 {
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 }
 
@@ -56,14 +56,14 @@ void ItemBase::UpdateCollision()
 			if (isHit)
 			{
 				// アイテム回収フラグをtrueにする
-				m_bitsEachFlg[CollectFlg] = true;
+				m_bitsEachFlg.set(CollectFlg, true);
 				m_debugColor = kGreenColor;
 			}
 			// falseであれば
 			else
 			{
 				// アイテム回収フラグをfalseにする
-				m_bitsEachFlg[CollectFlg] = false;
+				m_bitsEachFlg.set(CollectFlg, false);
 				m_debugColor = kRedColor;
 			}
 		}
@@ -77,7 +77,7 @@ void ItemBase::Flickering(float _alphaSpeed)
 	//// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ///
 
 	// アルファ値加減速フラグがtrueであれば
-	if (m_bitsEachFlg[AlphaFlg])
+	if (m_bitsEachFlg.test(AlphaFlg))
 	{
 		// アルファ値をプラスする
 		m_alpha += _alphaSpeed;
@@ -87,7 +87,7 @@ void ItemBase::Flickering(float _alphaSpeed)
 			// アルファ値を最大値にする
 			m_alpha		= m_alphaMax;
 			// アルファ値加減速フラグをfalseにする
-			m_bitsEachFlg[AlphaFlg] = false;
+			m_bitsEachFlg.set(AlphaFlg, false);
 		}
 	}
 	// falseであれば
@@ -101,7 +101,7 @@ void ItemBase::Flickering(float _alphaSpeed)
 			// アルファ値を最小値にする
 			m_alpha		= m_alphaMin;
 			// アルファ値加減速フラグをtrueにする
-			m_bitsEachFlg[AlphaFlg] = true;
+			m_bitsEachFlg.set(AlphaFlg, true);
 		}
 	}
 

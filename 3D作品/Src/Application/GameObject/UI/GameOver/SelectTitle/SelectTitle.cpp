@@ -22,7 +22,7 @@ void SelectTitle::Init()
 
 void SelectTitle::Update()
 {
-	if (m_bitsEachFlg[ChoiceFlg])
+	if (m_bitsEachFlg.test(ChoiceFlg))
 	{
 		m_alpha = m_alphaMax;
 	}

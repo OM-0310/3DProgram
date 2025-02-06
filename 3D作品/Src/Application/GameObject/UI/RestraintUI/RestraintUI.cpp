@@ -17,9 +17,9 @@ void RestraintUI::Init()
 	m_alpha			= 0.f;
 	m_alphaSpeed	= 0.2f;
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 
 	m_lifeSpan		= m_lifeSpanMax;
@@ -43,16 +43,16 @@ void RestraintUI::Update()
 
 		if (diffVec1.Length() <= spPlayer->GetTightArea())
 		{
-			if (!m_bitsEachFlg[Able1Flg])
+			if (!m_bitsEachFlg.test(Able1Flg))
 			{
-				m_bitsEachFlg.set(Able1Flg);
+				m_bitsEachFlg.set(Able1Flg, true);
 			}
 		}
 		else
 		{
-			if (m_bitsEachFlg[Able1Flg])
+			if (m_bitsEachFlg.test(Able1Flg))
 			{
-				m_bitsEachFlg.reset(Able1Flg);
+				m_bitsEachFlg.set(Able1Flg, false);
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
@@ -64,16 +64,16 @@ void RestraintUI::Update()
 
 		if (diffVec2.Length() <= spPlayer->GetTightArea())
 		{
-			if (!m_bitsEachFlg[Able2Flg])
+			if (!m_bitsEachFlg.test(Able2Flg))
 			{
-				m_bitsEachFlg.set(Able2Flg);
+				m_bitsEachFlg.set(Able2Flg, true);
 			}
 		}
 		else
 		{
-			if (m_bitsEachFlg[Able2Flg])
+			if (m_bitsEachFlg.test(Able2Flg))
 			{
-				m_bitsEachFlg.reset(Able2Flg);
+				m_bitsEachFlg.set(Able2Flg, false);
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
@@ -85,34 +85,34 @@ void RestraintUI::Update()
 
 		if (diffVec3.Length() <= spPlayer->GetTightArea())
 		{
-			if (!m_bitsEachFlg[Able3Flg])
+			if (!m_bitsEachFlg.test(Able3Flg))
 			{
-				m_bitsEachFlg.set(Able3Flg);
+				m_bitsEachFlg.set(Able3Flg, true);
 			}
 		}
 		else
 		{
-			if (m_bitsEachFlg[Able3Flg])
+			if (m_bitsEachFlg.test(Able3Flg))
 			{
-				m_bitsEachFlg.reset(Able3Flg);
+				m_bitsEachFlg.set(Able3Flg, false);
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
 	}
 
-	if (!m_bitsEachFlg[RestraintFlg])
+	if (!m_bitsEachFlg.test(RestraintFlg))
 	{
-		if (m_bitsEachFlg[Able1Flg] || m_bitsEachFlg[Able2Flg] || m_bitsEachFlg[Able3Flg])
+		if (m_bitsEachFlg.test(Able1Flg) || m_bitsEachFlg.test(Able2Flg) || m_bitsEachFlg.test(Able3Flg))
 		{
 			m_alpha += m_alphaSpeed;
 		}
-		else if(!m_bitsEachFlg[Able1Flg] && !m_bitsEachFlg[Able2Flg] && !m_bitsEachFlg[Able3Flg])
+		else if(!m_bitsEachFlg.test(Able1Flg) && !m_bitsEachFlg.test(Able2Flg) && !m_bitsEachFlg.test(Able3Flg))
 		{
 			m_alpha -= m_alphaSpeed;
 		}
 	}
 
-	if (m_bitsEachFlg[RestraintFlg])
+	if (m_bitsEachFlg.test(RestraintFlg))
 	{
 		m_lifeSpan--;
 		switch (m_alphaState)
@@ -157,16 +157,4 @@ void RestraintUI::Update()
 void RestraintUI::DrawSprite()
 {
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), m_rect.width, m_rect.height, &m_rect, &m_color);
-}
-
-void RestraintUI::SetRestraintFlg(const bool _restraintFlg)
-{
-	if (_restraintFlg)
-	{
-		m_bitsEachFlg[RestraintFlg] = true;
-	}
-	else
-	{
-		m_bitsEachFlg[RestraintFlg] = false;
-	}
 }

@@ -15,7 +15,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void SetActive	(bool _Active)	{ m_bitsEachFlg[ActiveFlg] = _Active; }
+	void SetActive	(bool _active)	{ m_bitsEachFlg.set(ActiveFlg, _active); }
 
 	void SetTPSCamera(const std::shared_ptr<TPSCamera>& _spTPSCamera)
 	{
@@ -31,13 +31,11 @@ private:
 
 private:
 
-	std::weak_ptr<TPSCamera>	m_wpTPSCamera;
+	std::weak_ptr<TPSCamera>		m_wpTPSCamera;
 
-	const Math::Vector2			m_aimRPos = { -15.0f,0.0f };
-	//const Math::Vector2			m_aimRPos = Math::Vector2::Zero;
-	const Math::Vector2			m_aimLPos = { 18.5f,0.0f };
-	//const Math::Vector2			m_aimLPos = Math::Vector2::Zero;
+	static constexpr Math::Vector2	m_aimRPos = { -15.0f,0.0f };
+	static constexpr Math::Vector2	m_aimLPos = { 18.5f,0.0f };
 
-	static constexpr short		m_totalEachFlg = 1;
-	std::bitset<m_totalEachFlg> m_bitsEachFlg;
+	static constexpr short			m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg>		m_bitsEachFlg;
 };

@@ -11,7 +11,7 @@ void PadKeyUI::Init()
 	m_alpha			= 0.f;
 	m_alphaSpeed	= 0.2f;
 
-	m_useFlg		= false;
+	m_bitsEachFlg.reset();
 	m_lifeSpan		= m_lifeSpanMax;
 	m_animCnt		= 0;
 	m_singleX		= static_cast<short>(m_spTex->GetWidth()) / static_cast<short>(m_animMax);
@@ -26,13 +26,13 @@ void PadKeyUI::Update()
 
 	const std::shared_ptr<LockedDoor> spLockedDoor = m_wpLockedDoor.lock();
 
-	if (!m_useFlg)
+	if (!m_bitsEachFlg.test(UseFlg))
 	{
 		if (spLockedDoor)
 		{
 			if (spLockedDoor->GetLockFlg())
 			{
-				m_useFlg = true;
+				m_bitsEachFlg.set(UseFlg, true);
 			}
 			if (spLockedDoor->GetOpeAbleFlg())
 			{

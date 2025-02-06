@@ -11,7 +11,7 @@ void Title_Sky::Init()
 
 	m_pos = { 0.0f,0.0f,0.0f };
 
-	m_bitsEachFlg[AngleFlg] = false;
+	m_bitsEachFlg.reset();
 
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
@@ -21,7 +21,7 @@ void Title_Sky::Init()
 
 void Title_Sky::Update()
 {
-	if (!m_bitsEachFlg[AngleFlg])
+	if (!m_bitsEachFlg.test(AngleFlg))
 	{
 		m_angle -= m_angleSpd;
 		if (m_angle <= -m_angleMax)
