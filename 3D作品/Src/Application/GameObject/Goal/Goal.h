@@ -13,14 +13,21 @@ public:
 	void Update		()	override;
 	void DrawUnLit	()	override;
 
-	void CanBeGoal() { m_goalAbleFlg = true; }
+	void CanBeGoal() { m_bitsEachFlg[GoalAbleFlg] = true; }
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{
 		m_wpPlayer = _spPlayer;
 	}
 
-	const bool& GetGoalAbleFlg() const { return m_goalAbleFlg; }
+	const bool GetGoalAbleFlg() const { return m_bitsEachFlg.test(GoalAbleFlg); }
+
+private:
+
+	enum
+	{
+		GoalAbleFlg
+	};
 
 private:
 
@@ -34,5 +41,6 @@ private:
 
 	Math::Color						m_debugColor	= kWhiteColor;
 
-	bool							m_goalAbleFlg	= false;
+	static constexpr short			m_totalEachFlg	= 1;
+	std::bitset<m_totalEachFlg>		m_bitsEachFlg;
 };

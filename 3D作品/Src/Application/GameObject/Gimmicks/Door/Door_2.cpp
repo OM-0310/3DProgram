@@ -19,8 +19,10 @@ void Door_2::Init()
 	m_pos = { -3.8f,-0.9f,-10.f };
 	m_eventPos = { -3.9f,0.f,-10.f };
 
-	m_openAbleFlg = false;
-	m_openFlg = false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
@@ -49,36 +51,36 @@ void Door_2::Update()
 
 			if (isHit)
 			{
-				m_openAbleFlg = true;
+				m_bitsEachFlg[OpenAbleFlg] = true;
 				m_debugColor = kGreenColor;
 			}
 			else
 			{
-				m_openAbleFlg = false;
+				m_bitsEachFlg[OpenAbleFlg] = false;
 				m_debugColor = kRedColor;
 			}
 		}
 	}
 
-	if (m_openAbleFlg)
+	if (m_bitsEachFlg[OpenAbleFlg])
 	{
-		m_openFlg = true;
+		m_bitsEachFlg[OpenFlg] = true;
 
 		if (m_spOpenSound->IsStopped())
 		{
 			m_spOpenSound->Play();
 		}
 	}
-	if (m_openFlg)
+	if (m_bitsEachFlg[OpenFlg])
 	{
 
 		m_pos.y += m_moveSpeed;
 		if (m_pos.y >= m_moveMax)
 		{
 			m_pos.y = m_moveMax;
-			if (!m_openAbleFlg)
+			if (!m_bitsEachFlg[OpenAbleFlg])
 			{
-				m_openFlg = false;
+				m_bitsEachFlg[OpenFlg] = false;
 
 				m_spOpenSound->Play();
 			}

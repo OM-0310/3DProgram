@@ -12,37 +12,39 @@ void Title_Back::Init()
 	m_spSound = KdAudioManager::Instance().GetSoundInstance("Asset/Sounds/Title/PressEnter.wav");
 	m_spSound->SetVolume(m_volume);
 
-	m_rect = { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
+	m_rect		= { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
 
-	m_pos = { 0.0f,0.0f };
+	m_pos		= { 0.0f,0.0f };
 
-	m_alpha = m_alphaMax;
+	m_alpha		= m_alphaMax;
 
-	m_color = { 1.0f,1.0f,1.0f,m_alpha };
+	m_color		= { 1.0f,1.0f,1.0f,m_alpha };
 
-	m_feedOut = false;
-	m_keyFlg = false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 }
 
 void Title_Back::Update()
 {
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
 	{
-		if (!m_keyFlg)
+		if (!m_bitsEachFlg[KeyFlg])
 		{
-			m_keyFlg = true;
+			m_bitsEachFlg[KeyFlg] = true;
 
-			m_feedOut = true;
+			m_bitsEachFlg[FeedOutFlg] = true;
 
 			m_spSound->Play();
 		}
 	}
 	else
 	{
-		m_keyFlg = false;
+		m_bitsEachFlg[KeyFlg] = false;
 	}
 
-	if (m_feedOut)
+	if (m_bitsEachFlg[FeedOutFlg])
 	{
 		m_alpha += m_alphaSpd;
 

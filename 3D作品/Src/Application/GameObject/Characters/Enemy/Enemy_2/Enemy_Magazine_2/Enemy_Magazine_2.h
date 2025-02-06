@@ -37,6 +37,5 @@ private:
 	std::shared_ptr<KdAnimator> m_spAnimator;
 	std::weak_ptr<Enemy_2>		m_wpEnemy;
 
-	const float					m_alphaSpeed = 0.05f;	// アルファ速度
-	bool						m_feedOutFlg = false;	// フェードアウトフラグ
+	static constexpr float		m_alphaSpeed = 0.05f;	// アルファ速度
 };

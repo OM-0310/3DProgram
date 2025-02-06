@@ -11,7 +11,7 @@ void CurrentLocation::Init()
 	m_pos = {};
 	m_color = { 0.0f,0.0f,1.0f,1.0f };
 
-	m_active = false;
+	m_bitsEachFlg[ActiveFlg] = false;
 }
 
 void CurrentLocation::Update()
@@ -39,6 +39,6 @@ void CurrentLocation::Update()
 
 void CurrentLocation::DrawSprite()
 {
-	if (!m_active)return;
+	if (!m_bitsEachFlg[m_activeFlg])return;
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), m_rect.width, m_rect.height, &m_rect, &m_color);
 }

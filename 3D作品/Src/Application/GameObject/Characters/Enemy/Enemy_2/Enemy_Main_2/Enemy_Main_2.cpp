@@ -12,7 +12,7 @@ void Enemy_Main_2::Init()
 	ChangeAnimation("Idle");
 
 	m_alpha			= 1.0f;
-	m_feedOutFlg	= false;
+	m_bitsEachFlg[FeedOutFlg] = false;
 
 	m_pos			= { 0.f,0.f,1.0f };
 
@@ -39,14 +39,14 @@ void Enemy_Main_2::Update()
 
 		if (spEnemy->GetDissolveFlg())
 		{
-			if (!m_feedOutFlg)
+			if (!m_bitsEachFlg[FeedOutFlg])
 			{
-				m_feedOutFlg = true;
+				m_bitsEachFlg[FeedOutFlg] = true;
 			}
 		}
 	}
 
-	if (m_feedOutFlg)
+	if (m_bitsEachFlg[FeedOutFlg])
 	{
 		m_alpha -= m_alphaSpeed;
 	}

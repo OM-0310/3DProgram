@@ -11,8 +11,10 @@ void CardKeyLocation::Init()
 	m_pos			= {};
 	m_color			= { 0.0f,1.0f,0.0f,1.0f };
 
-	m_active		= false;
-	m_permissionFlg = false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 }
 
 void CardKeyLocation::Update()
@@ -41,10 +43,10 @@ void CardKeyLocation::Update()
 void CardKeyLocation::DrawSprite()
 {
 	// 表示許可フラグがtrueのとき
-	if (m_permissionFlg)
+	if (m_bitsEachFlg[PermissionFlg])
 	{
 		// フラグがfalseのとき早期リターン
-		if (!m_active)return;
+		if (!m_bitsEachFlg[ActiveFlg])return;
 		KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), m_rect.width, m_rect.height, &m_rect, &m_color);
 	}
 }

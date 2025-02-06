@@ -29,11 +29,20 @@ public:
 
 private:
 
+	enum
+	{
+		FeedOutFlg
+	};
+
+private:
+
 	std::shared_ptr<KdAnimator> m_spAnimator;
 	std::weak_ptr<Enemy_1>		m_wpEnemy;
 
-	const float					m_alphaSpeed = 0.05f;	// アルファ速度
-	bool						m_feedOutFlg = false;	// フェードアウトフラグ
+	static constexpr float		m_alphaSpeed = 0.05f;	// アルファ速度
 
-	const short					MAXHP = 1;				// HPの最大値
+	static constexpr short		m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg>	m_bitsEachFlg;
+
+	static constexpr short		MAXHP = 1;				// HPの最大値
 };

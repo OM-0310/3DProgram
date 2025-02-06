@@ -16,7 +16,7 @@ void Player_Disarm_Pistol::Init()
 	m_objectType = KdGameObject::ObjectType::TypePlayer;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Player_Disarm_PistolCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump);
+	m_pCollider->RegisterCollisionShape("Player_Disarm_PistolCollsion", m_spModel, KdCollider::TypeEvent);
 }
 
 void Player_Disarm_Pistol::Update()

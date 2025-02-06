@@ -79,21 +79,24 @@ void Player::Init()
 	m_spItemCollectSound->SetVolume(m_itemCollVol);
 
 	m_spExeSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Execution.wav");
+	m_spExeSound->SetVolume(m_exeVol);
+
+	m_spDeathSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Death.wav");
+	m_spDeathSound->SetVolume(m_deathVol);
 
 	m_pos			= { 0.0f,-0.9f,-50.0f };
 	m_moveDir		= Math::Vector3::Zero;
 	m_moveSpeed		= 0.0f;
 
-	for (int i = 0; i <= TOTALKEYNUM; i++)
+	for (int i = 0; i <= m_totalKeyFlg; i++)
 	{
 		m_bitsKeyFlg[i] = false;
 	}
-	m_clearFlg		= false;
-	m_miniMapFlg	= false;
-	m_exeFlg		= false;
-	m_restEnemy1Flg = false;
-	m_restEnemy2Flg = false;
-	m_restEnemy3Flg = false;
+
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 
 	m_diffVec		= Math::Vector3::Zero;
 
@@ -122,6 +125,9 @@ void Player::Update()
 	// アイテム回収処理
 	CollectItemProc();
 
+	// 死亡処理
+	DeathProc();
+
 	// 各種「状態」に応じた更新処理を実行する
 	if (m_nowState)
 	{
@@ -143,6 +149,7 @@ void Player::PostUpdate()
 	m_spRunSound->SetPos(GetPos());
 	m_spWalkSound->SetPos(GetPos());
 	m_spExeSound->SetPos(GetPos());
+	m_spDeathSound->SetPos(GetPos());
 	
 	// 当たり判定(地面判定はレイ判定、衝突判定は球判定)
 	UpdateCollision();
@@ -251,9 +258,9 @@ void Player::OpneMapProc()
 	{
 		if (!m_bitsKeyFlg[KeyFlgType::OpenMapKey])
 		{
-			if (!m_miniMapFlg)
+			if (!m_bitsEachFlg[MiniMapFlg])
 			{
-				m_miniMapFlg = true;
+				m_bitsEachFlg[MiniMapFlg] = true;
 
 				if (m_spOpenMapSound->IsStopped())
 				{
@@ -267,7 +274,7 @@ void Player::OpneMapProc()
 			}
 			else
 			{
-				m_miniMapFlg = false;
+				m_bitsEachFlg[MiniMapFlg] = false;
 
 				if (m_spCloseMapSound->IsStopped())
 				{
@@ -664,7 +671,7 @@ void Player::RestraintProc()
 			// 左クリックしたとき
 			if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 			{
-				m_restEnemy1Flg = true;
+				m_bitsEachFlg[RestEnemy1Flg] = true;
 
 				// 拘束UI情報があるとき
 				if (spRestraintUI)
@@ -693,7 +700,7 @@ void Player::RestraintProc()
 			// 左クリックしたとき
 			if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 			{
-				m_restEnemy2Flg = true;
+				m_bitsEachFlg[RestEnemy2Flg] = true;
 
 				// 拘束UI情報があるとき
 				if (spRestraintUI)
@@ -722,7 +729,7 @@ void Player::RestraintProc()
 			// 左クリックしたとき
 			if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 			{
-				m_restEnemy3Flg = true;
+				m_bitsEachFlg[RestEnemy3Flg] = true;
 
 				// 拘束UI情報があるとき
 				if (spRestraintUI)
@@ -735,6 +742,20 @@ void Player::RestraintProc()
 				return;
 			}
 
+		}
+	}
+}
+
+void Player::DeathProc()
+{
+	const std::shared_ptr<Player_Main> spMain = m_wpPlayer_Main.lock();
+
+	if (spMain)
+	{
+		if (spMain->GetHP() <= 0)
+		{
+			ChangeActionState(std::make_shared<ActionDeath>());
+			return;
 		}
 	}
 }
@@ -1479,7 +1500,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 	if (_owner.m_nowAnimeFrm >= _owner.m_grabFrm)
 	{
 
-		if (_owner.m_restEnemy1Flg)
+		if (_owner.m_bitsEachFlg[RestEnemy1Flg])
 		{
 			if (spEnemy_1)
 			{
@@ -1487,7 +1508,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_restEnemy2Flg)
+		if (_owner.m_bitsEachFlg[RestEnemy2Flg])
 		{
 			if (spEnemy_2)
 			{
@@ -1495,7 +1516,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_restEnemy3Flg)
+		if (_owner.m_bitsEachFlg[RestEnemy3Flg])
 		{
 			if (spEnemy_3)
 			{
@@ -1569,7 +1590,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							_owner.m_spItemCollectSound->Play();
 						}
 
-						if (_owner.m_restEnemy1Flg)
+						if (_owner.m_bitsEachFlg[RestEnemy1Flg])
 						{
 							if (spEnemy_1)
 							{
@@ -1577,7 +1598,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_restEnemy2Flg)
+						if (_owner.m_bitsEachFlg[RestEnemy2Flg])
 						{
 							if (spEnemy_2)
 							{
@@ -1585,7 +1606,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_restEnemy3Flg)
+						if (_owner.m_bitsEachFlg[RestEnemy3Flg])
 						{
 							if (spEnemy_3)
 							{
@@ -1629,7 +1650,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							_owner.m_spItemCollectSound->Play();
 						}
 
-						if (_owner.m_restEnemy1Flg)
+						if (_owner.m_bitsEachFlg[RestEnemy1Flg])
 						{
 							if (spEnemy_1)
 							{
@@ -1674,7 +1695,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_restEnemy2Flg)
+						if (_owner.m_bitsEachFlg[RestEnemy2Flg])
 						{
 							if (spEnemy_2)
 							{
@@ -1719,7 +1740,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_restEnemy3Flg)
+						if (_owner.m_bitsEachFlg[RestEnemy3Flg])
 						{
 							if (spEnemy_3)
 							{
@@ -1776,9 +1797,9 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 	}
 	else
 	{
-		if (_owner.m_restEnemy1Flg)
+		if (_owner.m_bitsEachFlg[RestEnemy1Flg])
 		{
-			_owner.m_restEnemy1Flg = false;
+			_owner.m_bitsEachFlg[RestEnemy1Flg] = false;
 
 			if (spEnemy_1)
 			{
@@ -1786,9 +1807,9 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_restEnemy2Flg)
+		if (_owner.m_bitsEachFlg[RestEnemy2Flg])
 		{
-			_owner.m_restEnemy2Flg = false;
+			_owner.m_bitsEachFlg[RestEnemy2Flg] = false;
 
 			if (spEnemy_2)
 			{
@@ -1796,9 +1817,9 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_restEnemy3Flg)
+		if (_owner.m_bitsEachFlg[RestEnemy3Flg])
 		{
-			_owner.m_restEnemy3Flg = false;
+			_owner.m_bitsEachFlg[RestEnemy3Flg] = false;
 
 			if (spEnemy_3)
 			{
@@ -1842,9 +1863,9 @@ void Player::ActionKill::Update(Player& _owner)
 
 	if (_owner.m_nowAnimeFrm >= _owner.m_exeFrm)
 	{
-		if (!_owner.m_exeFlg)
+		if (!_owner.m_bitsEachFlg[ExeFlg])
 		{
-			_owner.m_exeFlg = true;
+			_owner.m_bitsEachFlg[ExeFlg] = true;
 
 			if (_owner.m_spExeSound->IsStopped())
 			{
@@ -1871,9 +1892,9 @@ void Player::ActionKill::Exit(Player& _owner)
 		_owner.m_nowAnimeFrm = 0.0f;
 	}
 
-	if (_owner.m_exeFlg)
+	if (_owner.m_bitsEachFlg[ExeFlg])
 	{
-		_owner.m_exeFlg = false;
+		_owner.m_bitsEachFlg[ExeFlg] = false;
 	}
 }
 
@@ -2042,6 +2063,7 @@ void Player::ActionReload_Walk::Enter(Player& _owner)
 void Player::ActionReload_Walk::Update(Player& _owner)
 {
 	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Reticle>				spReticle		= _owner.m_wpReticle.lock();
 	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
 
 	// 現在のアニメーションフレームを更新
@@ -2065,6 +2087,37 @@ void Player::ActionReload_Walk::Update(Player& _owner)
 		if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
 		if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
 		if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
+		if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+		{
+			// レティクルを表示し、カメラの状態を切り替え
+			spReticle->SetActive(true);
+
+			switch (spCamera->GetPastCamType())
+			{
+			case TPSCamera::CameraType::TpsR:
+				spCamera->ChangeAimR();
+				break;
+			case TPSCamera::CameraType::TpsL:
+				spCamera->ChangeAimL();
+				break;
+			}
+		}
+		else
+		{
+			// レティクルを非表示にし、カメラの状態を切り替え、
+			// ActionIdleに切り替え
+			spReticle->SetActive(false);
+
+			switch (spCamera->GetPastCamType())
+			{
+			case TPSCamera::CameraType::TpsR:
+				spCamera->ChangeTPSR();
+				break;
+			case TPSCamera::CameraType::TpsL:
+				spCamera->ChangeTPSL();
+				break;
+			}
+		}
 	}
 	// キーが離されたとき
 	else
@@ -2241,6 +2294,7 @@ void Player::ActionReload_Run::Enter(Player& _owner)
 void Player::ActionReload_Run::Update(Player& _owner)
 {
 	const std::shared_ptr<Player_Ready_Pistol>	spReady_Pistol	= _owner.m_wpPlayer_Ready_Pistol.lock();
+	const std::shared_ptr<Reticle>				spReticle		= _owner.m_wpReticle.lock();
 	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
 
 	// 現在の移動速度が走行速度と同じでないとき
@@ -2261,6 +2315,37 @@ void Player::ActionReload_Run::Update(Player& _owner)
 	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
 	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
 	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		// レティクルを表示し、カメラの状態を切り替え
+		spReticle->SetActive(true);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			spCamera->ChangeAimR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			spCamera->ChangeAimL();
+			break;
+		}
+	}
+	else
+	{
+		// レティクルを非表示にし、カメラの状態を切り替え、
+		// ActionIdleに切り替え
+		spReticle->SetActive(false);
+
+		switch (spCamera->GetPastCamType())
+		{
+		case TPSCamera::CameraType::TpsR:
+			spCamera->ChangeTPSR();
+			break;
+		case TPSCamera::CameraType::TpsL:
+			spCamera->ChangeTPSL();
+			break;
+		}
+	}
 
 	// 移動方向のベクトルの長さが0であるとき
 	if (_owner.m_moveDir.LengthSquared() == 0)
@@ -2684,3 +2769,31 @@ void Player::ActionSit_Ready::Exit(Player& _owner)
 //================================================================================================================================
 // ステートパターン管理系
 //================================================================================================================================
+
+void Player::ActionDeath::Enter(Player& _owner)
+{
+	// プレイヤーの状態が"死亡状態"でないとき
+	if (_owner.m_sType != Player::SituationType::Death)
+	{
+		// プレイヤーの状態を"死亡状態"にし、
+		// アニメーションを"Death"に切り替え
+		_owner.m_sType = Player::SituationType::Death;
+		_owner.ChangeAnimation("Death", false);
+		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
+	}
+}
+
+void Player::ActionDeath::Update(Player& _owner)
+{
+	// アニメーションフレームを更新
+	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
+
+	// アニメーションフレームが最後まで再生されていたら
+	if (_owner.m_nowAnimeFrm >= _owner.m_deathFrmMax)
+	{
+		_owner.m_spDeathSound->Play();
+
+		_owner.m_bitsEachFlg[FeedOutFlg]	= true;
+		_owner.m_bitsEachFlg[DeathFlg]		= true;
+	}
+}

@@ -23,14 +23,14 @@ private:
 	Math::Vector3					m_pos			= Math::Vector3::Zero;
 	Math::Vector3					m_moveDir		= Math::Vector3::Zero;
 
-	const short						m_bulletPow		= 1;
+	static constexpr short			m_bulletPow		= 1;
 	short							m_lifeSpan		= 0;
-	const float						m_hitArea		= 0.4f;
+	static constexpr float			m_hitArea		= 0.4f;
 
-	const float						m_moveSpeed		= 2.0f;
+	static constexpr float			m_moveSpeed		= 2.0f;
 
 	KdTrailPolygon					m_tPoly;
 
-	const float						m_hitVol		= 0.5f;
+	static constexpr float			m_hitVol		= 0.5f;
 	std::shared_ptr<KdSoundInstance>m_spHitSound;
 };

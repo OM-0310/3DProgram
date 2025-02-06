@@ -15,7 +15,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void Use		() { m_useFlg = true; }
+	void Use		() { m_bitsEachFlg[m_totalEachFlg] = true; }
 
 	void SetCardKey(const std::shared_ptr<CardKey>& _spCard)
 	{
@@ -24,11 +24,12 @@ public:
 
 private:
 
-	std::weak_ptr<CardKey>	m_wpCard;
+	std::weak_ptr<CardKey>		m_wpCard;
 
-	const int				m_lifeSpanMax	= 35;	// 生存期間最大値
-	const int				m_lifeSpanMin	= 0;	// 生存期間最小値
-	int						m_lifeSpan		= 0;	// 生存期間
+	static constexpr short		m_lifeSpanMax	= 35;		// 生存期間最大値
+	static constexpr short		m_lifeSpanMin	= 0;		// 生存期間最小値
+	short						m_lifeSpan		= 0;		// 生存期間
 
-	bool					m_useFlg	= false;	// 使用フラグ
+	static constexpr short		m_totalEachFlg	= 1;
+	std::bitset<m_totalEachFlg>	m_bitsEachFlg	= false;	// 使用フラグ
 };

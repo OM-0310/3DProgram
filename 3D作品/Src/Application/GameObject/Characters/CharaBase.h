@@ -41,8 +41,8 @@ protected:
 
 	Math::Color							m_color			= kWhiteColor;				// 色情報
 	float								m_alpha			= 1.0f;						// アルファ値
-	const float							m_alphaMax		= 1.0f;						// アルファ値最大値
-	const float							m_alphaMin		= 0.0f;						// アルファ値最小値
+	static constexpr float				m_alphaMax		= 1.0f;						// アルファ値最大値
+	static constexpr float				m_alphaMin		= 0.0f;						// アルファ値最小値
 
 	float								m_gravity		= 0.0f;						// 重力
 };

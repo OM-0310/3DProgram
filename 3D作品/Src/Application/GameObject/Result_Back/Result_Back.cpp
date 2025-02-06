@@ -17,27 +17,29 @@ void Result_Back::Init()
 
 	m_color = { 1.0f,1.0f,1.0f,m_alpha };
 
-	m_feedOut = false;
-	m_keyFlg = false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 }
 
 void Result_Back::Update()
 {
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
 	{
-		if (!m_keyFlg)
+		if (!m_bitsEachFlg[KeyFlg])
 		{
-			m_keyFlg = true;
+			m_bitsEachFlg[KeyFlg] = true;
 
-			m_feedOut = true;
+			m_bitsEachFlg[FeedOutFlg] = true;
 		}
 	}
 	else
 	{
-		m_keyFlg = false;
+		m_bitsEachFlg[KeyFlg] = false;
 	}
 
-	if (m_feedOut)
+	if (m_bitsEachFlg[FeedOutFlg])
 	{
 		m_alpha += m_alphaSpd;
 

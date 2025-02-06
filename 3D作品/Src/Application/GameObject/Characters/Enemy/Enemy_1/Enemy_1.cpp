@@ -43,16 +43,16 @@ void Enemy_1::Init()
 	m_spDiscoverSound = KdAudioManager::Instance().GetSoundInstance("Asset/Sounds/Game/Discover.wav");
 	m_spDiscoverSound->SetVolume(m_discoverVol);
 
+	m_spDeathSound = KdAudioManager::Instance().GetSoundInstance3D("Asset/Sounds/Game/Death.wav");
+	m_spDeathSound->SetVolume(m_deathVol);
+
 	m_mMuzzle		= Math::Matrix::CreateTranslation(m_muzzlePos);
 	m_mlocalAresst	= Math::Matrix::CreateTranslation(m_localAresstPos);
 
-	m_dirFlg		= false;
-	m_waryFlg		= false;
-	m_lostFlg		= false;
-	m_findFlg		= false;
-	m_deathFlg		= false;
-	m_dissolveFlg	= false;
-	m_answerFlg		= false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 
 	m_pos			= { 0.f,-0.9f,27.0f };
 	m_moveDir		= Math::Vector3::Zero;
@@ -128,7 +128,6 @@ void Enemy_1::Update()
 
 	// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 
-
 	SearchProc();
 
 	m_pos.y -= m_gravity;
@@ -149,6 +148,7 @@ void Enemy_1::PostUpdate()
 	m_spWalkSound->SetPos(GetPos());
 	m_spMgznSetSound->SetPos(GetPos());
 	m_spMgznRlsSound->SetPos(GetPos());
+	m_spDeathSound->SetPos(GetPos());
 
 	UpdateCollision();
 }
@@ -284,14 +284,36 @@ void Enemy_1::SearchProc()
 	// 敵の方向ベクトルと差ベクトルの内積を計算し格納
 	float innerView = m_moveDir.Dot(targetVec);
 
-	// 視野の範囲内のとき
-	if (innerView > m_viewRange)
+	Math::Vector3 rayDir = targetVec;
+	rayDir.Normalize();
+
+	KdCollider::RayInfo ray;
+	ray.m_pos = m_pos + Math::Vector3{ 0.0f,1.0f,0.0f };
+	ray.m_dir = rayDir;
+	ray.m_range = 100.0f;
+	ray.m_type = KdCollider::TypeBump;
+
+	m_pDebugWire->AddDebugLine(ray.m_pos, ray.m_dir, ray.m_range);
+
+	// レイと当たり判定
+	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
-		// 発見範囲内であれば
-		if (targetVec.Length() < m_discoverArea)
+		if (obj->Intersects(ray, nullptr))
+		{
+			if (obj->GetObjectType() == KdGameObject::ObjectType::TypeObstacles)
+			{
+				m_bitsEachFlg[FindFlg] = false;
+			}
+		}
+	}
+	// 発見範囲内であれば
+	if (targetVec.Length() < m_discoverArea)
+	{
+		// 視野の範囲内のとき
+		if (innerView > m_viewRange)
 		{
 			// 発見フラグをtrueにする
-			m_findFlg = true;
+			m_bitsEachFlg[FindFlg] = true;
 		}
 	}
 }
@@ -307,85 +329,10 @@ void Enemy_1::ChaseProc()
 	{
 		_targetPos = _spPlayer->GetPos();
 	}
-	if (m_findFlg)
+	if (m_bitsEachFlg[FindFlg])
 	{
 		m_moveDir = _targetPos - m_pos;
 	}
-
-	//// 移動方向を正規化
-	//m_moveDir.Normalize();
-
-	//// レイ判定用の辺巣を作成
-	//KdCollider::RayInfo ray;
-
-	//// レイの発射位置(座標)を設定
-	//ray.m_pos = m_pos + Math::Vector3{ 0.0f,1.0f,0.0f };
-
-	//// レイの発射方向を設定
-	//ray.m_dir = m_moveDir;
-
-	//// レイの長さを設定
-	//ray.m_range = 15.0f;
-
-	//// 判定をしたいオブジェクトのタイプを設定
-	//ray.m_type = KdCollider::TypeBump;
-
-	//// デバッグ表示
-	//m_pDebugWire->AddDebugLine(ray.m_pos, ray.m_dir, ray.m_range, kBlueColor);
-
-	//// レイに当たったオブジェクト情報
-	//std::list<KdCollider::CollisionResult> retRayList;
-
-	//bool isHit = false;		// 当たっていたらtrue
-	//float maxOverLap = 0.0f;// はみ出たレイの長さ
-
-	//// レイと当たり判定
-	//for (auto& obj : SceneManager::Instance().GetObjList())
-	//{
-	//	// 当たっているオブジェクトがプレイヤーのとき
-	//	if (obj->GetObjectType() == KdGameObject::ObjectType::TypePlayer)
-	//	{
-	//		m_isPlayer = true;
-	//		obj->Intersects(ray, &retRayList);
-	//	}
-	//	else if(obj->GetObjectType() == KdGameObject::ObjectType::TypeObstacles)
-	//	{
-	//		m_isPlayer = false;
-	//		obj->Intersects(ray, &retRayList);
-	//	}
-	//}
-
-	//for (auto& ret : retRayList)
-	//{
-	//	if (maxOverLap < ret.m_overlapDistance)
-	//	{
-	//		maxOverLap = ret.m_overlapDistance;
-	//		isHit = true;
-	//	}
-	//}
-
-	//if (isHit)
-	//{
-	//	if (m_isPlayer)
-	//	{
-	//		m_findFlg = true;
-	//		m_lostFlg = false;
-	//	}
-	//	else
-	//	{
-	//		if (m_findFlg)
-	//		{
-	//			m_lostFlg = true;
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	if (m_findFlg)
-	//	{
-	//		m_lostFlg = true;
-	//	}
-	//}
 }
 void Enemy_1::LostProc()
 {
@@ -408,24 +355,24 @@ void Enemy_1::LostProc()
 	if (targetVec.Length() > m_waryArea)
 	{
 		// 失踪フラグがfalseのとき
-		if (!m_lostFlg)
+		if (!m_bitsEachFlg[LostFlg])
 		{
 			// 失踪フラグをtrueにする
-			m_lostFlg = true;
+			m_bitsEachFlg[LostFlg] = true;
 		}
 	}
 	else
 	{
 		// 失踪フラグがtrueのとき
-		if (m_lostFlg)
+		if (m_bitsEachFlg[LostFlg])
 		{
 			// 失踪フラグをfalseにする
-			m_lostFlg = false;
+			m_bitsEachFlg[LostFlg] = false;
 		}
 	}
 
 	// 失踪フラグがtrueのとき
-	if (m_lostFlg)
+	if (m_bitsEachFlg[LostFlg])
 	{
 		// 失踪カウントを増やす
 		m_lostCnt++;
@@ -444,10 +391,10 @@ void Enemy_1::LostProc()
 	if (m_lostCnt >= m_lostCntMax)
 	{
 		// 発見フラグがtrueのとき
-		if (m_findFlg)
+		if (m_bitsEachFlg[FindFlg])
 		{
 			// 発見フラグをfalseにする
-			m_findFlg = false;
+			m_bitsEachFlg[FindFlg] = false;
 		}
 
 		// 失踪カウントを最大値に設定
@@ -483,7 +430,7 @@ void Enemy_1::ChangeIdle()
 void Enemy_1::SetDeathFlg(const bool _deathFlg)
 {
 	// 死亡フラグをtrueにする
-	m_deathFlg = _deathFlg;
+	m_bitsEachFlg[DeathFlg] = _deathFlg;
 }
 
 void Enemy_1::ChangeActionState(std::shared_ptr<ActionStateBase> _nextState)
@@ -529,7 +476,7 @@ void Enemy_1::ActionIdle::Update(Enemy_1& _owner)
 	_owner.m_moveDir = Math::Vector3::Zero;
 
 	// 敵がプレイヤーを見つけている状態のとき
-	if (_owner.m_findFlg)
+	if (_owner.m_bitsEachFlg[FindFlg])
 	{
 		// ステートを"走行状態"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDiscover>());
@@ -551,7 +498,7 @@ void Enemy_1::ActionIdle::Update(Enemy_1& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_deathFlg)
+	if (_owner.m_bitsEachFlg[DeathFlg])
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -604,7 +551,7 @@ void Enemy_1::ActionWalk::Update(Enemy_1& _owner)
 	}
 
 	// 敵がプレイヤーを見つけている状態のとき
-	if (_owner.m_findFlg)
+	if (_owner.m_bitsEachFlg[FindFlg])
 	{
 		// ステートを"発見状態"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDiscover>());
@@ -619,7 +566,7 @@ void Enemy_1::ActionWalk::Update(Enemy_1& _owner)
 	}
 
 	// 方向切り替えフラグがfalseのとき
-	if (!_owner.m_dirFlg)
+	if (!_owner.m_bitsEachFlg[DirFlg])
 	{
 		_owner.m_moveDir += Math::Vector3::Backward;
 	}
@@ -633,10 +580,10 @@ void Enemy_1::ActionWalk::Update(Enemy_1& _owner)
 	if (_owner.m_pos.z >= _owner.m_arrivalZPos)
 	{
 		// 方向切り替えフラグがfalseのとき
-		if (!_owner.m_dirFlg)
+		if (!_owner.m_bitsEachFlg[DirFlg])
 		{
 			// 方向切り替えフラグをtrueにする
-			_owner.m_dirFlg = true;
+			_owner.m_bitsEachFlg[DirFlg] = true;
 
 			// Z座標を27.0fに固定
 			_owner.m_pos.z = _owner.m_arrivalZPos;
@@ -650,10 +597,10 @@ void Enemy_1::ActionWalk::Update(Enemy_1& _owner)
 	else if (_owner.m_pos.z <= -_owner.m_arrivalZPos)
 	{
 		// 方向切り替えフラグがtrueのとき
-		if (_owner.m_dirFlg)
+		if (_owner.m_bitsEachFlg[DirFlg])
 		{
 			// 方向切り替えフラグをfalseにする
-			_owner.m_dirFlg = false;
+			_owner.m_bitsEachFlg[DirFlg] = false;
 
 			// Z座標を-27.0fに固定
 			_owner.m_pos.z = -_owner.m_arrivalZPos;
@@ -665,7 +612,7 @@ void Enemy_1::ActionWalk::Update(Enemy_1& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_deathFlg)
+	if (_owner.m_bitsEachFlg[DeathFlg])
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -784,9 +731,6 @@ void Enemy_1::ActionRun::Update(Enemy_1& _owner)
 	const std::shared_ptr<Enemy_Main_1>	spEnemy_Main	= _owner.m_wpEnemy_Main.lock();
 	const std::shared_ptr<Player>		spPlayer		= _owner.m_wpPlayer.lock();
 
-	// 失踪処理
-	_owner.LostProc();
-
 	// 銃の情報があれば
 	if (spGun)
 	{
@@ -821,7 +765,7 @@ void Enemy_1::ActionRun::Update(Enemy_1& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_deathFlg)
+	if (_owner.m_bitsEachFlg[DeathFlg])
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -840,6 +784,9 @@ void Enemy_1::ActionRun::Update(Enemy_1& _owner)
 
 	// 移動方向を正規化
 	_owner.m_moveDir.Normalize();
+
+	// 失踪処理
+	_owner.LostProc();
 
 	// 移動方向と移動速度を合成し、座標に加算して更新
 	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
@@ -880,9 +827,6 @@ void Enemy_1::ActionReady::Update(Enemy_1& _owner)
 	const std::shared_ptr<Enemy_Main_1>	spEnemy_Main	= _owner.m_wpEnemy_Main.lock();
 	const std::shared_ptr<Player>		spPlayer		= _owner.m_wpPlayer.lock();
 	Math::Vector3 targetPos;
-
-	// 失踪処理
-	_owner.LostProc();
 
 	// プレイヤーの情報があるとき
 	if (spPlayer)
@@ -932,7 +876,7 @@ void Enemy_1::ActionReady::Update(Enemy_1& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_deathFlg)
+	if (_owner.m_bitsEachFlg[DeathFlg])
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -944,6 +888,9 @@ void Enemy_1::ActionReady::Update(Enemy_1& _owner)
 
 	// 移動方向を正規化
 	_owner.m_moveDir.Normalize();
+
+	// 失踪処理
+	_owner.LostProc();
 
 	// 移動方向と移動速度を合成し、座標に加算して更新
 	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
@@ -980,9 +927,6 @@ void Enemy_1::ActionShot::Update(Enemy_1& _owner)
 	const std::shared_ptr<Player>		spPlayer		= _owner.m_wpPlayer.lock();
 
 	Math::Vector3 targetPos;
-
-	// 失踪処理
-	_owner.LostProc();
 
 	// プレイヤーの情報があるとき
 	if (spPlayer)
@@ -1092,12 +1036,18 @@ void Enemy_1::ActionShot::Update(Enemy_1& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_deathFlg)
+	if (_owner.m_bitsEachFlg[DeathFlg])
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
 		return;
 	}
+
+	// 移動方向を正規化
+	_owner.m_moveDir.Normalize();
+
+	// 失踪処理
+	_owner.LostProc();
 
 	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
@@ -1126,10 +1076,10 @@ void Enemy_1::ActionAressted::Update(Enemy_1& _owner)
 	const std::shared_ptr<Player> spPlayer = _owner.m_wpPlayer.lock();
 
 	// 発見フラグがfalseのとき
-	if (!_owner.m_findFlg)
+	if (!_owner.m_bitsEachFlg[FindFlg])
 	{
 		// 発見フラグをtrueにする
-		_owner.m_findFlg = true;
+		_owner.m_bitsEachFlg[FindFlg] = true;
 	}
 
 	// プレイヤーの情報があるとき
@@ -1169,11 +1119,11 @@ void Enemy_1::ActionAressted_Death::Update(Enemy_1& _owner)
 	// アニメーションが終了していれば
 	if (_owner.m_nowAnimeFrm >= _owner.m_exeAnimFrm)
 	{
-		_owner.m_dissolveFlg = true;
+		_owner.m_bitsEachFlg[DissolveFlg] = true;
 	}
 
 	// ディゾルブフラグがtrueのとき
-	if (_owner.m_dissolveFlg)
+	if (_owner.m_bitsEachFlg[DissolveFlg])
 	{
 		// ディゾルブカウントを進める
 		_owner.m_dissolveCnt += _owner.m_dissolveSpd;
@@ -1225,9 +1175,6 @@ void Enemy_1::ActionReload::Update(Enemy_1& _owner)
 	const std::shared_ptr<Enemy_Magazine_1>			spMagazine			= _owner.m_wpEnemy_Magazine.lock();
 	const std::shared_ptr<Enemy_Gun_NoMagazine_1>	spGun_NoMagazine	= _owner.m_wpEnemy_Gun_NoMagazine.lock();
 
-	// 失踪処理
-	_owner.LostProc();
-
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
 
@@ -1255,7 +1202,7 @@ void Enemy_1::ActionReload::Update(Enemy_1& _owner)
 			spGun->Reload();
 
 			// 発見フラグがtrueのとき
-			if (_owner.m_findFlg)
+			if (_owner.m_bitsEachFlg[FindFlg])
 			{
 				// ActionReadyに切り替え
 				_owner.ChangeActionState(std::make_shared<ActionReady>());
@@ -1269,6 +1216,12 @@ void Enemy_1::ActionReload::Update(Enemy_1& _owner)
 			}
 		}
 	}
+
+	// 移動方向を正規化
+	_owner.m_moveDir.Normalize();
+
+	// 失踪処理
+	_owner.LostProc();
 
 	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
 	_owner.m_mTrans = Math::Matrix::CreateTranslation(_owner.m_pos);
@@ -1310,14 +1263,24 @@ void Enemy_1::ActionDeath::Update(Enemy_1& _owner)
 	// アニメーションフレームを更新
 	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
 
+	// アニメションが転倒アニメーションフレームのとき
+	if (_owner.m_nowAnimeFrm >= _owner.m_downAnimFrm && _owner.m_nowAnimeFrm <= _owner.m_downAnimFrm + 0.1f)
+	{
+		if (_owner.m_spDeathSound->IsStopped())
+		{
+			_owner.m_spDeathSound->Play();
+		}
+	}
+
 	// アニメーションが終了していれば
 	if (_owner.m_nowAnimeFrm >= _owner.m_reloadAnimFrm)
 	{
-		_owner.m_dissolveFlg = true;
+		_owner.m_spDeathSound->Stop();
+		_owner.m_bitsEachFlg[DissolveFlg] = true;
 	}
 
 	// ディゾルブフラグがtrueのとき
-	if (_owner.m_dissolveFlg)
+	if (_owner.m_bitsEachFlg[DissolveFlg])
 	{
 		// ディゾルブカウントを進める
 		_owner.m_dissolveCnt += _owner.m_dissolveSpd;

@@ -12,7 +12,7 @@ void MiniMapUIBack::Init()
 
 	m_color		= { 1.0f,1.0f,1.0f,m_alpha };
 
-	m_active	= false;
+	m_bitsEachFlg[ActiveFlg] = false;
 }
 
 void MiniMapUIBack::Update()
@@ -22,6 +22,6 @@ void MiniMapUIBack::Update()
 
 void MiniMapUIBack::DrawSprite()
 {
-	if (!m_active)return;
+	if (!m_bitsEachFlg[ActiveFlg])return;
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), m_rect.width, m_rect.height, &m_rect, &m_color);
 }

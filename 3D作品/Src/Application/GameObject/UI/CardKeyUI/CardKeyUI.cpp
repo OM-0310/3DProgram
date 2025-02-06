@@ -6,18 +6,18 @@ void CardKeyUI::Init()
 {
 	UIBase::SetAsset("Asset/Textures/UI/CardKey/CardKeyUI/CardKeyUI.png");
 
-	m_rect			= { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
+	m_rect							= { 0,0,static_cast<long>(m_spTex->GetWidth()),static_cast<long>(m_spTex->GetHeight()) };
 
-	m_pos			= { 0.f, -220.f };
-	m_alpha			= 0.f;
-	m_alphaSpeed	= 0.2f;
+	m_pos							= { 0.f, -220.f };
+	m_alpha							= 0.f;
+	m_alphaSpeed					= 0.2f;
 
-	m_useFlg		= false;
-	m_lifeSpan		= m_lifeSpanMax;
+	m_bitsEachFlg[m_totalEachFlg]	= false;
+	m_lifeSpan						= m_lifeSpanMax;
 
-	m_color			= { 1.f,1.f,1.f,m_alpha };
+	m_color							= { 1.f,1.f,1.f,m_alpha };
 
-	m_alphaState	= AlphaStateType::Dec;
+	m_alphaState					= AlphaStateType::Dec;
 }
 
 void CardKeyUI::Update()
@@ -25,7 +25,7 @@ void CardKeyUI::Update()
 	const std::shared_ptr<CardKey> spCard = m_wpCard.lock();
 
 	// 使用フラグがfalseのとき
-	if (!m_useFlg)
+	if (!m_bitsEachFlg[m_totalEachFlg])
 	{
 		// カードキーの情報があるとき
 		if (spCard)
@@ -34,7 +34,7 @@ void CardKeyUI::Update()
 			if (spCard->IsExpired())
 			{
 				// 使用フラグをtrueにする
-				m_useFlg = true;
+				m_bitsEachFlg[m_totalEachFlg] = true;
 			}
 
 			// カードキーのアイテム回収フラグがtrueのとき

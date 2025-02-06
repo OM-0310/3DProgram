@@ -337,6 +337,27 @@
     <Filter Include="Src\Application\GameObject\UI\SubMissionUI">
       <UniqueIdentifier>{1fb651ed-b875-4778-9732-171867cf36d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Scene\GameOverScene">
+      <UniqueIdentifier>{96487421-87db-4652-9b0e-a469c26005b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GameOver">
+      <UniqueIdentifier>{44501ac4-0d2d-4a37-ad89-b5a596ef2396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GameOver\MissionFailedBack">
+      <UniqueIdentifier>{ee72cdc1-bae2-4c45-90d6-3b57af0ec1d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GameOver\GameOver_Back">
+      <UniqueIdentifier>{c8337afd-eab0-4d80-97ad-f1e2b83bb6a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GameOver\SelectTitle">
+      <UniqueIdentifier>{86a23987-b517-487a-8fcd-8903ebba0207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GameOver\SelectRetry">
+      <UniqueIdentifier>{5f28efa5-c276-4691-86fe-781ab1436f51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MissionDisplayUI">
+      <UniqueIdentifier>{bd6c514c-f537-4f17-863e-aeee679f3ff4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -759,6 +780,24 @@
     <ClInclude Include="Src\Application\GameObject\UI\SubMissionUI\SubMissionUI.h">
       <Filter>Src\Application\GameObject\UI\SubMissionUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\Scene\GameOverScene\GameOverScene.h">
+      <Filter>Src\Application\Scene\GameOverScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\MissionFailedBack\MissionFailedBack.h">
+      <Filter>Src\Application\GameObject\UI\GameOver\MissionFailedBack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\GameOver_Back\GameOver_Back.h">
+      <Filter>Src\Application\GameObject\UI\GameOver\GameOver_Back</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\SelectTitle\SelectTitle.h">
+      <Filter>Src\Application\GameObject\UI\GameOver\SelectTitle</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\SelectRetry\SelectRetry.h">
+      <Filter>Src\Application\GameObject\UI\GameOver\SelectRetry</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MissionDisplayUI\MissionDisplayUI.h">
+      <Filter>Src\Application\GameObject\UI\MissionDisplayUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1153,6 +1192,24 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\SubMissionUI\SubMissionUI.cpp">
       <Filter>Src\Application\GameObject\UI\SubMissionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Scene\GameOverScene\GameOverScene.cpp">
+      <Filter>Src\Application\Scene\GameOverScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\MissionFailedBack\MissionFailedBack.cpp">
+      <Filter>Src\Application\GameObject\UI\GameOver\MissionFailedBack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\GameOver_Back\GameOver_Back.cpp">
+      <Filter>Src\Application\GameObject\UI\GameOver\GameOver_Back</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\SelectTitle\SelectTitle.cpp">
+      <Filter>Src\Application\GameObject\UI\GameOver\SelectTitle</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\SelectRetry\SelectRetry.cpp">
+      <Filter>Src\Application\GameObject\UI\GameOver\SelectRetry</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MissionDisplayUI\MissionDisplayUI.cpp">
+      <Filter>Src\Application\GameObject\UI\MissionDisplayUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

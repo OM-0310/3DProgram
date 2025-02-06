@@ -22,11 +22,19 @@ public:
 
 private:
 
+	enum
+	{
+		UseFlg
+	};
+
+private:
+
 	std::weak_ptr<SecretFile>	m_wpFile;
 
 	const short					m_lifeSpanMax	= 35;
 	const short					m_lifeSpanMin	= 0;
 	short						m_lifeSpan		= 0;
 
-	bool						m_useFlg		= false;
+	static constexpr short		m_totalEachFlg	= 1;
+	std::bitset<m_totalEachFlg> m_bitsEachFlg;
 };

@@ -12,7 +12,7 @@ void SecretFileUI::Init()
 	m_alpha			= m_alphaMin;
 	m_alphaSpeed	= 0.2f;
 
-	m_useFlg		= false;
+	m_bitsEachFlg[UseFlg] = false;
 	m_lifeSpan		= m_lifeSpanMax;
 
 	m_color			= { 1.f,1.f,1.f,m_alpha };
@@ -24,13 +24,13 @@ void SecretFileUI::Update()
 {
 	std::shared_ptr<SecretFile> spFile = m_wpFile.lock();
 
-	if (!m_useFlg)
+	if (!m_bitsEachFlg[UseFlg])
 	{
 		if (spFile)
 		{
 			if (spFile->IsExpired())
 			{
-				m_useFlg = true;
+				m_bitsEachFlg[UseFlg] = true;
 			}
 			if (spFile->GetCollectFlg())
 			{

@@ -15,7 +15,15 @@ public:
 
 private:
 
-	bool m_feedOut = false;
+	enum
+	{
+		FeedOutFlg
+	};
+
+private:
+
+	static constexpr short		m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg> m_bitsEachFlg;
 
 	const float m_alphaSpd = 0.01f;
 };

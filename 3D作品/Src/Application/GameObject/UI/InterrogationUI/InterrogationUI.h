@@ -16,7 +16,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void SetUseFlg(const bool& _useFlg) { m_useFlg = _useFlg; }
+	void SetUseFlg(const bool& _useFlg) { m_bitsEachFlg[UseFlg] = _useFlg; }
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{
@@ -28,16 +28,24 @@ public:
 		m_wpKillUI = _spKillUI;
 	}
 
-	const bool& GetUseFlg() const { return m_useFlg; }
+	const bool GetUseFlg() const { return m_bitsEachFlg.test(UseFlg); }
 
 private:
 
-	std::weak_ptr<Player>	m_wpPlayer;
-	std::weak_ptr<KillUI>	m_wpKillUI;
+	enum
+	{
+		UseFlg
+	};
 
-	bool					m_useFlg = false;
+private:
 
-	const short				m_lifeSpanMax	= 70;
-	const short				m_lifeSpanMin	= 0;
-	short					m_lifeSpan		= 0;
+	std::weak_ptr<Player>		m_wpPlayer;
+	std::weak_ptr<KillUI>		m_wpKillUI;
+
+	static constexpr short		m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg> m_bitsEachFlg;
+
+	const short					m_lifeSpanMax	= 70;
+	const short					m_lifeSpanMin	= 0;
+	short						m_lifeSpan		= 0;
 };

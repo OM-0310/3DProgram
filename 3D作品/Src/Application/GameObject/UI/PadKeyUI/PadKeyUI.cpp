@@ -14,7 +14,7 @@ void PadKeyUI::Init()
 	m_useFlg		= false;
 	m_lifeSpan		= m_lifeSpanMax;
 	m_animCnt		= 0;
-	m_singleX		= static_cast<short>(m_spTex->GetWidth()) / m_animMax;
+	m_singleX		= static_cast<short>(m_spTex->GetWidth()) / static_cast<short>(m_animMax);
 
 	m_color			= { 1.f,1.f,1.f,m_alpha };
 
@@ -56,7 +56,7 @@ void PadKeyUI::Update()
 	else
 	{
 		m_lifeSpan--;
-		m_animCnt += 0.5f;
+		m_animCnt += m_animSpeed;
 		switch (m_alphaState)
 		{
 		case AlphaStateType::Inc:

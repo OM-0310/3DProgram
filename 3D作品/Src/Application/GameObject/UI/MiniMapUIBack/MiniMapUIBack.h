@@ -13,11 +13,19 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void Open		(const bool _active) { m_active = _active; }
+	void Open		(const bool _active) { m_bitsEachFlg[ActiveFlg] = _active; }
 
-	const bool& GetActive()const { return m_active; }
+	const bool GetActive()const { return m_bitsEachFlg.test(ActiveFlg); }
 
 private:
 
-	bool m_active = false;
+	enum
+	{
+		ActiveFlg
+	};
+
+private:
+
+	static constexpr short		m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg>	m_bitsEachFlg;
 };

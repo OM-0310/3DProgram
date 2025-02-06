@@ -18,7 +18,7 @@ void Goal::Init()
 
 	m_debugColor = kRedColor;
 
-	m_goalAbleFlg = false;
+	m_bitsEachFlg[GoalAbleFlg] = false;
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
@@ -27,7 +27,7 @@ void Goal::Update()
 {
 	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 
-	if (m_goalAbleFlg)
+	if (m_bitsEachFlg[GoalAbleFlg])
 	{
 		KdCollider::SphereInfo sphere;
 		sphere.m_sphere.Center = m_pos;
@@ -48,7 +48,7 @@ void Goal::Update()
 				{
 					if (spPlayer)
 					{
-						spPlayer->SetClearFlg(true);
+						spPlayer->SetFeedOutFlg(true);
 					}
 				}
 			}
@@ -62,6 +62,6 @@ void Goal::Update()
 
 void Goal::DrawUnLit()
 {
-	if (!m_goalAbleFlg)return;
+	if (!m_bitsEachFlg[GoalAbleFlg])return;
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPoly, m_mWorld);
 }

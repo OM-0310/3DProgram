@@ -6,7 +6,7 @@ class KdGameObject : public std::enable_shared_from_this<KdGameObject>
 public:
 
 	// オブジェクトのタイプ
-	enum class ObjectType
+	enum ObjectType
 	{
 		None,
 		TypePlayer,
@@ -82,7 +82,7 @@ public:
 	bool Intersects(const KdCollider::BoxInfo& targetBox, std::list<KdCollider::CollisionResult>		* pResults);
 	bool Intersects(const KdCollider::RayInfo& targetShape, std::list<KdCollider::CollisionResult>		* pResults);
 
-	const ObjectType& GetObjectType() const { return m_objectType; }
+	const UINT& GetObjectType() const { return m_objectType; }
 
 protected:
 
@@ -110,5 +110,5 @@ protected:
 	int	m_HP = 0;
 
 	// オブジェクトタイプ
-	ObjectType m_objectType = KdGameObject::ObjectType::None;
+	UINT m_objectType = KdGameObject::ObjectType::None;
 };

@@ -25,10 +25,10 @@ void LockedDoor::Init()
 	m_pos			= { 4.5f,-0.9f,-18.f };
 	m_eventPos		= { 4.f,0.f,-18.f };
 
-	m_openAbleFlg	= false;
-	m_openFlg		= false;
-	m_lockFlg		= false;
-	m_UIFlg			= false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
 
@@ -52,9 +52,8 @@ void LockedDoor::Update()
 	sphere.m_sphere.Radius = m_openArea;
 	sphere.m_type = KdCollider::TypeEvent;
 
-
 	// デバッグ用
-	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
+	//m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius, m_debugColor);
 
 	bool isHit = false;
 	for (auto& obj : SceneManager::Instance().GetObjList())
@@ -75,26 +74,26 @@ void LockedDoor::Update()
 					if (spPlayer->GetItemCollType() == Player::ItemCollectType::CardKeyCollect)
 					{
 						// 開錠可能フラグをtrueしてループを抜ける
-						m_openAbleFlg = true;
+						m_bitsEachFlg[OpenAbleFlg] = true;
 						m_debugColor = kGreenColor;
 					}
 					// そうでなければ
 					else
 					{	
 						// ロックフラグがtrueであれば
-						if (m_lockFlg)
+						if (m_bitsEachFlg[LockFlg])
 						{
 							// 開錠可能フラグをtrueしてループを抜ける
-							m_openAbleFlg = true;
+							m_bitsEachFlg[OpenAbleFlg] = true;
 							m_debugColor = kGreenColor;
 
 						}
 						// falseであれば
 						else
 						{
-							if (!m_UIFlg)
+							if (!m_bitsEachFlg[UIFlg])
 							{
-								m_UIFlg = true;
+								m_bitsEachFlg[UIFlg] = true;
 
 								GenerateNeedCardKeyUI();
 
@@ -105,7 +104,7 @@ void LockedDoor::Update()
 							}
 
 							// 開錠可能フラグをfalseしてループを抜ける
-							m_openAbleFlg = false;
+							m_bitsEachFlg[OpenAbleFlg] = false;
 
 							m_debugColor = kBlueColor;
 						}
@@ -116,20 +115,20 @@ void LockedDoor::Update()
 			else
 			{
 				// 開錠可能フラグをfalseにしてループを抜ける
-				m_openAbleFlg	= false;
+				m_bitsEachFlg[OpenAbleFlg] = false;
 				m_debugColor	= kRedColor;
 			}
 		}
 	}
 
 	// ロックフラグがtrueであれば
-	if (m_lockFlg)
+	if (m_bitsEachFlg[LockFlg])
 	{
 		// 開錠可能フラグがtrueであれば
-		if (m_openAbleFlg)
+		if (m_bitsEachFlg[OpenAbleFlg])
 		{
 			// 開錠フラグをtrueにする
-			m_openFlg = true;
+			m_bitsEachFlg[OpenFlg] = true;
 
 			if (m_spOpenSound->IsStopped())
 			{
@@ -139,7 +138,7 @@ void LockedDoor::Update()
 	}
 
 	// 開錠フラグがtrueであれば
-	if (m_openFlg)
+	if (m_bitsEachFlg[OpenFlg])
 	{
 		// 扉のY座標の値をプラスする
 		m_pos.y += m_moveSpeed;
@@ -150,10 +149,10 @@ void LockedDoor::Update()
 			m_pos.y = m_moveMax;
 
 			// 開錠可能フラグがtrueであれば
-			if (m_openAbleFlg)
+			if (m_bitsEachFlg[OpenAbleFlg])
 			{
 				// 開錠フラグをfalseにする
-				m_openFlg = false;
+				m_bitsEachFlg[OpenFlg] = false;
 
 				m_spOpenSound->Play();
 			}
@@ -191,7 +190,7 @@ void LockedDoor::GenerateDepthMapFromLight()
 
 void LockedDoor::Open()
 {
-	m_lockFlg = true;
+	m_bitsEachFlg[LockFlg] = true;
 }
 
 void LockedDoor::GenerateNeedCardKeyUI()

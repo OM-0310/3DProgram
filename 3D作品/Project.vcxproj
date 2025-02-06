@@ -218,6 +218,10 @@
     <ClInclude Include="Src\Application\GameObject\UI\CollectUIBack\CollectUIBack.h" />
     <ClInclude Include="Src\Application\GameObject\UI\CurrentLocation\CurrentLocation.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ExclamationMarkUI\ExclamationMarkUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\GameOver_Back\GameOver_Back.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\MissionFailedBack\MissionFailedBack.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\SelectRetry\SelectRetry.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\GameOver\SelectTitle\SelectTitle.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GoalUI\GoalUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GunInfoUIBack\GunInfoUIBack.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GunInfoUI\GunInfoUI.h" />
@@ -230,6 +234,7 @@
     <ClInclude Include="Src\Application\GameObject\UI\MapUpdateUI\MapUpdateUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\MiniMapUIBack\MiniMapUIBack.h" />
     <ClInclude Include="Src\Application\GameObject\UI\MiniMapUI\MiniMapUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\MissionDisplayUI\MissionDisplayUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\NeedCardKeyUI\NeedCradKeyUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\NoAnswerUI\NoAnswerUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.h" />
@@ -242,6 +247,7 @@
     <ClInclude Include="Src\Application\GameObject\UI\UIBase.h" />
     <ClInclude Include="Src\Application\main.h" />
     <ClInclude Include="Src\Application\Scene\BaseScene\BaseScene.h" />
+    <ClInclude Include="Src\Application\Scene\GameOverScene\GameOverScene.h" />
     <ClInclude Include="Src\Application\Scene\GameScene\GameScene.h" />
     <ClInclude Include="Src\Application\Scene\ResultScene\ResultScene.h" />
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
@@ -353,6 +359,10 @@
     <ClCompile Include="Src\Application\GameObject\UI\CollectUIBack\CollectUIBack.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\CurrentLocation\CurrentLocation.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ExclamationMarkUI\ExclamationMarkUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\GameOver_Back\GameOver_Back.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\MissionFailedBack\MissionFailedBack.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\SelectRetry\SelectRetry.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\GameOver\SelectTitle\SelectTitle.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GoalUI\GoalUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GunInfoUIBack\GunInfoUIBack.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GunInfoUI\GunInfoUI.cpp" />
@@ -365,6 +375,7 @@
     <ClCompile Include="Src\Application\GameObject\UI\MapUpdateUI\MapUpdateUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\MiniMapUIBack\MiniMapUIBack.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\MiniMapUI\MiniMapUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\MissionDisplayUI\MissionDisplayUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\NeedCardKeyUI\NeedCradKeyUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\NoAnswerUI\NoAnswerUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\PadKeyUI\PadKeyUI.cpp" />
@@ -377,6 +388,7 @@
     <ClCompile Include="Src\Application\GameObject\UI\UIBase.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Application\Scene\BaseScene\BaseScene.cpp" />
+    <ClCompile Include="Src\Application\Scene\GameOverScene\GameOverScene.cpp" />
     <ClCompile Include="Src\Application\Scene\GameScene\GameScene.cpp" />
     <ClCompile Include="Src\Application\Scene\ResultScene\ResultScene.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />

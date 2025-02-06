@@ -33,9 +33,9 @@ private:
 
 	Math::Vector3						m_dir			= Math::Vector3::Zero;
 	Math::Vector3						m_pos			= Math::Vector3::Zero;
-	const Math::Vector3					m_adjustPos		= { 0.0f,2.5f,0.0f };
+	static constexpr Math::Vector3		m_adjustPos		= { 0.0f,2.5f,0.0f };
 
-	const short							m_lifeSpanMax	= 60;
-	const short							m_lifeSpanMin	= 0;
+	static constexpr short				m_lifeSpanMax	= 60;
+	static constexpr short				m_lifeSpanMin	= 0;
 	short								m_lifeSpan		= 0;
 };

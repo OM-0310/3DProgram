@@ -11,10 +11,18 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void SetFeedOut(const bool& _feedOut) { m_feedOut = _feedOut; }
+	void SetFeedOut(const bool& _feedOut) { m_bitsEachFlg[FeedOutFlg] = _feedOut; }
 
 	const float& GetAlpha	() const { return m_alpha; }
 	const float& GetAlphaMax() const { return m_alphaMax; }
+
+private:
+
+	enum
+	{
+		FeedOutFlg,
+		KeyFlg
+	};
 
 private:
 
@@ -31,6 +39,6 @@ private:
 	const float					m_alphaSpd	= 0.05f;
 	float						m_alpha		= 0.0f;
 
-	bool						m_feedOut	= false;
-	bool						m_keyFlg	= false;
+	static constexpr short		m_totalEachFlg = 2;
+	std::bitset<m_totalEachFlg> m_bitsEachFlg;
 };

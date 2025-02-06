@@ -25,15 +25,15 @@ public:
 		m_wpPlayer = _spPlayer;
 	}
 
-	const short& GetMaxHP		() const { return m_maxHP; }
-	const short& GetHalfHP		() const { return m_halfHP; }
-	const short& GetQuaterHP	() const { return m_quaterHP; }
+	const short& GetMaxHP		() const { return m_maxHP;		}
+	const short& GetHalfHP		() const { return m_halfHP;		}
+	const short& GetQuaterHP	() const { return m_quaterHP;	}
 
 private:
 
-	const short			m_maxHP		= 100;		// 最大HP 100
-	const short			m_halfHP	= 50;		// HP半分 50
-	const short			m_quaterHP	= 25;		// HP4分の1 25
+	const short					m_maxHP		= 100;		// 最大HP 100
+	const short					m_halfHP	= 50;		// HP半分 50
+	const short					m_quaterHP	= 25;		// HP4分の1 25
 
 	std::shared_ptr<KdAnimator> m_spAnimator;
 	std::weak_ptr<Player>		m_wpPlayer;

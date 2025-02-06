@@ -16,6 +16,14 @@ public:
 
 private:
 
+	enum
+	{
+		OpenAbleFlg,
+		OpenFlg
+	};
+
+private:
+
 	std::shared_ptr<KdModelWork>	m_spModel;
 
 	Math::Color						m_debugColor	= kWhiteColor;
@@ -25,15 +33,15 @@ private:
 	Math::Vector3					m_pos			= Math::Vector3::Zero;
 	Math::Vector3					m_eventPos		= Math::Vector3::Zero;
 
-	const float						m_moveMax		= 2.5f;
-	const float						m_moveMin		= -0.9f;
-	const float						m_moveSpeed		= 0.1f;
+	static constexpr float			m_moveMax		= 2.5f;
+	static constexpr float			m_moveMin		= -0.9f;
+	static constexpr float			m_moveSpeed		= 0.1f;
 
-	const float						m_openArea		= 1.4f;
+	static constexpr float			m_openArea		= 1.4f;
 
-	bool							m_openAbleFlg	= false;
-	bool							m_openFlg		= false;
+	static constexpr short			m_totalEachFlg	= 2;
+	std::bitset<m_totalEachFlg>		m_bitsEachFlg;
 
-	const float							m_openVol = 1.0f;
+	static constexpr float				m_openVol = 1.0f;
 	std::shared_ptr<KdSoundInstance3D>	m_spOpenSound;
 };

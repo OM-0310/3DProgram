@@ -16,7 +16,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void SetUseFlg(const bool& _useFlg) { m_useFlg = _useFlg; }
+	void SetUseFlg(const bool& _useFlg) { m_bitsEachFlg[UseFlg] = _useFlg; }
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{
@@ -28,16 +28,24 @@ public:
 		m_wpInterrogationUI = _spInterrogationUI;
 	}
 
-	const bool& GetUseFlg() const { return m_useFlg; }
+	const bool GetUseFlg() const { return m_bitsEachFlg.test(UseFlg); }
+
+private:
+
+	enum
+	{
+		UseFlg
+	};
 
 private:
 
 	std::weak_ptr<Player>			m_wpPlayer;
 	std::weak_ptr<InterrogationUI>	m_wpInterrogationUI;
 
-	bool							m_useFlg = false;
+	static constexpr short			m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg>		m_bitsEachFlg;
 	
-	const short						m_lifeSpanMax	= 70;
-	const short						m_lifeSpanMin	= 0;
+	static constexpr short			m_lifeSpanMax	= 70;
+	static constexpr short			m_lifeSpanMin	= 0;
 	short							m_lifeSpan		= 0;
 };

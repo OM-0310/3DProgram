@@ -42,17 +42,25 @@ public:
 
 private:
 
-	std::weak_ptr<Player>	m_wpPlayer;
-	std::weak_ptr<Enemy_1>	m_wpEnemy_1;
-	std::weak_ptr<Enemy_2>	m_wpEnemy_2;
-	std::weak_ptr<Enemy_3>	m_wpEnemy_3;
+	enum
+	{
+		Able1Flg,
+		Able2Flg,
+		Able3Flg,
+		RestraintFlg
+	};
 
-	bool					m_restraintFlg	= false;
-	bool					m_able1Flg		= false;
-	bool					m_able2Flg		= false;
-	bool					m_able3Flg		= false;
+private:
 
-	const short				m_lifeSpanMax	= 35;
-	const short				m_lifeSpanMin	= 0;
-	short					m_lifeSpan		= 0;
+	std::weak_ptr<Player>		m_wpPlayer;
+	std::weak_ptr<Enemy_1>		m_wpEnemy_1;
+	std::weak_ptr<Enemy_2>		m_wpEnemy_2;
+	std::weak_ptr<Enemy_3>		m_wpEnemy_3;
+
+	static constexpr short		m_totalEachFlg	= 4;
+	std::bitset<m_totalEachFlg> m_bitsEachFlg;
+
+	static constexpr short		m_lifeSpanMax	= 35;
+	static constexpr short		m_lifeSpanMin	= 0;
+	short						m_lifeSpan		= 0;
 };

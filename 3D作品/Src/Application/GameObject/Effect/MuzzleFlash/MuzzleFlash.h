@@ -29,7 +29,7 @@ private:
 	Math::Vector3						m_dir			= Math::Vector3::Zero;
 	Math::Vector3						m_pos			= Math::Vector3::Zero;
 
-	const short							m_lifeSpanMax	= 1;
-	const short							m_lifeSpanMin	= 0;
+	static constexpr short				m_lifeSpanMax	= 1;
+	static constexpr short				m_lifeSpanMin	= 0;
 	short								m_lifeSpan		= 0;
 };

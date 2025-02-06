@@ -18,7 +18,7 @@ void Player_Main::Init()
 	m_objectType = KdGameObject::ObjectType::TypePlayer;
 
 	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Player_MainCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeBump | KdCollider::TypeDamage);
+	m_pCollider->RegisterCollisionShape("Player_MainCollsion", m_spModel, KdCollider::TypeEvent | KdCollider::TypeDamage);
 }
 
 void Player_Main::Update()

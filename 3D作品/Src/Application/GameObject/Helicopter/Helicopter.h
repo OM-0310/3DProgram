@@ -27,7 +27,7 @@ private:
 	Math::Vector3						m_pos		= Math::Vector3::Zero;
 
 	float								m_angle		= 0.0f;
-	const float							m_volume	= 0.25f;
 
+	static constexpr float				m_volume	= 0.1f;
 	std::shared_ptr<KdSoundInstance>	m_spSound;
 };

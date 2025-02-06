@@ -1,6 +1,9 @@
 ﻿#include "Game_Back.h"
 
+#include "../UI/MissionDisplayUI/MissionDisplayUI.h"
 #include "../Characters/Player/Player.h"
+
+#include "../../Scene/SceneManager.h"
 
 void Game_Back::Init()
 {
@@ -19,7 +22,10 @@ void Game_Back::Init()
 
 	m_color = { 1.0f,1.0f,1.0f,m_alpha };
 
-	m_feedOut = false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 }
 
 void Game_Back::Update()
@@ -27,13 +33,13 @@ void Game_Back::Update()
 	const std::shared_ptr<Player> spPlayer = m_wpPlayer.lock();
 	if (spPlayer)
 	{
-		if (spPlayer->GetClearFlg())
+		if (spPlayer->GetFeedOutFlg())
 		{
-			m_feedOut = true;
+			m_bitsEachFlg[FeedOutFlg] = true;
 		}
 	}
 
-	if (m_feedOut)
+	if (m_bitsEachFlg[FeedOutFlg])
 	{
 		m_alpha += m_alphaSpd;
 
@@ -49,6 +55,16 @@ void Game_Back::Update()
 		if(m_alpha <= m_alphaMin)
 		{
 			m_alpha = m_alphaMin;
+
+			if (!m_bitsEachFlg[DisplayFlg])
+			{
+				m_bitsEachFlg[DisplayFlg] = true;
+
+				std::shared_ptr<MissionDisplayUI> displayUI;
+				displayUI = std::make_shared<MissionDisplayUI>();
+				displayUI->Init();
+				SceneManager::Instance().AddObject(displayUI);
+			}
 		}
 	}
 

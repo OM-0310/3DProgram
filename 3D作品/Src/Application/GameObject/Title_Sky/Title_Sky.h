@@ -11,7 +11,14 @@ public:
 	void Update		()	override;
 	void DrawUnLit	()	override;
 
-	void SetAngleFlg(const bool& _angleFlg) { m_angleFlg = _angleFlg; }
+	void SetAngleFlg(const bool& _angleFlg) { m_bitsEachFlg[AngleFlg] = _angleFlg; }
+
+private:
+
+	enum
+	{
+		AngleFlg
+	};
 
 private:
 
@@ -23,9 +30,10 @@ private:
 
 	Math::Vector3					m_pos		= Math::Vector3::Zero;
 
-	const float						m_angleSpd	= 0.1f;
-	const float						m_angleMax	= 360.0f;
+	static constexpr float			m_angleSpd	= 0.1f;
+	static constexpr float			m_angleMax	= 360.0f;
 	float							m_angle		= 0.0f;
 
-	bool							m_angleFlg	= false;
+	static constexpr short			m_totalEachFlg = 1;
+	std::bitset<m_totalEachFlg>		m_bitsEachFlg;
 };

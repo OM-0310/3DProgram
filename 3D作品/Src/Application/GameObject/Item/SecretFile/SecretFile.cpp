@@ -11,10 +11,10 @@ void SecretFile::Init()
 	m_color			= kWhiteColor;
 	m_alphaSpeed	= 0.025f;
 	m_alpha			= 1.0f;
-	m_alphaFlg		= false;
 
 	m_collectArea	= 1.f;
-	m_collectFlg	= false;
+
+	ItemBase::Init();
 
 	m_mTrans		= Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld		= m_mTrans;

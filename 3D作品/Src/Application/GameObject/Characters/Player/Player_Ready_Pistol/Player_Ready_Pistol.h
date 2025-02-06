@@ -29,25 +29,25 @@ public:
 		m_wpPlayer = _spPlayer;
 	}
 
-	const short& GetNowBullet	() const { return m_nowBullet; }
-	const short& GetMagazinSize	() const { return m_magazineSize; }
-	const short& GetMagazinEmpty() const { return m_magazineEmpty; }
+	const short& GetNowBullet	() const { return m_nowBullet;		}
+	const short& GetMagazinSize	() const { return m_magazineSize;	}
+	const short& GetMagazinEmpty() const { return m_magazineEmpty;	}
 
 private:
 
 	std::shared_ptr<KdAnimator> m_spAnimator;
 	std::weak_ptr<Player>		m_wpPlayer;
 
-	Math::Matrix	m_localMuzzleMat = Math::Matrix::Identity;	// 親から銃口へのローカル行列
+	Math::Matrix				m_localMuzzleMat = Math::Matrix::Identity;	// 親から銃口へのローカル行列
 
-	const short		m_magazineSize	= 10;		// マガジンサイズ 10
-	const short		m_magazineEmpty = 0;		// 残弾 空
-	short			m_nowBullet		= 0;		// 装弾数
+	const short					m_magazineSize	= 10;		// マガジンサイズ 10
+	const short					m_magazineEmpty = 0;		// 残弾 空
+	short						m_nowBullet		= 0;		// 装弾数
 
-	const short		m_shotWaitMax	= 25;
-	const short		m_shotWaitMin	= 0;
-	short			m_shotWait		= 0;
+	const short					m_shotWaitMax	= 25;
+	const short					m_shotWaitMin	= 0;
+	short						m_shotWait		= 0;
 
-	bool			m_shotFlg		= false;	// 発射フラグ
-	bool			m_rayBulletFlg	= false;	// レイ発射フラグ
+	bool						m_rayBulletFlg	= false;
+	bool						m_shotFlg		= false;
 };

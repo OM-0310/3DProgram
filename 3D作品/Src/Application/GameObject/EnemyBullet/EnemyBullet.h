@@ -22,16 +22,17 @@ private:
 	Math::Matrix					m_mLocalTrail	= Math::Matrix::Identity;
 
 	Math::Vector3					m_pos			= Math::Vector3::Zero;
+	static constexpr Math::Vector3	m_localTrailPos = { 0.0f,0.0f,-2.0 };
+
 	Math::Vector3					m_moveDir		= Math::Vector3::Zero;
-	const Math::Vector3				m_localTrailPos = { 0.0f,0.0f,-2.0 };
+	static constexpr float			m_moveSpeed		= 2.0f;
 
-	static const short				BULLETPOW		= 1;
-	const short						m_lifeSpanMax	= 100;
-	const short						m_lifeSpanMin	= 0;
+	static constexpr short			BULLETPOW		= 1;
+	static constexpr short			m_lifeSpanMax	= 100;
+	static constexpr short			m_lifeSpanMin	= 0;
 	short							m_lifeSpan		= 0;
-	const float						m_hitArea		= 0.4f;
 
-	const float						m_moveSpeed		= 2.0f;
+	static constexpr float			m_hitArea		= 0.4f;
 
 	KdTrailPolygon					m_tPoly;
 };

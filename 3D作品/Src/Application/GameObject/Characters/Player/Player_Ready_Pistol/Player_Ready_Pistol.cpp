@@ -19,8 +19,8 @@ void Player_Ready_Pistol::Init()
 
 	m_shotWait		= m_shotWaitMin;
 
-	m_shotFlg		= false;
 	m_rayBulletFlg	= false;
+	m_shotFlg		= false;
 
 	m_localMuzzleMat = Math::Matrix::CreateTranslation({ 0.0f,1.56f,1.0f });
 
@@ -52,10 +52,10 @@ void Player_Ready_Pistol::Update()
 	Math::Vector3 muzzlePos;
 	muzzlePos = (m_localMuzzleMat * parentMat).Translation();
 
-	KdCollider::SphereInfo sphereInfo;
-	sphereInfo.m_sphere.Center = muzzlePos;
-	sphereInfo.m_sphere.Radius = 0.05f;
-	sphereInfo.m_type = KdCollider::TypeDamage;
+	//KdCollider::SphereInfo sphereInfo;
+	//sphereInfo.m_sphere.Center = muzzlePos;
+	//sphereInfo.m_sphere.Radius = 0.05f;
+	//sphereInfo.m_type = KdCollider::TypeDamage;
 
 	//m_pDebugWire->AddDebugSphere(sphereInfo.m_sphere.Center, sphereInfo.m_sphere.Radius, kBlueColor);
 
@@ -142,7 +142,7 @@ void Player_Ready_Pistol::Update()
 	m_shotWait--;
 
 	// 発射待機時間が最小値以下のとき
-	if (m_shotWait <= m_shotWaitMin)
+	if (m_shotWait < m_shotWaitMin)
 	{
 		// 発射待機時間を最小値に設定
 		m_shotWait = m_shotWaitMin;
@@ -156,7 +156,7 @@ void Player_Ready_Pistol::Update()
 	}
 
 	// 残弾数が0以下のとき
-	if (m_nowBullet <= m_magazineEmpty)
+	if (m_nowBullet < m_magazineEmpty)
 	{
 		// 残弾数を0に設定
 		m_nowBullet = m_magazineEmpty;

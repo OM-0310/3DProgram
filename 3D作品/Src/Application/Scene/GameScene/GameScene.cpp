@@ -72,15 +72,37 @@
 
 void GameScene::Event()
 {
-	const std::shared_ptr<Game_Back> spBack = m_wpBack.lock();
-	if (spBack)
+	const std::shared_ptr<Game_Back>	spBack		= m_wpBack.lock();
+	const std::shared_ptr<Player>		spPlayer	= m_wpPlayer.lock();
+
+	if (spPlayer)
 	{
-		if (spBack->GetAlpha() >= spBack->GetAlphaMax())
+		if (spPlayer->GetDeathFlg())
 		{
-			SceneManager::Instance().SetNextScene
-			(
-				SceneManager::SceneType::Result
-			);
+			if (spBack)
+			{
+				if (spBack->GetAlpha() >= spBack->GetAlphaMax())
+				{
+					SceneManager::Instance().SetNextScene
+					(
+						SceneManager::SceneType::GameOver
+					);
+				}
+			}
+
+		}
+		else
+		{
+			if (spBack)
+			{
+				if (spBack->GetAlpha() >= spBack->GetAlphaMax())
+				{
+					SceneManager::Instance().SetNextScene
+					(
+						SceneManager::SceneType::Result
+					);
+				}
+			}
 		}
 	}
 }
@@ -90,7 +112,7 @@ void GameScene::Init()
 	ShowCursor(false);
 
 	KdShaderManager::Instance().WorkAmbientController().SetDirLight({ 1,-1,1 }, { 0,0,0 });
-	KdShaderManager::Instance().WorkAmbientController().SetAmbientLight({ 0.2f,0.2f,0.2f,1 });
+	KdShaderManager::Instance().WorkAmbientController().SetAmbientLight({ 0.25f,0.25f,0.25f,1 });
 
 	//=================================================================
 	// マルチスレッド

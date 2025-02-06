@@ -13,7 +13,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void SetFeedOut(const bool& _feedOut) { m_feedOut = _feedOut; }
+	void SetFeedOut(const bool& _feedOut) { m_bitsEachFlg[FeedOutFlg] = _feedOut; }
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{
@@ -25,21 +25,28 @@ public:
 
 private:
 
+	enum
+	{
+		DisplayFlg,
+		FeedOutFlg
+	};
+
+private:
+
 	std::shared_ptr<KdTexture>	m_spTex;
 	std::weak_ptr<Player>		m_wpPlayer;
-
+	
 	Math::Rectangle				m_rect;
 
 	Math::Vector2				m_pos		= Math::Vector2::Zero;
 
 	Math::Color					m_color		= kWhiteColor;
 
-	const float					m_alphaMax	= 1.0f;
-	const float					m_alphaMin	= 0.0f;
-	const float					m_alphaSpd	= 0.05f;
+	static constexpr float		m_alphaMax	= 1.0f;
+	static constexpr float		m_alphaMin	= 0.0f;
+	static constexpr float		m_alphaSpd	= 0.05f;
 	float						m_alpha		= 0.0f;
 
-	bool						m_feedOut	= false;
-
-	std::shared_ptr<KdSoundInstance> m_spSound;
+	static constexpr short		m_totalEachFlg = 2;
+	std::bitset<m_totalEachFlg> m_bitsEachFlg;
 };

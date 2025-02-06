@@ -17,10 +17,10 @@ void RestraintUI::Init()
 	m_alpha			= 0.f;
 	m_alphaSpeed	= 0.2f;
 
-	m_restraintFlg	= false;
-	m_able1Flg		= false;
-	m_able2Flg		= false;
-	m_able3Flg		= false;
+	for (int i = 0; i <= m_totalEachFlg; i++)
+	{
+		m_bitsEachFlg[i] = false;
+	}
 
 	m_lifeSpan		= m_lifeSpanMax;
 
@@ -43,16 +43,16 @@ void RestraintUI::Update()
 
 		if (diffVec1.Length() <= spPlayer->GetTightArea())
 		{
-			if (!m_able1Flg)
+			if (!m_bitsEachFlg[Able1Flg])
 			{
-				m_able1Flg = true;
+				m_bitsEachFlg[Able1Flg] = true;
 			}
 		}
 		else
 		{
-			if (m_able1Flg)
+			if (m_bitsEachFlg[Able1Flg])
 			{
-				m_able1Flg = false;
+				m_bitsEachFlg[Able1Flg] = false;
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
@@ -64,16 +64,16 @@ void RestraintUI::Update()
 
 		if (diffVec2.Length() <= spPlayer->GetTightArea())
 		{
-			if (!m_able2Flg)
+			if (!m_bitsEachFlg[Able2Flg])
 			{
-				m_able2Flg = true;
+				m_bitsEachFlg[Able2Flg] = true;
 			}
 		}
 		else
 		{
-			if (m_able2Flg)
+			if (m_bitsEachFlg[Able2Flg])
 			{
-				m_able2Flg = false;
+				m_bitsEachFlg[Able2Flg] = false;
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
@@ -85,34 +85,34 @@ void RestraintUI::Update()
 
 		if (diffVec3.Length() <= spPlayer->GetTightArea())
 		{
-			if (!m_able3Flg)
+			if (!m_bitsEachFlg[Able3Flg])
 			{
-				m_able3Flg = true;
+				m_bitsEachFlg[Able3Flg] = true;
 			}
 		}
 		else
 		{
-			if (m_able3Flg)
+			if (m_bitsEachFlg[Able3Flg])
 			{
-				m_able3Flg = false;
+				m_bitsEachFlg[Able3Flg] = false;
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
 	}
 
-	if (!m_restraintFlg)
+	if (!m_bitsEachFlg[RestraintFlg])
 	{
-		if (m_able1Flg || m_able2Flg || m_able3Flg)
+		if (m_bitsEachFlg[Able1Flg] || m_bitsEachFlg[Able2Flg] || m_bitsEachFlg[Able3Flg])
 		{
 			m_alpha += m_alphaSpeed;
 		}
-		else if(!m_able1Flg && !m_able2Flg && !m_able3Flg)
+		else if(!m_bitsEachFlg[Able1Flg] && !m_bitsEachFlg[Able2Flg] && !m_bitsEachFlg[Able3Flg])
 		{
 			m_alpha -= m_alphaSpeed;
 		}
 	}
 
-	if (m_restraintFlg)
+	if (m_bitsEachFlg[RestraintFlg])
 	{
 		m_lifeSpan--;
 		switch (m_alphaState)
@@ -161,5 +161,12 @@ void RestraintUI::DrawSprite()
 
 void RestraintUI::SetRestraintFlg(const bool _restraintFlg)
 {
-	m_restraintFlg	= _restraintFlg;
+	if (_restraintFlg)
+	{
+		m_bitsEachFlg[RestraintFlg] = true;
+	}
+	else
+	{
+		m_bitsEachFlg[RestraintFlg] = false;
+	}
 }

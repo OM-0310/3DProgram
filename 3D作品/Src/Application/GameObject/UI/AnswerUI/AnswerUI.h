@@ -31,7 +31,7 @@ private:
 	std::weak_ptr<SecretFileLocation>	m_wpFileLocation;
 	std::weak_ptr<CardKeyLocation>		m_wpCardLocation;
 
-	const short							m_lifeSpanMax	= 60;
-	const short							m_lifeSpanMin	= 0;
+	static constexpr short				m_lifeSpanMax	= 60;
+	static constexpr short				m_lifeSpanMin	= 0;
 	short								m_lifeSpan		= 0;
 };

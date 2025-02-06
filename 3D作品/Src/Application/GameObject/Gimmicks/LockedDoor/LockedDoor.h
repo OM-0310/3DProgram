@@ -28,9 +28,19 @@ public:
 		m_wpSubMissionUI = _spSubMissionUI;
 	}
 
-	const bool& GetOpeAbleFlg	() { return m_openAbleFlg; }
-	const bool& GetOpenFlg		() { return m_openFlg; }
-	const bool& GetLockFlg		() { return m_lockFlg; }
+	const bool GetOpeAbleFlg	() { return m_bitsEachFlg.test(OpenAbleFlg);	}
+	const bool GetOpenFlg		() { return m_bitsEachFlg.test(OpenFlg);		}
+	const bool GetLockFlg		() { return m_bitsEachFlg.test(LockFlg);		}
+
+private:
+
+	enum
+	{
+		LockFlg,
+		OpenAbleFlg,
+		OpenFlg,
+		UIFlg
+	};
 
 private:
 
@@ -45,17 +55,15 @@ private:
 	Math::Vector3						m_pos			= Math::Vector3::Zero;		// 座標
 	Math::Vector3						m_eventPos		= Math::Vector3::Zero;		// 座標(円判定用)
 
-	const float							m_moveMax		= 2.5f;						// Y座標のMAX値 = 2.5f
-	const float							m_moveMin		= -0.9f;					// Y座標のMin値 = -0.9f
-	const float							m_moveSpeed		= 0.1f;						// 移動量
+	static constexpr float				m_moveMax		= 2.5f;						// Y座標のMAX値 = 2.5f
+	static constexpr float				m_moveMin		= -0.9f;					// Y座標のMin値 = -0.9f
+	static constexpr float				m_moveSpeed		= 0.1f;						// 移動量
 
-	const float							m_openArea		= 1.4f;						// 扉が開閉するアクティブが起こる範囲
+	static constexpr float				m_openArea		= 1.4f;						// 扉が開閉するアクティブが起こる範囲
 
-	bool								m_openAbleFlg	= false;					// 開錠可能フラグ
-	bool								m_openFlg		= false;					// 開錠フラグ
-	bool								m_lockFlg		= false;					// ロックフラグ
-	bool								m_UIFlg			= false;
+	static constexpr short				m_totalEachFlg	= 4;
+	std::bitset<m_totalEachFlg>			m_bitsEachFlg;
 
-	const float							m_openVol		= 1.0f;
+	static constexpr float				m_openVol		= 1.0f;
 	std::shared_ptr<KdSoundInstance3D>	m_spOpenSound;
 };

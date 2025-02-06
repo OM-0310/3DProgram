@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "../CharaBase.h"
 
-#define TOTALKEYNUM 7
-
 class TPSCamera;
 class Player_Main;
 class Player_Disarm;
@@ -54,7 +52,8 @@ public:
 		Reload			= 1 << 5,	// リロード状態
 		Restraint		= 1 << 6,	// 拘束状態
 		Restraint_Idle	= 1 << 7,	// 拘束停止状態
-		Kill			= 1 << 8	// 処刑状態
+		Kill			= 1 << 8,	// 処刑状態
+		Death			= 1 << 9	// 死亡状態
 	};
 
 	enum class PostureType
@@ -84,12 +83,13 @@ public:
 	void AutoReloadProc			();	// 自動リロード処理
 	void ChanegeViewPointProc	();	// 視点切り替え処理
 	void RestraintProc			();	// 拘束処理
+	void DeathProc				();	// 死亡処理
 
 	// アニメーション切り替え処理
 	void ChangeAnimation(const std::string& _animeName, bool _isLoop = true, float _time = 0.0f);
 
 	// クリアフラグセット
-	void SetClearFlg(const bool& _clearFlg) { m_clearFlg = _clearFlg; }
+	void SetFeedOutFlg(const bool& _feedOutFlg) { m_bitsEachFlg[FeedOutFlg] = _feedOutFlg; }
 
 	void SetCamera					// カメラ情報セット		
 	(const std::shared_ptr<TPSCamera>& _spCamera) { m_wpCamera = _spCamera; }
@@ -160,14 +160,28 @@ public:
 	void SetSecretFileLocation		// 機密ファイル位置情報セット
 	(const std::shared_ptr<SecretFileLocation>& _spSecretFileLocation) { m_wpSecretFileLocation = _spSecretFileLocation; }
 
-	const Math::Matrix&		GetRotateMat		()			{ return m_mRot;			}
-	const ItemCollectType&	GetItemCollType		() const	{ return m_itemCollType;	}
-	const UINT&				GetSituationType	() const	{ return m_sType;			}
-	const PostureType&		GetPostureType		() const	{ return m_posType;			}
-	const Math::Vector3&	GetDiffVec			() const	{ return m_diffVec;			}
-	const float&			GetTightArea		() const	{ return m_tightArea;		}
-	const bool&				GetClearFlg			() const	{ return m_clearFlg;		}
-	const float&			GetAnimeSpeed		() const	{ return m_animeSpeed;		}
+	const Math::Matrix&		GetRotateMat		()			{ return m_mRot;						}
+	const ItemCollectType&	GetItemCollType		() const	{ return m_itemCollType;				}
+	const UINT&				GetSituationType	() const	{ return m_sType;						}
+	const PostureType&		GetPostureType		() const	{ return m_posType;						}
+	const Math::Vector3&	GetDiffVec			() const	{ return m_diffVec;						}
+	const float&			GetTightArea		() const	{ return m_tightArea;					}
+	const float&			GetAnimeSpeed		() const	{ return m_animeSpeed;					}
+	const bool				GetFeedOutFlg		() const	{ return m_bitsEachFlg.test(FeedOutFlg);}
+	const bool				GetDeathFlg			() const	{ return m_bitsEachFlg.test(DeathFlg);	}
+
+private:
+
+	enum
+	{
+		DeathFlg,
+		ExeFlg,
+		FeedOutFlg,
+		MiniMapFlg,
+		RestEnemy1Flg,
+		RestEnemy2Flg,
+		RestEnemy3Flg,
+	};
 
 private:
 
@@ -214,6 +228,7 @@ private:
 	const float							m_grabFrm		= 7.5f;		// 掴み時フレーム 17.5f
 	const float							m_killFrmMax	= 45.0f;	// 処刑時フレーム最大値 45.0f
 	const float							m_exeFrm		= 21.0f;	// 処刑時フレーム 22.5f
+	const float							m_deathFrmMax	= 65.0f;	// 死亡時フレーム最大値 65.0f
 
 	const float							m_zeroMoveSpd	= 0.0f;		// 停止速度 0.0f
 	const float							m_walkMoveSpd	= 0.05f;	// 歩行速度 0.05f
@@ -222,13 +237,11 @@ private:
 
 	const float							m_tightArea		= 1.25f;	// 拘束エリア 1.25f
 
-	std::bitset<TOTALKEYNUM>			m_bitsKeyFlg	= false;
-	bool								m_clearFlg		= false;
-	bool								m_miniMapFlg	= false;
-	bool								m_restEnemy1Flg	= false;
-	bool								m_restEnemy2Flg = false;
-	bool								m_restEnemy3Flg = false;
-	bool								m_exeFlg		= false;
+	static constexpr short				m_totalKeyFlg	= 7;
+	std::bitset<m_totalKeyFlg>			m_bitsKeyFlg	= false;
+
+	static constexpr short				m_totalEachFlg	= 7;
+	std::bitset<m_totalEachFlg>			m_bitsEachFlg	= false;
 
 	Math::Vector3						m_diffVec		= Math::Vector3::Zero;			// 敵とプレイヤーの差ベクトル
 
@@ -257,7 +270,7 @@ private:
 	const float							m_restraintVol	= 0.5f;
 	std::shared_ptr<KdSoundInstance3D>	m_spRestraintSound;
 
-	const float							m_runVol		= 0.5f;
+	const float							m_runVol		= 0.2f;
 	std::shared_ptr<KdSoundInstance3D>	m_spRunSound;
 
 	const float							m_walkVol		= 0.1f;
@@ -265,6 +278,9 @@ private:
 
 	const float							m_exeVol		= 0.2f;
 	std::shared_ptr<KdSoundInstance3D>	m_spExeSound;
+
+	const float							m_deathVol		= 0.2f;
+	std::shared_ptr<KdSoundInstance3D>	m_spDeathSound;
 
 private:
 
@@ -472,6 +488,16 @@ private:
 		void Exit	(Player& _owner)	override;
 	};
 
+	class ActionDeath : public ActionStateBase
+	{
+	public:
+
+		ActionDeath	()				{}
+		~ActionDeath()	override	{}
+
+		void Enter	(Player& _owner)	override;
+		void Update	(Player& _owner)	override;
+	};
 
 	void ChangeActionState(std::shared_ptr<ActionStateBase> _nextState);
 	std::shared_ptr<ActionStateBase> m_nowState = nullptr;

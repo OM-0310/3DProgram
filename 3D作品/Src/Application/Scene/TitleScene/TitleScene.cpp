@@ -96,6 +96,8 @@ void TitleScene::TitleInit(std::atomic<bool>& done)
 	back->Init();
 	m_objList.push_back(back);
 	m_wpBack = back;
+
+	done = true;
 }
 
 void TitleScene::StageInit(std::atomic<bool>& done)
