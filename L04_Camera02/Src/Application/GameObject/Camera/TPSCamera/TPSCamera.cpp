@@ -78,7 +78,7 @@ void TPSCamera::Update()
 			if (_hit)
 			{
 				Math::Vector3 _hoseiPos = _hitPos;
-				_hoseiPos += _rayInfo.m_dir * 0.4f;
+				//_hoseiPos += _rayInfo.m_dir * 0.4f;
 				SetPos(_hoseiPos);
 			}
 		}
