@@ -29,8 +29,8 @@ void Player_Main::Update()
 		m_mWorld = spPlayer->GetMatrix();
 	}
 
-	Application::Instance().m_log.Clear();
-	Application::Instance().m_log.AddLog("m_hp=%d", m_HP);
+	//Application::Instance().m_log.Clear();
+	//Application::Instance().m_log.AddLog("m_hp=%d", m_HP);
 }
 
 void Player_Main::PostUpdate()

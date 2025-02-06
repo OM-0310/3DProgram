@@ -14,7 +14,8 @@ void InterrogationUI::Init()
 	m_alpha			= m_alphaMin;
 	m_alphaSpeed	= 0.2f;
 
-	m_bitsEachFlg[UseFlg] = false;
+	m_bitsEachFlg.reset();
+
 	m_lifeSpan		= m_lifeSpanMax;
 
 	m_color			= { 1.f,1.f,1.f,m_alpha };
@@ -29,7 +30,7 @@ void InterrogationUI::Update()
 
 	if (spKillUI)
 	{
-		if (!m_bitsEachFlg[UseFlg])
+		if (!m_bitsEachFlg.test(UseFlg))
 		{
 			if (spPlayer)
 			{
@@ -85,9 +86,9 @@ void InterrogationUI::Update()
 			}
 			if (m_lifeSpan <= m_lifeSpanMin)
 			{
-				if (m_bitsEachFlg[UseFlg])
+				if (m_bitsEachFlg.test(UseFlg))
 				{
-					m_bitsEachFlg[UseFlg] = false;
+					m_bitsEachFlg.set(UseFlg, false);
 					m_lifeSpan = m_lifeSpanMax;
 				}
 			}

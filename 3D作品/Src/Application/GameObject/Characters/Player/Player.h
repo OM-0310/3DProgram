@@ -30,18 +30,6 @@ class Player : public CharaBase
 {
 public:
 
-	enum KeyFlgType
-	{
-		KillKey			,	// 0:殺害キー
-		InterKey		,	// 1:尋問キー
-		OpenMapKey		,	// 2:マップ展開キー
-		ShotKey			,	// 3:弾発射キー
-		ReloadKey		,	// 4:リロードキー
-		CollectKey		,	// 5:アイテム回収キー
-		ChangeKey		,	// 6:視点切り替えキー
-		PosKey			,	// 7:姿勢切り替えキー
-	};
-
 	enum SituationType
 	{
 		Idle			= 1 << 0,	// 停止状態
@@ -54,13 +42,6 @@ public:
 		Restraint_Idle	= 1 << 7,	// 拘束停止状態
 		Kill			= 1 << 8,	// 処刑状態
 		Death			= 1 << 9	// 死亡状態
-	};
-
-	enum class PostureType
-	{
-		Stand,		// 直立
-		Sit,		// しゃがみ
-		Creep		// 匍匐
 	};
 
 	enum class ItemCollectType
@@ -163,7 +144,6 @@ public:
 	const Math::Matrix&		GetRotateMat		()			{ return m_mRot;						}
 	const ItemCollectType&	GetItemCollType		() const	{ return m_itemCollType;				}
 	const UINT&				GetSituationType	() const	{ return m_sType;						}
-	const PostureType&		GetPostureType		() const	{ return m_posType;						}
 	const Math::Vector3&	GetDiffVec			() const	{ return m_diffVec;						}
 	const float&			GetTightArea		() const	{ return m_tightArea;					}
 	const float&			GetAnimeSpeed		() const	{ return m_animeSpeed;					}
@@ -171,16 +151,26 @@ public:
 	const bool				GetDeathFlg			() const	{ return m_bitsEachFlg.test(DeathFlg);	}
 
 private:
-
-	enum
+	enum KeyFlgType
 	{
-		DeathFlg,
-		ExeFlg,
-		FeedOutFlg,
-		MiniMapFlg,
-		RestEnemy1Flg,
-		RestEnemy2Flg,
-		RestEnemy3Flg,
+		KillKey,	// 0:殺害キー
+		InterKey,	// 1:尋問キー
+		OpenMapKey,	// 2:マップ展開キー
+		ShotKey,	// 3:弾発射キー
+		ReloadKey,	// 4:リロードキー
+		CollectKey,	// 5:アイテム回収キー
+		ChangeKey,	// 6:視点切り替えキー
+	};
+
+	enum EachFlgType
+	{
+		DeathFlg,		// 死亡フラグ
+		ExeFlg,			// 
+		FeedOutFlg,		// フェードアウトフラグ
+		MiniMapFlg,		// ミニマップフラグ
+		RestEnemy1Flg,	// 敵1拘束フラグ
+		RestEnemy2Flg,	// 敵2拘束フラグ
+		RestEnemy3Flg,	// 敵3拘束フラグ
 	};
 
 private:
@@ -246,7 +236,6 @@ private:
 	Math::Vector3						m_diffVec		= Math::Vector3::Zero;			// 敵とプレイヤーの差ベクトル
 
 	UINT								m_sType			= SituationType::Idle;			// プレイヤーの状態タイプ
-	PostureType							m_posType		= PostureType::Stand;			// プレイヤーの体勢タイプ
 	ItemCollectType						m_itemCollType	= ItemCollectType::NoCollect;	// アイテム所持タイプ
 
 	const float							m_openMapVol	= 0.5f;
@@ -422,66 +411,6 @@ private:
 
 		ActionReload_Run	()				{}
 		~ActionReload_Run()	override	{}
-
-		void Enter	(Player& _owner)	override;
-		void Update	(Player& _owner)	override;
-		void Exit	(Player& _owner)	override;
-	};
-
-	class ActionStand : public ActionStateBase
-	{
-	public:
-
-		ActionStand	()				{}
-		~ActionStand()	override	{}
-
-		void Enter	(Player& _owner)	override;
-		void Update	(Player& _owner)	override;
-		void Exit	(Player& _owner)	override;
-	};
-
-	class ActionSit : public ActionStateBase
-	{
-	public:
-
-		ActionSit	()				{}
-		~ActionSit	()	override	{}
-
-		void Enter	(Player& _owner)	override;
-		void Update	(Player& _owner)	override;
-		void Exit	(Player& _owner)	override;
-	};
-
-	class ActionSit_Idle : public ActionStateBase
-	{
-	public:
-
-		ActionSit_Idle	()				{}
-		~ActionSit_Idle	()	override	{}
-
-		void Enter	(Player& _owner)	override;
-		void Update	(Player& _owner)	override;
-		void Exit	(Player& _owner)	override;
-	};
-
-	class ActionSit_Walk : public ActionStateBase
-	{
-	public:
-
-		ActionSit_Walk	()				{}
-		~ActionSit_Walk	()	override	{}
-
-		void Enter	(Player& _owner)	override;
-		void Update	(Player& _owner)	override;
-		void Exit	(Player& _owner)	override;
-	};
-
-	class ActionSit_Ready : public ActionStateBase
-	{
-	public:
-
-		ActionSit_Ready	()				{}
-		~ActionSit_Ready()	override	{}
 
 		void Enter	(Player& _owner)	override;
 		void Update	(Player& _owner)	override;

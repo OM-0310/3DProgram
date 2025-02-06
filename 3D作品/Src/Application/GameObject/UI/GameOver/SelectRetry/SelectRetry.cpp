@@ -17,7 +17,7 @@ void SelectRetry::Init()
 
 	m_color = { 1.0f,1.0f,1.0f,m_alpha };
 
-	m_bitsEachFlg[ChoiceFlg] = false;
+	m_bitsEachFlg.set(ChoiceFlg, true);
 }
 
 void SelectRetry::Update()

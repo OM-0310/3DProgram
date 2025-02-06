@@ -15,14 +15,14 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void Open		(const bool _active) { m_bitsEachFlg[m_activeFlg] = _active; }
+	void Open(const bool& _active) { m_bitsEachFlg.set(ActiveFlg, _active); }
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{
 		m_wpPlayer = _spPlayer;
 	}
 
-	const bool GetActive() const { return m_bitsEachFlg.test(ActiveFlg); }
+	const bool GetActive() const;
 
 private:
 

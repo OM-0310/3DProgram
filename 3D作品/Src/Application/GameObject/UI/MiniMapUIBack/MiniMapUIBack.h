@@ -13,7 +13,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void Open		(const bool _active) { m_bitsEachFlg[ActiveFlg] = _active; }
+	void Open		(const bool _active) { m_bitsEachFlg.set(ActiveFlg, _active); }
 
 	const bool GetActive()const { return m_bitsEachFlg.test(ActiveFlg); }
 

@@ -12,7 +12,7 @@ void MiniMapUIBack::Init()
 
 	m_color		= { 1.0f,1.0f,1.0f,m_alpha };
 
-	m_bitsEachFlg[ActiveFlg] = false;
+	m_bitsEachFlg.reset();
 }
 
 void MiniMapUIBack::Update()

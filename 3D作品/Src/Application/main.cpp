@@ -379,7 +379,7 @@ void Application::ImGuiProcess()
 	//ImGui::End();
 
 	// ログウィンドウ
-	//m_log.Draw("Log Window");
+	m_log.Draw("Log Window");
 
 	//=====================================================
 	// ログ出力 ・・・ AddLog("～") で追加

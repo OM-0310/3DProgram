@@ -22,9 +22,9 @@ void Game_Back::Init()
 
 	m_color = { 1.0f,1.0f,1.0f,m_alpha };
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 }
 
@@ -35,11 +35,11 @@ void Game_Back::Update()
 	{
 		if (spPlayer->GetFeedOutFlg())
 		{
-			m_bitsEachFlg[FeedOutFlg] = true;
+			m_bitsEachFlg.set(FeedOutFlg, true);
 		}
 	}
 
-	if (m_bitsEachFlg[FeedOutFlg])
+	if (m_bitsEachFlg.test(FeedOutFlg))
 	{
 		m_alpha += m_alphaSpd;
 
@@ -56,9 +56,9 @@ void Game_Back::Update()
 		{
 			m_alpha = m_alphaMin;
 
-			if (!m_bitsEachFlg[DisplayFlg])
+			if (!m_bitsEachFlg.test(DisplayFlg))
 			{
-				m_bitsEachFlg[DisplayFlg] = true;
+				m_bitsEachFlg.set(DisplayFlg, true);
 
 				std::shared_ptr<MissionDisplayUI> displayUI;
 				displayUI = std::make_shared<MissionDisplayUI>();

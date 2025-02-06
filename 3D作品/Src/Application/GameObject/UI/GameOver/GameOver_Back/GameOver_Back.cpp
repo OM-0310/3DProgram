@@ -26,9 +26,9 @@ void GameOver_Back::Init()
 
 	m_color			= { 1.0f,1.0f,1.0f,m_alpha };
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 }
 
@@ -37,68 +37,64 @@ void GameOver_Back::Update()
 	const std::shared_ptr<SelectTitle> spTitle = m_wpTitle.lock();
 	const std::shared_ptr<SelectRetry> spRetry = m_wpRetry.lock();
 
-	if (GetAsyncKeyState('A') & 0x8000)
+	if (GetAsyncKeyState('A') & 0x8000 && !m_bitsEachFlg.test(AKeyFlg))
 	{
-		if (!m_bitsEachFlg[AKeyFlg])
+		m_bitsEachFlg.set(AKeyFlg, true);
+
+		m_spSelectSound->Play();
+
+		if (spTitle && spRetry)
 		{
-			m_bitsEachFlg[AKeyFlg] = true;
-
-			m_spSelectSound->Play();
-
-			if (spTitle && spRetry)
+			if (!spTitle->GetChoiceFlg() && spRetry->GetChoiceFlg())
 			{
-				if (!spTitle->GetChoiceFlg() && spRetry->GetChoiceFlg())
-				{
-					spTitle->SetChoiseFlg(true);
-					spRetry->SetChoiseFlg(false);
-				}
-				else if (spTitle->GetChoiceFlg() && !spRetry->GetChoiceFlg())
-				{
-					spTitle->SetChoiseFlg(false);
-					spRetry->SetChoiseFlg(true);
-				}
+				spTitle->SetChoiseFlg(true);
+				spRetry->SetChoiseFlg(false);
+			}
+			else if (spTitle->GetChoiceFlg() && !spRetry->GetChoiceFlg())
+			{
+				spTitle->SetChoiseFlg(false);
+				spRetry->SetChoiseFlg(true);
 			}
 		}
+
 	}
-	else
+	else if (!(GetAsyncKeyState('A') & 0x8000))
 	{
-		m_bitsEachFlg[AKeyFlg] = false;
+		m_bitsEachFlg.set(AKeyFlg, false);
 	}
 
-	if (GetAsyncKeyState('D') & 0x8000)
+	if (GetAsyncKeyState('D') & 0x8000 && !m_bitsEachFlg.test(DKeyFlg))
 	{
-		if (!m_bitsEachFlg[DKeyFlg])
+		m_bitsEachFlg.set(DKeyFlg, true);
+
+		m_spSelectSound->Play();
+
+		if (spTitle && spRetry)
 		{
-			m_bitsEachFlg[DKeyFlg] = true;
-
-			m_spSelectSound->Play();
-
-			if (spTitle && spRetry)
+			if (!spTitle->GetChoiceFlg() && spRetry->GetChoiceFlg())
 			{
-				if (!spTitle->GetChoiceFlg() && spRetry->GetChoiceFlg())
-				{
-					spTitle->SetChoiseFlg(true);
-					spRetry->SetChoiseFlg(false);
-				}
-				else if (spTitle->GetChoiceFlg() && !spRetry->GetChoiceFlg())
-				{
-					spTitle->SetChoiseFlg(false);
-					spRetry->SetChoiseFlg(true);
-				}
+				spTitle->SetChoiseFlg(true);
+				spRetry->SetChoiseFlg(false);
+			}
+			else if (spTitle->GetChoiceFlg() && !spRetry->GetChoiceFlg())
+			{
+				spTitle->SetChoiseFlg(false);
+				spRetry->SetChoiseFlg(true);
 			}
 		}
+
 	}
-	else
+	else if (!(GetAsyncKeyState('D') & 0x8000))
 	{
-		m_bitsEachFlg[DKeyFlg] = false;
+		m_bitsEachFlg.set(DKeyFlg, false);
 	}
 
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
 	{
-		if (!m_bitsEachFlg[EnterKeyFlg])
+		if (!m_bitsEachFlg.test(EnterKeyFlg))
 		{
-			m_bitsEachFlg[EnterKeyFlg]	= true;
-			m_bitsEachFlg[FeedOutFlg]	= true;
+			m_bitsEachFlg.set(EnterKeyFlg, true);
+			m_bitsEachFlg.set(FeedOutFlg, true);
 
 			if (m_spPressSound->IsStopped())
 			{
@@ -107,7 +103,7 @@ void GameOver_Back::Update()
 		}
 	}
 
-	if (m_bitsEachFlg[FeedOutFlg])
+	if (m_bitsEachFlg.test(FeedOutFlg))
 	{
 		m_alpha += m_alphaSpd;
 

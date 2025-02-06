@@ -7,10 +7,11 @@
 #include "../../GameObject/Terrains/Ground/Ground_UP/Ground_UP.h"
 #include "../../GameObject/Terrains/Ground/Ground_Bottom/Ground_Bottom.h"
 #include "../../GameObject/Terrains/RockWall/RockWall.h"
+#include "../../GameObject/Terrains/ArmoredCar/ArmoredCar.h"
 #include "../../GameObject/Terrains/Building/Building_Main/Building_Main.h"
 #include "../../GameObject/Terrains/Building/Building_Roof/Building_Roof.h"
 #include "../../GameObject/Terrains/Building/Light/Light.h"
-#include "../../GameObject/Terrains/ArmoredCar/ArmoredCar.h"
+#include "../../GameObject/Terrains/Building/Furniture/Bed/Bed.h"
 #include "../../GameObject/Terrains/Grass/Grass.h"
 
 #include "../../GameObject/Gimmicks/Door/Door_1.h"
@@ -149,13 +150,15 @@ void GameScene::StageInit(
 	sky->Init();
 	m_objList.push_back(sky);
 
-	// 地形　地面初期化
+	// 地形
+	// 地面上部分初期化
 	std::shared_ptr<Ground_UP> ground_Up;
 	ground_Up = std::make_shared<Ground_UP>();
 	ground_Up->Init();
 	m_objList.push_back(ground_Up);
 	m_wpGround_Up = ground_Up;
 
+	// 地面下部分初期化
 	std::shared_ptr<Ground_Bottom> ground_Bottom;
 	ground_Bottom = std::make_shared<Ground_Bottom>();
 	ground_Bottom->Init();
@@ -168,6 +171,13 @@ void GameScene::StageInit(
 	rock->Init();
 	m_objList.push_back(rock);
 	m_wpRock_Wall = rock;
+
+	// 装甲車&戦車
+	std::shared_ptr<ArmoredCar> car;
+	car = std::make_shared<ArmoredCar>();
+	car->Init();
+	m_objList.push_back(car);
+	m_wpArmoredCar = car;
 
 	// 建物　屋根
 	std::shared_ptr<Building_Roof> build_roof;
@@ -271,12 +281,28 @@ void GameScene::StageInit(
 		}
 	}
 
-	// 装甲車&戦車
-	std::shared_ptr<ArmoredCar> car;
-	car = std::make_shared<ArmoredCar>();
-	car->Init();
-	m_objList.push_back(car);
-	m_wpArmoredCar = car;
+	std::shared_ptr<Bed> bed;
+	for (int i = 0; i <= 1; i++)
+	{
+		for (int j = 0; j <= 1; j++)
+		{
+			bed = std::make_shared<Bed>();
+			bed->Init();
+			bed->SetPos({ -8.5f + (-5.5f * i),-1.0f,14.0f + (4.0f * j) });
+			m_objList.push_back(bed);
+		}
+	}
+
+	for (int i = 0; i <= 1; i++)
+	{
+		for (int j = 0; j <= 1; j++)
+		{
+			bed = std::make_shared<Bed>();
+			bed->Init();
+			bed->SetPos({ -8.5f + (-5.5f * i),-1.0f,-6.0f + (4.0f * j) });
+			m_objList.push_back(bed);
+		}
+	}
 
 	{
 		// 初期化完了を通知

@@ -8,11 +8,11 @@ void MiniMapUI::Init()
 
 	m_pos						= {};
 
-	m_bitsEachFlg[ActiveFlg]	= false;
+	m_bitsEachFlg.reset();
 }
 
 void MiniMapUI::DrawSprite()
 {
-	if (!m_bitsEachFlg[ActiveFlg])return;
+	if (!m_bitsEachFlg.test(ActiveFlg))return;
 	KdShaderManager::Instance().m_spriteShader.DrawTex(m_spTex, static_cast<int>(m_pos.x), static_cast<int>(m_pos.y), m_rect.width, m_rect.height, &m_rect);
 }

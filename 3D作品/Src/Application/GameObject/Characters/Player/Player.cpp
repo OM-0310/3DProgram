@@ -88,20 +88,19 @@ void Player::Init()
 	m_moveDir		= Math::Vector3::Zero;
 	m_moveSpeed		= 0.0f;
 
-	for (int i = 0; i <= m_totalKeyFlg; i++)
+	for (uint16_t i = 0; i < m_bitsKeyFlg.size(); ++i)
 	{
-		m_bitsKeyFlg[i] = false;
+		m_bitsKeyFlg.reset(i);
 	}
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 
 	m_diffVec		= Math::Vector3::Zero;
 
 	m_sType			= SituationType::Idle;
-	m_posType		= PostureType::Stand;
 	m_itemCollType	= ItemCollectType::NoCollect;
 
 	m_objectType	= KdGameObject::ObjectType::TypePlayer;
@@ -136,6 +135,9 @@ void Player::Update()
 
 	m_mTrans = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = m_mRot * m_mTrans;
+
+	Application::Instance().m_log.Clear();
+	Application::Instance().m_log.AddLog("m_pos={ %.2f, %.2f, %.2f }", m_pos.x, m_pos.y, m_pos.z);
 
 	//m_pDebugWire->AddDebugSphere(readySphereInfo.m_sphere.Center, readySphereInfo.m_sphere.Radius, kBlueColor);
 }
@@ -258,9 +260,9 @@ void Player::OpneMapProc()
 	{
 		if (!m_bitsKeyFlg[KeyFlgType::OpenMapKey])
 		{
-			if (!m_bitsEachFlg[MiniMapFlg])
+			if (!m_bitsEachFlg[EachFlgType::MiniMapFlg])
 			{
-				m_bitsEachFlg[MiniMapFlg] = true;
+				m_bitsEachFlg.set(EachFlgType::MiniMapFlg, true);
 
 				if (m_spOpenMapSound->IsStopped())
 				{
@@ -274,7 +276,7 @@ void Player::OpneMapProc()
 			}
 			else
 			{
-				m_bitsEachFlg[MiniMapFlg] = false;
+				m_bitsEachFlg.set(EachFlgType::MiniMapFlg, false);
 
 				if (m_spCloseMapSound->IsStopped())
 				{
@@ -287,7 +289,7 @@ void Player::OpneMapProc()
 				}
 			}
 
-			m_bitsKeyFlg[KeyFlgType::OpenMapKey] = true;
+			m_bitsKeyFlg.set(KeyFlgType::OpenMapKey, true);
 
 			// ミニマップUIの情報があるとき
 			if (spMiniMapUI)
@@ -537,21 +539,9 @@ void Player::AutoReloadProc()
 		// 残弾数が空のとき
 		if (nowBullet <= spPlayer_Ready_Pistol->GetMagazinEmpty())
 		{
-			switch (m_posType)
-			{
-			case Player::PostureType::Stand:
-
-				// Reload_Idleに切り替え
-				ChangeActionState(std::make_shared<ActionReload_Idle>());
-				return;
-				break;
-			case Player::PostureType::Sit:
-				break;
-			case Player::PostureType::Creep:
-				break;
-			default:
-				break;
-			}
+			// Reload_Idleに切り替え
+			ChangeActionState(std::make_shared<ActionReload_Idle>());
+			return;
 		}
 	}
 }
@@ -624,20 +614,6 @@ void Player::ChanegeViewPointProc()
 				spCamera->ChangeAimR();
 			}
 			break;
-		case TPSCamera::CameraType::SitR:
-			if (!m_bitsKeyFlg[KeyFlgType::ChangeKey])
-			{
-				m_bitsKeyFlg[KeyFlgType::ChangeKey] = true;
-				spCamera->ChangeSitL();
-			}
-			break;
-		case TPSCamera::CameraType::SitL:
-			if (!m_bitsKeyFlg[KeyFlgType::ChangeKey])
-			{
-				m_bitsKeyFlg[KeyFlgType::ChangeKey] = true;
-				spCamera->ChangeSitR();
-			}
-			break;
 		}
 	}
 	// キーが離されたとき
@@ -665,23 +641,27 @@ void Player::RestraintProc()
 		// プレイヤーと敵の座標の差ベクトルを算出
 		diffVec1 = parentPos1 - m_pos;
 
-		// 差ベクトルが拘束エリア範囲内のとき
-		if (diffVec1.Length() <= m_tightArea)
+		if (spEnemy_1->GetSitType() != Enemy_1::SituationType::Aressted_Death &&
+			spEnemy_1->GetSitType() != Enemy_1::SituationType::Death)
 		{
-			// 左クリックしたとき
-			if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+			// 差ベクトルが拘束エリア範囲内のとき
+			if (diffVec1.Length() <= m_tightArea)
 			{
-				m_bitsEachFlg[RestEnemy1Flg] = true;
-
-				// 拘束UI情報があるとき
-				if (spRestraintUI)
+				// 左クリックしたとき
+				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 				{
-					spRestraintUI->SetRestraintFlg(true);
-				}
+					m_bitsEachFlg[EachFlgType::RestEnemy1Flg] = true;
 
-				// "ActionRestraint"に切り替え
-				ChangeActionState(std::make_shared<ActionRestraint>());
-				return;
+					// 拘束UI情報があるとき
+					if (spRestraintUI)
+					{
+						spRestraintUI->SetRestraintFlg(true);
+					}
+
+					// "ActionRestraint"に切り替え
+					ChangeActionState(std::make_shared<ActionRestraint>());
+					return;
+				}
 			}
 		}
 
@@ -694,25 +674,29 @@ void Player::RestraintProc()
 		// プレイヤーと敵の座標の差ベクトルを算出
 		diffVec2 = parentPos2 - m_pos;
 
-		// 差ベクトルが拘束エリア範囲内のとき
-		if (diffVec2.Length() <= m_tightArea)
+		if (spEnemy_2->GetSitType() != Enemy_2::SituationType::Aressted_Death &&
+			spEnemy_2->GetSitType() != Enemy_2::SituationType::Death)
 		{
-			// 左クリックしたとき
-			if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+			// 差ベクトルが拘束エリア範囲内のとき
+			if (diffVec2.Length() <= m_tightArea)
 			{
-				m_bitsEachFlg[RestEnemy2Flg] = true;
-
-				// 拘束UI情報があるとき
-				if (spRestraintUI)
+				// 左クリックしたとき
+				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 				{
-					spRestraintUI->SetRestraintFlg(true);
+					m_bitsEachFlg[EachFlgType::RestEnemy2Flg] = true;
+
+					// 拘束UI情報があるとき
+					if (spRestraintUI)
+					{
+						spRestraintUI->SetRestraintFlg(true);
+					}
+
+					// "ActionRestraint"に切り替え
+					ChangeActionState(std::make_shared<ActionRestraint>());
+					return;
 				}
 
-				// "ActionRestraint"に切り替え
-				ChangeActionState(std::make_shared<ActionRestraint>());
-				return;
 			}
-
 		}
 	}
 
@@ -723,25 +707,28 @@ void Player::RestraintProc()
 		// プレイヤーと敵の座標の差ベクトルを算出
 		diffVec3 = parentPos3 - m_pos;
 
-		// 差ベクトルが拘束エリア範囲内のとき
-		if (diffVec3.Length() <= m_tightArea)
+		if (spEnemy_3->GetSitType() != Enemy_3::SituationType::Aressted_Death &&
+			spEnemy_3->GetSitType() != Enemy_3::SituationType::Death)
 		{
-			// 左クリックしたとき
-			if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+		// 差ベクトルが拘束エリア範囲内のとき
+			if (diffVec3.Length() <= m_tightArea)
 			{
-				m_bitsEachFlg[RestEnemy3Flg] = true;
-
-				// 拘束UI情報があるとき
-				if (spRestraintUI)
+				// 左クリックしたとき
+				if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 				{
-					spRestraintUI->SetRestraintFlg(true);
+					m_bitsEachFlg[EachFlgType::RestEnemy3Flg] = true;
+
+					// 拘束UI情報があるとき
+					if (spRestraintUI)
+					{
+						spRestraintUI->SetRestraintFlg(true);
+					}
+
+					// "ActionRestraint"に切り替え
+					ChangeActionState(std::make_shared<ActionRestraint>());
+					return;
 				}
-
-				// "ActionRestraint"に切り替え
-				ChangeActionState(std::make_shared<ActionRestraint>());
-				return;
 			}
-
 		}
 	}
 }
@@ -776,11 +763,10 @@ void Player::ActionIdle::Enter(Player& _owner)
 	// リロード時の現在のアニメーションフレームが52.5f以上かつ60.0f未満のとき
 	if (_owner.m_nowAnimeFrm >= 52.5f && _owner.m_nowAnimeFrm <= _owner.m_reloadFrmMax)
 	{
-		// プレイヤーの状態が"停止状態"またはプレイヤーの姿勢状態が"立ち状態"でないとき
-		if (_owner.m_sType != SituationType::Idle || _owner.m_posType != PostureType::Stand)
+		// プレイヤーの状態が"停止状態"でないとき
+		if (_owner.m_sType != SituationType::Idle)
 		{
-			// プレイヤーの状態を"停止状態"にし、プレイヤーの姿勢状態を"立ち状態"にする
-			_owner.m_posType = PostureType::Stand;
+			// プレイヤーの状態を"停止状態"にする
 			_owner.m_sType = SituationType::Idle;
 			// プレイヤーの上半身と下半身のアニメーションを"Idle"に切り替え
 			_owner.ChangeAnimation("Idle", _owner.m_nowAnimeFrm);
@@ -791,11 +777,10 @@ void Player::ActionIdle::Enter(Player& _owner)
 	{
 		// 現在のアニメーションフレームを初期化
 		_owner.m_nowAnimeFrm = 0.0f;
-		// プレイヤーの状態が"停止状態"またはプレイヤーの姿勢状態が"立ち状態"でないとき
-		if (_owner.m_sType != SituationType::Idle || _owner.m_posType != PostureType::Stand)
+		// プレイヤーの状態が"停止状態"でないとき
+		if (_owner.m_sType != SituationType::Idle)
 		{
-			// プレイヤーの状態を"停止状態"にし、プレイヤーの姿勢状態を"立ち状態"にする
-			_owner.m_posType = PostureType::Stand;
+			// プレイヤーの状態を"停止状態"にする
 			_owner.m_sType = SituationType::Idle;
 			// プレイヤーの上半身と下半身のアニメーションを"Idle"に切り替え
 			_owner.ChangeAnimation("Idle");
@@ -853,35 +838,6 @@ void Player::ActionIdle::Update(Player& _owner)
 		{
 			_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = false;
 		}
-	}
-
-	// "C"キーを押したとき
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		// 姿勢状態切り替えキーフラグがfalseのとき
-		if (!_owner.m_bitsKeyFlg[KeyFlgType::PosKey])
-		{
-			// 姿勢状態切り替えキーフラグをtrueにし、
-			// カメラの状態を切り替え、ActionSitに切り替える
-			_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = true;
-			_owner.ChangeActionState(std::make_shared<ActionSit>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	// キーが離されたとき
-	else
-	{
-		// 姿勢状態切り替えキーフラグ
-		_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = false;
 	}
 
 	// 自動リロード処理
@@ -996,35 +952,6 @@ void Player::ActionWalk::Update(Player& _owner)
 		}
 	}
 
-	// "C"キーが押されたとき
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		// 姿勢状態切り替えキーフラグがfalseのとき
-		if (!_owner.m_bitsKeyFlg[KeyFlgType::PosKey])
-		{
-			// 姿勢状態切り替えキーフラグをtrueにし、
-			// カメラの状態を切り替え、ActionSitに切り替え
-			_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = true;
-			_owner.ChangeActionState(std::make_shared<ActionSit>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	// キーが離されたとき
-	else
-	{
-		// 姿勢状態切り替えキーフラグをfalseにする
-		_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = false;
-	}
-
 	// マウス右クリックされたとき、ActionReadyに切り替え 
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
@@ -1112,12 +1039,8 @@ void Player::ActionRun::Update(Player& _owner)
 	// CTRLキーが押されたとき
 	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
 	{
-		// プレイヤーの姿勢状態が"立ち状態"であるとき、ActionWalkに切り替え
-		if (_owner.m_posType == PostureType::Stand)
-		{
-			_owner.ChangeActionState(std::make_shared<ActionWalk>());
-			return;
-		}
+		_owner.ChangeActionState(std::make_shared<ActionWalk>());
+		return;
 	}
 
 	// 銃の情報があるとき
@@ -1144,35 +1067,6 @@ void Player::ActionRun::Update(Player& _owner)
 			// リロードキーフラグをfalseにする
 			_owner.m_bitsKeyFlg[KeyFlgType::ReloadKey] = false;
 		}
-	}
-
-	// "C"キーが押されたとき
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		// 姿勢状態切り替えフラグがfalseのとき
-		if (!_owner.m_bitsKeyFlg[KeyFlgType::PosKey])
-		{
-			// 姿勢状態切り替えキーフラグをtrueにし、
-			// カメラの状態を切り替え、ActionSitに切り替え
-			_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = true;
-			_owner.ChangeActionState(std::make_shared<ActionSit>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	// 離されたとき
-	else
-	{
-		// 姿勢状態切り替えフラグをfalseにする
-		_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = false;
 	}
 
 	// マウス右クリックされたとき、ActionReadyに切り替え
@@ -1500,7 +1394,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 	if (_owner.m_nowAnimeFrm >= _owner.m_grabFrm)
 	{
 
-		if (_owner.m_bitsEachFlg[RestEnemy1Flg])
+		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
 		{
 			if (spEnemy_1)
 			{
@@ -1508,7 +1402,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[RestEnemy2Flg])
+		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
 		{
 			if (spEnemy_2)
 			{
@@ -1516,7 +1410,7 @@ void Player::ActionRestraint::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[RestEnemy3Flg])
+		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
 		{
 			if (spEnemy_3)
 			{
@@ -1590,7 +1484,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							_owner.m_spItemCollectSound->Play();
 						}
 
-						if (_owner.m_bitsEachFlg[RestEnemy1Flg])
+						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
 						{
 							if (spEnemy_1)
 							{
@@ -1598,7 +1492,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[RestEnemy2Flg])
+						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
 						{
 							if (spEnemy_2)
 							{
@@ -1606,7 +1500,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[RestEnemy3Flg])
+						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
 						{
 							if (spEnemy_3)
 							{
@@ -1650,7 +1544,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							_owner.m_spItemCollectSound->Play();
 						}
 
-						if (_owner.m_bitsEachFlg[RestEnemy1Flg])
+						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
 						{
 							if (spEnemy_1)
 							{
@@ -1695,7 +1589,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[RestEnemy2Flg])
+						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
 						{
 							if (spEnemy_2)
 							{
@@ -1740,7 +1634,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 							}
 						}
 
-						if (_owner.m_bitsEachFlg[RestEnemy3Flg])
+						if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
 						{
 							if (spEnemy_3)
 							{
@@ -1797,7 +1691,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 	}
 	else
 	{
-		if (_owner.m_bitsEachFlg[RestEnemy1Flg])
+		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy1Flg])
 		{
 			_owner.m_bitsEachFlg[RestEnemy1Flg] = false;
 
@@ -1807,7 +1701,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[RestEnemy2Flg])
+		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy2Flg])
 		{
 			_owner.m_bitsEachFlg[RestEnemy2Flg] = false;
 
@@ -1817,7 +1711,7 @@ void Player::ActionRestraint_Idle::Update(Player& _owner)
 			}
 		}
 
-		if (_owner.m_bitsEachFlg[RestEnemy3Flg])
+		if (_owner.m_bitsEachFlg[EachFlgType::RestEnemy3Flg])
 		{
 			_owner.m_bitsEachFlg[RestEnemy3Flg] = false;
 
@@ -1863,9 +1757,9 @@ void Player::ActionKill::Update(Player& _owner)
 
 	if (_owner.m_nowAnimeFrm >= _owner.m_exeFrm)
 	{
-		if (!_owner.m_bitsEachFlg[ExeFlg])
+		if (!_owner.m_bitsEachFlg[EachFlgType::ExeFlg])
 		{
-			_owner.m_bitsEachFlg[ExeFlg] = true;
+			_owner.m_bitsEachFlg[EachFlgType::ExeFlg] = true;
 
 			if (_owner.m_spExeSound->IsStopped())
 			{
@@ -1892,9 +1786,9 @@ void Player::ActionKill::Exit(Player& _owner)
 		_owner.m_nowAnimeFrm = 0.0f;
 	}
 
-	if (_owner.m_bitsEachFlg[ExeFlg])
+	if (_owner.m_bitsEachFlg[EachFlgType::ExeFlg])
 	{
-		_owner.m_bitsEachFlg[ExeFlg] = false;
+		_owner.m_bitsEachFlg[EachFlgType::ExeFlg] = false;
 	}
 }
 
@@ -2193,35 +2087,6 @@ void Player::ActionReload_Walk::Update(Player& _owner)
 		}
 	}
 
-	// "C"キーが押されたとき
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		// 姿勢状態切り替えフラグがfalseのとき
-		if (!_owner.m_bitsKeyFlg[KeyFlgType::PosKey])
-		{
-			// 姿勢状態切り替えフラグをtrueにし、
-			// カメラの状態を切り替え、ActionSitに切り替え
-			_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = true;
-			_owner.ChangeActionState(std::make_shared<ActionSit>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::TpsL:
-				spCamera->ChangeSitL();
-				break;
-			case TPSCamera::CameraType::TpsR:
-				spCamera->ChangeSitR();
-				break;
-			}
-			return;
-		}
-	}
-	// キーが離されたとき
-	else
-	{
-		// 姿勢状態切り替えフラグをfalseにする
-		_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = false;
-	}
-
 	// カメラ情報があるとき
 	if (spCamera)
 	{
@@ -2412,364 +2277,6 @@ void Player::ActionReload_Run::Exit(Player& _owner)
 	}
 }
 
-void Player::ActionSit::Enter(Player& _owner)
-{
-	// プレイヤーの姿勢状態が"しゃがみ状態"でないとき
-	if (_owner.m_posType != PostureType::Sit)
-	{
-		// 現在のアニメーションフレームを初期化し、
-		// アニメーションを"Sit"に切り替え
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.ChangeAnimation("Sit", false);
-		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
-	}
-}
-
-void Player::ActionSit::Update(Player& _owner)
-{
-	// アニメーションフレームを更新
-	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
-
-	// アニメーションフレームが最後まで再生されたら
-	if (_owner.m_nowAnimeFrm >= _owner.m_sitFrmMax)
-	{
-		// ActionSit_Idleに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionSit_Idle>());
-		return;
-	}
-}
-
-void Player::ActionSit::Exit(Player& _owner)
-{
-	// アニメーションフレームが最後まで再生されていたら
-	if (_owner.m_nowAnimeFrm >= _owner.m_sitFrmMax)
-	{
-		// 現在のアニメーションフレームを初期化する
-		_owner.m_nowAnimeFrm = 0.0f;
-	}
-}
-
-void Player::ActionStand::Enter(Player& _owner)
-{
-	// プレイヤーの姿勢状態が"立ち状態"でないとき
-	if (_owner.m_posType != PostureType::Stand)
-	{
-		// 現在のアニメーションフレームを初期化し、
-		// アニメーションを"Stand"に切り替え
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.ChangeAnimation("Stand");
-		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
-	}
-}
-
-void Player::ActionStand::Update(Player& _owner)
-{
-	// アニメーションフレームを更新
-	_owner.m_nowAnimeFrm += _owner.m_animFrmSpd;
-
-	// アニメーションフレームが最後まで再生されていたら
-	if (_owner.m_nowAnimeFrm >= _owner.m_standFrmMax)
-	{
-		// ActionIdleに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionIdle>());
-		return;
-	}
-}
-
-void Player::ActionStand::Exit(Player& _owner)
-{
-	// 現在のアニメションフレームが最後まで再生されていたら
-	if (_owner.m_nowAnimeFrm >= _owner.m_standFrmMax)
-	{
-		// 現在のアニメーションフレームを初期化する
-		_owner.m_nowAnimeFrm = 0.0f;
-	}
-}
-
-void Player::ActionSit_Idle::Enter(Player& _owner)
-{
-	// プレイヤーの状態が"停止状態"でないとき、
-	// またはプレイヤーの姿勢状態が"しゃがみ状態"でないとき
-	if (_owner.m_sType != SituationType::Idle || _owner.m_posType != PostureType::Sit)
-	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"停止状態"に切り替え、
-		// プレイヤーの姿勢状態を"しゃがみ状態"に切り替える
-		_owner.m_nowAnimeFrm	= 0.0f;
-		_owner.m_sType			= SituationType::Idle;
-		_owner.m_posType		= PostureType::Sit;
-		// アニメーションを"Sit_Idle"に切り替え
-		_owner.ChangeAnimation("Sit_Idle");
-		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
-	}
-}
-
-void Player::ActionSit_Idle::Update(Player& _owner)
-{
-	const std::shared_ptr<RestraintUI>			spRestraintUI	= _owner.m_wpRestraintUI.lock();
-	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
-
-	// 移動方向を初期化
-	_owner.m_moveDir = Math::Vector3::Zero;
-
-	// 各移動キーが押されたとき、対応した方向に向ける
-	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward;	}
-	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
-	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
-	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
-
-	// 移動方向のベクトルの長さが0より大きいとき
-	if (_owner.m_moveDir.LengthSquared() > 0)
-	{
-		// ActionSit_Walkに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionSit_Walk>());
-		return;
-	}
-
-	// 拘束処理
-	_owner.RestraintProc();
-
-	// "C"キーが押されたとき
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		// 姿勢状態切り替えフラグがfalseのとき
-		if (!_owner.m_bitsKeyFlg[KeyFlgType::PosKey])
-		{
-			// 姿勢状態切り替えフラグをtrueにし、
-			// カメラの状態を切り替え、ActionStandに切り替える
-			_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = true;
-			_owner.ChangeActionState(std::make_shared<ActionStand>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::SitL:
-				spCamera->ChangeTPSL();
-				break;
-			case TPSCamera::CameraType::SitR:
-				spCamera->ChangeTPSR();
-				break;
-			}
-			return;
-		}
-	}
-	// キーが離されたとき
-	else
-	{
-		// 姿勢状態切り替えフラグをfalseにする
-		_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = false;
-	}
-
-	// 右クリックされたとき
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		// ActionSit_Readyに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionSit_Ready>());
-		return;
-	}
-
-	// 行列作成
-	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
-}
-
-void Player::ActionSit_Idle::Exit(Player& _owner)
-{
-	// 現在のアニメーションフレームを初期化する
-	_owner.m_nowAnimeFrm = 0.0f;
-}
-
-void Player::ActionSit_Walk::Enter(Player& _owner)
-{
-	// プレイヤーの状態が"歩行状態"でないとき
-	if (_owner.m_sType != SituationType::Walk)
-	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"歩行状態"に切り替え
-		_owner.m_nowAnimeFrm = 0.0f;
-		_owner.m_sType = SituationType::Walk;
-		// アニメーションを"Sit_Walk"に切り替え
-		_owner.ChangeAnimation("Sit_Walk");
-		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
-	}
-}
-
-void Player::ActionSit_Walk::Update(Player& _owner)
-{
-	const std::shared_ptr<RestraintUI>			spRestraintUI	= _owner.m_wpRestraintUI.lock();
-	const std::shared_ptr<TPSCamera>			spCamera		= _owner.m_wpCamera.lock();
-
-	// 現在の移動速度がしゃがみ歩行速度と同じでないとき
-	if (_owner.m_moveSpeed != _owner.m_sitWalkMoveSpd)
-	{
-		// 移動速度を初期化
-		_owner.m_moveSpeed = _owner.m_sitWalkMoveSpd;
-	}
-
-	// 移動方向を初期化
-	_owner.m_moveDir = Math::Vector3::Zero;
-
-	// 各移動キーが押されたとき、対応した方向に向ける
-	if (GetAsyncKeyState('W') & 0x8000) { _owner.m_moveDir += Math::Vector3::Backward;	}
-	if (GetAsyncKeyState('S') & 0x8000) { _owner.m_moveDir += Math::Vector3::Forward;	}
-	if (GetAsyncKeyState('A') & 0x8000) { _owner.m_moveDir += Math::Vector3::Left;		}
-	if (GetAsyncKeyState('D') & 0x8000) { _owner.m_moveDir += Math::Vector3::Right;		}
-
-	// 移動方向のベクトルの長さが0であるとき
-	if (_owner.m_moveDir.LengthSquared() == 0)
-	{
-		// ActionSit_Idleに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionSit_Idle>());
-		return;
-	}
-
-	// 拘束処理
-	_owner.RestraintProc();
-
-	// "C"キーが押されたとき
-	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		// 姿勢状態切り替えフラグがfalseのとき
-		if (!_owner.m_bitsKeyFlg[KeyFlgType::PosKey])
-		{
-			// 姿勢状態切り替えフラグをtrueにし、
-			// カメラの状態を切り替え、ActionStandに切り替え
-			_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = true;
-			_owner.ChangeActionState(std::make_shared<ActionStand>());
-			switch (spCamera->GetCamType())
-			{
-			case TPSCamera::CameraType::SitL:
-				spCamera->ChangeTPSL();
-				break;
-			case TPSCamera::CameraType::SitR:
-				spCamera->ChangeTPSR();
-				break;
-			}
-			return;
-		}
-	}
-	// キーが離されたとき
-	else
-	{
-		// 姿勢状態切り替えフラグをfalseにする
-		_owner.m_bitsKeyFlg[KeyFlgType::PosKey] = false;
-	}
-
-	// 右クリックされたとき
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		// ActionSit_Readyに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionSit_Ready>());
-	}
-
-	// カメラ情報があるとき
-	if (spCamera)
-	{
-		// 移動方向の法線ベクトルをカメラの回転行列に変換
-		_owner.m_moveDir = _owner.m_moveDir.TransformNormal(_owner.m_moveDir, spCamera->GetRotationYMatrix());
-	}
-
-	// 移動方向を初期化
-	_owner.m_moveDir.Normalize();
-
-	// 移動方向と移動速度を合成し、座標に加算して更新
-	_owner.m_pos += _owner.m_moveDir * _owner.m_moveSpeed;
-
-	//	キャラクターの回転角度を計算する
-	_owner.UpdateRotate(_owner.m_moveDir);
-
-	// 行列作成
-	_owner.m_mRot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_owner.m_angle.y));
-}
-
-void Player::ActionSit_Walk::Exit(Player& _owner)
-{
-	// 現在のアニメーションフレームを初期化する
-	_owner.m_nowAnimeFrm = 0.0f;
-}
-
-void Player::ActionSit_Ready::Enter(Player& _owner)
-{
-	// プレイヤーの状態が"構え状態"でないとき、
-	// またはプレイヤーの姿勢状態が"しゃがみ状態"でないとき
-	if (_owner.m_sType != SituationType::Ready || _owner.m_posType != PostureType::Sit)
-	{
-		// 現在のアニメーションフレームを初期化し、
-		// プレイヤーの状態を"構え状態"に切り替え、
-		// プレイヤーの姿勢状態を"しゃがみ状態"に切り替える
-		_owner.m_nowAnimeFrm	= 0.0f;
-		_owner.m_sType			= SituationType::Ready;
-		_owner.m_posType		= PostureType::Sit;
-		// アニメーションを"Sit_Ready"に切り替え
-		_owner.ChangeAnimation("Sit_Ready");
-		_owner.m_animeSpeed = _owner.m_normalAnimSpd;
-	}
-}
-
-void Player::ActionSit_Ready::Update(Player& _owner)
-{
-	// カメラとレティクル情報取得
-	const std::shared_ptr<TPSCamera> spCamera = _owner.m_wpCamera.lock();
-	const std::shared_ptr<Reticle>	spReticle = _owner.m_wpReticle.lock();
-
-	// カメラの行列を格納するためにローカル行列を宣言
-	Math::Matrix camRotMat;
-
-	// カメラの情報があれば、カメラの行列をローカル行列に格納
-	if (spCamera)
-	{
-		camRotMat = spCamera->GetRotationMatrix();
-	}
-
-	// 右クリックされたとき
-	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		// レティクルを表示する
-		spReticle->SetActive(true);
-
-		// カメラの状態を切り替え
-		switch (spCamera->GetPastCamType())
-		{
-		case TPSCamera::CameraType::SitR:
-			spCamera->ChangeSitAimR();
-			break;
-		case TPSCamera::CameraType::SitL:
-			spCamera->ChangeSitAimL();
-			break;
-		}
-	}
-	// クリックが離されたとき
-	else
-	{
-		// レティクルを非表示にする
-		spReticle->SetActive(false);
-
-		// カメラの状態を切り替え
-		switch (spCamera->GetPastCamType())
-		{
-		case TPSCamera::CameraType::SitR:
-			spCamera->ChangeSitR();
-			break;
-		case TPSCamera::CameraType::SitL:
-			spCamera->ChangeSitL();
-			break;
-		}
-
-		// ActionSit_Idleに切り替え
-		_owner.ChangeActionState(std::make_shared<ActionSit_Idle>());
-		return;
-	}
-
-	// カメラのローカル行列を格納
-	_owner.m_mRot = camRotMat;
-}
-
-void Player::ActionSit_Ready::Exit(Player& _owner)
-{
-	// 現在のアニメーションフレームを初期化する
-	_owner.m_nowAnimeFrm = 0.0f;
-}
-//================================================================================================================================
-// ステートパターン管理系
-//================================================================================================================================
-
 void Player::ActionDeath::Enter(Player& _owner)
 {
 	// プレイヤーの状態が"死亡状態"でないとき
@@ -2793,7 +2300,10 @@ void Player::ActionDeath::Update(Player& _owner)
 	{
 		_owner.m_spDeathSound->Play();
 
-		_owner.m_bitsEachFlg[FeedOutFlg]	= true;
-		_owner.m_bitsEachFlg[DeathFlg]		= true;
+		_owner.m_bitsEachFlg[EachFlgType::FeedOutFlg]	= true;
+		_owner.m_bitsEachFlg[EachFlgType::DeathFlg]		= true;
 	}
 }
+//================================================================================================================================
+// ステートパターン管理系
+//================================================================================================================================

@@ -45,14 +45,14 @@ void RestraintUI::Update()
 		{
 			if (!m_bitsEachFlg[Able1Flg])
 			{
-				m_bitsEachFlg[Able1Flg] = true;
+				m_bitsEachFlg.set(Able1Flg);
 			}
 		}
 		else
 		{
 			if (m_bitsEachFlg[Able1Flg])
 			{
-				m_bitsEachFlg[Able1Flg] = false;
+				m_bitsEachFlg.reset(Able1Flg);
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
@@ -66,14 +66,14 @@ void RestraintUI::Update()
 		{
 			if (!m_bitsEachFlg[Able2Flg])
 			{
-				m_bitsEachFlg[Able2Flg] = true;
+				m_bitsEachFlg.set(Able2Flg);
 			}
 		}
 		else
 		{
 			if (m_bitsEachFlg[Able2Flg])
 			{
-				m_bitsEachFlg[Able2Flg] = false;
+				m_bitsEachFlg.reset(Able2Flg);
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
@@ -87,14 +87,14 @@ void RestraintUI::Update()
 		{
 			if (!m_bitsEachFlg[Able3Flg])
 			{
-				m_bitsEachFlg[Able3Flg] = true;
+				m_bitsEachFlg.set(Able3Flg);
 			}
 		}
 		else
 		{
 			if (m_bitsEachFlg[Able3Flg])
 			{
-				m_bitsEachFlg[Able3Flg] = false;
+				m_bitsEachFlg.reset(Able3Flg);
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}

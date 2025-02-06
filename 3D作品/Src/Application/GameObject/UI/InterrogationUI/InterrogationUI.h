@@ -16,7 +16,7 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void SetUseFlg(const bool& _useFlg) { m_bitsEachFlg[UseFlg] = _useFlg; }
+	void SetUseFlg(const bool& _useFlg) { m_bitsEachFlg.set(UseFlg, _useFlg); }
 
 	void SetPlayer(const std::shared_ptr<Player>& _spPlayer)
 	{

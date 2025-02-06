@@ -13,14 +13,6 @@ public:
 		TpsL,
 		AimR,
 		AimL,
-		SitR,
-		SitL,
-		SitAimR,
-		SitAimL,
-		CreepR,
-		CreepL,
-		CreepAimR,
-		CreepAimL
 	};
 
 	void				Init			()			override;
@@ -32,13 +24,9 @@ public:
 	void				ChangeTPSL		();
 	void				ChangeAimR		();
 	void				ChangeAimL		();
-	void				ChangeSitR		();
-	void				ChangeSitL		();
-	void				ChangeSitAimR	();
-	void				ChangeSitAimL	();
 
-	const CameraType	GetPastCamType	()	const					{ return m_pastCamType; }
-	const CameraType	GetCamType		()	const					{ return m_camType; }
+	const CameraType	GetPastCamType	()	const	{ return m_pastCamType; }
+	const CameraType	GetCamType		()	const	{ return m_camType; }
 
 private:
 
@@ -46,10 +34,6 @@ private:
 	static constexpr Math::Vector3 m_aimLBasePoint	= { -0.7f,1.75f,-0.8f };
 	static constexpr Math::Vector3 m_tpsRBasePoint	= { 0.5f, 1.75f, -3.f };
 	static constexpr Math::Vector3 m_tpsLBasePoint	= { -0.5f, 1.75f, -3.f };
-	static constexpr Math::Vector3 m_sitRBasePoint	= { 0.5f,1.45f,-3.f };
-	static constexpr Math::Vector3 m_sitLBasePoint	= { -0.5f,1.45f,-3.f };
-	static constexpr Math::Vector3 m_sitAimRPoint	= { 0.7f, 1.25f, -0.8f };
-	static constexpr Math::Vector3 m_sitAimLPoint	= { -0.7f,1.25f,-0.8f };
 
 	Math::Vector3		m_basePoint		= Math::Vector3::Zero;
 

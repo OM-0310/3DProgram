@@ -15,12 +15,19 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void Use		() { m_bitsEachFlg[m_totalEachFlg] = true; }
+	void Use		() { m_bitsEachFlg.set(UseFlg, true); }
 
 	void SetCardKey(const std::shared_ptr<CardKey>& _spCard)
 	{
 		m_wpCard = _spCard;
 	}
+
+private:
+
+	enum
+	{
+		UseFlg
+	};
 
 private:
 

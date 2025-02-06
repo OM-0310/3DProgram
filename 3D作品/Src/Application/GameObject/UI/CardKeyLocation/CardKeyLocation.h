@@ -15,16 +15,17 @@ public:
 	void Update		()	override;
 	void DrawSprite	()	override;
 
-	void Open	(const bool _active)		{ m_bitsEachFlg[ActiveFlg]		= _active;			}	// 表示処理
-	void Consent(const bool _permissionFlg) { m_bitsEachFlg[PermissionFlg]	= _permissionFlg;	}	// 表示許可処理
+	void Open	(const bool& _active)			{ m_bitsEachFlg.set(ActiveFlg, _active);			}	// 表示処理
+	void Consent(const bool& _permissionFlg)	{ m_bitsEachFlg.set(PermissionFlg, _permissionFlg); }	// 表示許可処理
+	void ClassDestruction() { m_isExpired = true; }
 
 	void SetCardKey(const std::shared_ptr<CardKey>& _spCardKey)
 	{
 		m_wpCardKey = _spCardKey;
 	}
 
-	const bool GetActive		() const { return m_bitsEachFlg.test(ActiveFlg);		}
-	const bool GetPermissionFlg	() const { return m_bitsEachFlg.test(PermissionFlg);	}
+	const bool GetActive		() const;
+	const bool GetPermissionFlg	() const;
 
 private:
 
@@ -38,7 +39,7 @@ private:
 
 	std::weak_ptr<CardKey>		m_wpCardKey;
 
-	static constexpr short		m_totalEachFlg	= 1;
+	static constexpr short		m_totalEachFlg	= 2;
 	std::bitset<m_totalEachFlg> m_bitsEachFlg;
 
 	static constexpr float		m_posMulti		= 2.5f;		// 座標掛け算値

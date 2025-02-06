@@ -358,6 +358,12 @@
     <Filter Include="Src\Application\GameObject\UI\MissionDisplayUI">
       <UniqueIdentifier>{bd6c514c-f537-4f17-863e-aeee679f3ff4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Building\Furniture">
+      <UniqueIdentifier>{bda1c5f4-f8eb-4ac1-bf95-76857830c117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Terrains\Building\Furniture\Bed">
+      <UniqueIdentifier>{1ca1e8ac-5a94-4f72-8630-99140b7cf7d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -798,6 +804,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\MissionDisplayUI\MissionDisplayUI.h">
       <Filter>Src\Application\GameObject\UI\MissionDisplayUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Terrains\Building\Furniture\Bed\Bed.h">
+      <Filter>Src\Application\GameObject\Terrains\Building\Furniture\Bed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1210,6 +1219,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\MissionDisplayUI\MissionDisplayUI.cpp">
       <Filter>Src\Application\GameObject\UI\MissionDisplayUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Terrains\Building\Furniture\Bed\Bed.cpp">
+      <Filter>Src\Application\GameObject\Terrains\Building\Furniture\Bed</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

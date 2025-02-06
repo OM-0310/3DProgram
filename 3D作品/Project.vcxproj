@@ -199,6 +199,7 @@
     <ClInclude Include="Src\Application\GameObject\Terrains\ArmoredCar\ArmoredCar.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.h" />
+    <ClInclude Include="Src\Application\GameObject\Terrains\Building\Furniture\Bed\Bed.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Building\Light\Light.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Grass\Grass.h" />
     <ClInclude Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.h" />
@@ -340,6 +341,7 @@
     <ClCompile Include="Src\Application\GameObject\Terrains\ArmoredCar\ArmoredCar.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Main\Building_Main.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Building_Roof\Building_Roof.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Terrains\Building\Furniture\Bed\Bed.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Building\Light\Light.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Grass\Grass.cpp" />
     <ClCompile Include="Src\Application\GameObject\Terrains\Ground\Ground_Bottom\Ground_Bottom.cpp" />

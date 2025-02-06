@@ -12,7 +12,11 @@ void CardKeyUI::Init()
 	m_alpha							= 0.f;
 	m_alphaSpeed					= 0.2f;
 
-	m_bitsEachFlg[m_totalEachFlg]	= false;
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
+	{
+		m_bitsEachFlg.reset(i);
+	}
+
 	m_lifeSpan						= m_lifeSpanMax;
 
 	m_color							= { 1.f,1.f,1.f,m_alpha };
@@ -25,7 +29,7 @@ void CardKeyUI::Update()
 	const std::shared_ptr<CardKey> spCard = m_wpCard.lock();
 
 	// 使用フラグがfalseのとき
-	if (!m_bitsEachFlg[m_totalEachFlg])
+	if (!m_bitsEachFlg.test(UseFlg))
 	{
 		// カードキーの情報があるとき
 		if (spCard)
@@ -34,7 +38,7 @@ void CardKeyUI::Update()
 			if (spCard->IsExpired())
 			{
 				// 使用フラグをtrueにする
-				m_bitsEachFlg[m_totalEachFlg] = true;
+				m_bitsEachFlg.set(UseFlg, true);
 			}
 
 			// カードキーのアイテム回収フラグがtrueのとき

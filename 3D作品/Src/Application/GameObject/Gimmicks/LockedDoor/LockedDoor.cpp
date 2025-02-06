@@ -25,9 +25,9 @@ void LockedDoor::Init()
 	m_pos			= { 4.5f,-0.9f,-18.f };
 	m_eventPos		= { 4.f,0.f,-18.f };
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 
 	m_objectType = KdGameObject::ObjectType::TypeObstacles;
@@ -74,26 +74,26 @@ void LockedDoor::Update()
 					if (spPlayer->GetItemCollType() == Player::ItemCollectType::CardKeyCollect)
 					{
 						// 開錠可能フラグをtrueしてループを抜ける
-						m_bitsEachFlg[OpenAbleFlg] = true;
+						m_bitsEachFlg.set(OpenAbleFlg, true);
 						m_debugColor = kGreenColor;
 					}
 					// そうでなければ
 					else
 					{	
 						// ロックフラグがtrueであれば
-						if (m_bitsEachFlg[LockFlg])
+						if (m_bitsEachFlg.test(LockFlg))
 						{
 							// 開錠可能フラグをtrueしてループを抜ける
-							m_bitsEachFlg[OpenAbleFlg] = true;
+							m_bitsEachFlg.set(OpenAbleFlg, true);
 							m_debugColor = kGreenColor;
 
 						}
 						// falseであれば
 						else
 						{
-							if (!m_bitsEachFlg[UIFlg])
+							if (!m_bitsEachFlg.test(UIFlg))
 							{
-								m_bitsEachFlg[UIFlg] = true;
+								m_bitsEachFlg.set(UIFlg, true);
 
 								GenerateNeedCardKeyUI();
 
@@ -104,7 +104,7 @@ void LockedDoor::Update()
 							}
 
 							// 開錠可能フラグをfalseしてループを抜ける
-							m_bitsEachFlg[OpenAbleFlg] = false;
+							m_bitsEachFlg.set(OpenAbleFlg, false);
 
 							m_debugColor = kBlueColor;
 						}
@@ -115,20 +115,20 @@ void LockedDoor::Update()
 			else
 			{
 				// 開錠可能フラグをfalseにしてループを抜ける
-				m_bitsEachFlg[OpenAbleFlg] = false;
+				m_bitsEachFlg.set(OpenAbleFlg, false);
 				m_debugColor	= kRedColor;
 			}
 		}
 	}
 
 	// ロックフラグがtrueであれば
-	if (m_bitsEachFlg[LockFlg])
+	if (m_bitsEachFlg.test(LockFlg))
 	{
 		// 開錠可能フラグがtrueであれば
-		if (m_bitsEachFlg[OpenAbleFlg])
+		if (m_bitsEachFlg.test(OpenAbleFlg))
 		{
 			// 開錠フラグをtrueにする
-			m_bitsEachFlg[OpenFlg] = true;
+			m_bitsEachFlg.set(OpenFlg, true);
 
 			if (m_spOpenSound->IsStopped())
 			{
@@ -138,7 +138,7 @@ void LockedDoor::Update()
 	}
 
 	// 開錠フラグがtrueであれば
-	if (m_bitsEachFlg[OpenFlg])
+	if (m_bitsEachFlg.test(OpenFlg))
 	{
 		// 扉のY座標の値をプラスする
 		m_pos.y += m_moveSpeed;
@@ -149,10 +149,10 @@ void LockedDoor::Update()
 			m_pos.y = m_moveMax;
 
 			// 開錠可能フラグがtrueであれば
-			if (m_bitsEachFlg[OpenAbleFlg])
+			if (m_bitsEachFlg.test(OpenAbleFlg))
 			{
 				// 開錠フラグをfalseにする
-				m_bitsEachFlg[OpenFlg] = false;
+				m_bitsEachFlg.set(OpenFlg, false);
 
 				m_spOpenSound->Play();
 			}
@@ -190,7 +190,7 @@ void LockedDoor::GenerateDepthMapFromLight()
 
 void LockedDoor::Open()
 {
-	m_bitsEachFlg[LockFlg] = true;
+	m_bitsEachFlg.set(LockFlg, true);
 }
 
 void LockedDoor::GenerateNeedCardKeyUI()

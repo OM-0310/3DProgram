@@ -16,15 +16,15 @@ void MissionDisplayUI::Init()
 
 	m_lifeSpan = m_lifeSpanMin;
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 }
 
 void MissionDisplayUI::Update()
 {
-	if (!m_bitsEachFlg[FeedOutFlg])
+	if (!m_bitsEachFlg.test(FeedOutFlg))
 	{
 		m_alpha += m_alphaSpeed;
 
@@ -32,9 +32,9 @@ void MissionDisplayUI::Update()
 		{
 			m_alpha = m_alphaMax;
 
-			if (!m_bitsEachFlg[lifeDecFlg])
+			if (!m_bitsEachFlg.test(lifeDecFlg))
 			{
-				m_bitsEachFlg[lifeDecFlg] = true;
+				m_bitsEachFlg.set(lifeDecFlg, true);
 				m_lifeSpan = m_lifeSpanMax;
 			}
 		}
@@ -50,13 +50,13 @@ void MissionDisplayUI::Update()
 		}
 	}
 
-	if (m_bitsEachFlg[lifeDecFlg])
+	if (m_bitsEachFlg.test(lifeDecFlg))
 	{
 		m_lifeSpan--;
 		if (m_lifeSpan <= m_lifeSpanMin)
 		{
 			m_lifeSpan = m_lifeSpanMin;
-			m_bitsEachFlg[FeedOutFlg] = true;
+			m_bitsEachFlg.set(FeedOutFlg, true);
 		}
 	}
 

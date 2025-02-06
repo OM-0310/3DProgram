@@ -49,9 +49,9 @@ void Enemy_2::Init()
 	m_mMuzzle		= Math::Matrix::CreateTranslation(m_muzzlePos);
 	m_mlocalAresst	= Math::Matrix::CreateTranslation(m_localAresstPos);
 
-	for (int i = 0; i <= m_totalEachFlg; i++)
+	for (uint16_t i = 0; i < m_bitsEachFlg.size(); ++i)
 	{
-		m_bitsEachFlg[i] = false;
+		m_bitsEachFlg.reset(i);
 	}
 
 	m_pos			= { -22.0f,-0.9f,-27.0f };
@@ -292,7 +292,7 @@ void Enemy_2::SearchProc()
 		if (targetVec.Length() < m_discoverArea)
 		{
 			// 発見フラグをtrueにする
-			m_bitsEachFlg[FindFlg] = true;
+			m_bitsEachFlg.set(FindFlg, true);
 		}
 	}
 }
@@ -308,7 +308,7 @@ void Enemy_2::ChaseProc()
 	{
 		_targetPos = _spPlayer->GetPos();
 	}
-	if (m_bitsEachFlg[FindFlg])
+	if (m_bitsEachFlg.test(FindFlg))
 	{
 		m_moveDir = _targetPos - m_pos;
 	}
@@ -409,24 +409,24 @@ void Enemy_2::LostProc()
 	if (targetVec.Length() > m_waryArea)
 	{
 		// 失踪フラグがfalseのとき
-		if (!m_bitsEachFlg[LostFlg])
+		if (!m_bitsEachFlg.test(LostFlg))
 		{
 			// 失踪フラグをtrueにする
-			m_bitsEachFlg[LostFlg] = true;
+			m_bitsEachFlg.set(LostFlg, true);
 		}
 	}
 	else
 	{
 		// 失踪フラグがtrueのとき
-		if (m_bitsEachFlg[LostFlg])
+		if (m_bitsEachFlg.test(LostFlg))
 		{
 			// 失踪フラグをfalseにする
-			m_bitsEachFlg[LostFlg] = false;
+			m_bitsEachFlg.set(LostFlg, false);
 		}
 	}
 
 	// 失踪フラグがtrueのとき
-	if (m_bitsEachFlg[LostFlg])
+	if (m_bitsEachFlg.test(LostFlg))
 	{
 		// 失踪カウントを増やす
 		m_lostCnt++;
@@ -445,10 +445,10 @@ void Enemy_2::LostProc()
 	if (m_lostCnt >= m_lostCntMax)
 	{
 		// 発見フラグがtrueのとき
-		if (m_bitsEachFlg[FindFlg])
+		if (m_bitsEachFlg.test(FindFlg))
 		{
 			// 発見フラグをfalseにする
-			m_bitsEachFlg[FindFlg] = false;
+			m_bitsEachFlg.set(FindFlg, true);
 		}
 
 		// 失踪カウントを最大値に設定
@@ -484,7 +484,7 @@ void Enemy_2::ChangeIdle()
 void Enemy_2::SetDeathFlg(const bool _deathFlg)
 {
 	// 死亡フラグをtrueにする
-	m_bitsEachFlg[DeathFlg] = _deathFlg;
+	m_bitsEachFlg.set(DeathFlg, _deathFlg);
 }
 
 void Enemy_2::ChangeActionState(std::shared_ptr<ActionStateBase> _nextState)
@@ -530,7 +530,7 @@ void Enemy_2::ActionIdle::Update(Enemy_2& _owner)
 	_owner.m_moveDir = Math::Vector3::Zero;
 
 	// 敵がプレイヤーを見つけている状態のとき
-	if (_owner.m_bitsEachFlg[FindFlg])
+	if (_owner.m_bitsEachFlg.test(FindFlg))
 	{
 		// ステートを"走行状態"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDiscover>());
@@ -552,7 +552,7 @@ void Enemy_2::ActionIdle::Update(Enemy_2& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_bitsEachFlg[DeathFlg])
+	if (_owner.m_bitsEachFlg.test(DeathFlg))
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -605,7 +605,7 @@ void Enemy_2::ActionWalk::Update(Enemy_2& _owner)
 	}
 
 	// 敵がプレイヤーを見つけている状態のとき
-	if (_owner.m_bitsEachFlg[FindFlg])
+	if (_owner.m_bitsEachFlg.test(FindFlg))
 	{
 		// ステートを"発見状態"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDiscover>());
@@ -620,7 +620,7 @@ void Enemy_2::ActionWalk::Update(Enemy_2& _owner)
 	}
 
 	// 方向切り替えフラグがfalseのとき
-	if (!_owner.m_bitsEachFlg[DirFlg])
+	if (!_owner.m_bitsEachFlg.test(DirFlg))
 	{
 		_owner.m_moveDir += Math::Vector3::Backward;
 	}
@@ -634,10 +634,10 @@ void Enemy_2::ActionWalk::Update(Enemy_2& _owner)
 	if (_owner.m_pos.z >= _owner.m_arrivalZPos)
 	{
 		// 方向切り替えフラグがfalseのとき
-		if (!_owner.m_bitsEachFlg[DirFlg])
+		if (!_owner.m_bitsEachFlg.test(DirFlg))
 		{
 			// 方向切り替えフラグをtrueにする
-			_owner.m_bitsEachFlg[DirFlg] = true;
+			_owner.m_bitsEachFlg.set(DirFlg, true);
 
 			// Z座標を27.0fに固定
 			_owner.m_pos.z = _owner.m_arrivalZPos;
@@ -651,10 +651,10 @@ void Enemy_2::ActionWalk::Update(Enemy_2& _owner)
 	else if (_owner.m_pos.z <= -_owner.m_arrivalZPos)
 	{
 		// 方向切り替えフラグがtrueのとき
-		if (_owner.m_bitsEachFlg[DirFlg])
+		if (_owner.m_bitsEachFlg.test(DirFlg))
 		{
 			// 方向切り替えフラグをfalseにする
-			_owner.m_bitsEachFlg[DirFlg] = false;
+			_owner.m_bitsEachFlg.set(DirFlg, false);
 
 			// Z座標を-27.0fに固定
 			_owner.m_pos.z = -_owner.m_arrivalZPos;
@@ -666,7 +666,7 @@ void Enemy_2::ActionWalk::Update(Enemy_2& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_bitsEachFlg[DeathFlg])
+	if (_owner.m_bitsEachFlg.test(DeathFlg))
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -822,7 +822,7 @@ void Enemy_2::ActionRun::Update(Enemy_2& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_bitsEachFlg[DeathFlg])
+	if (_owner.m_bitsEachFlg.test(DeathFlg))
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -933,7 +933,7 @@ void Enemy_2::ActionReady::Update(Enemy_2& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_bitsEachFlg[DeathFlg])
+	if (_owner.m_bitsEachFlg.test(DeathFlg))
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -1093,7 +1093,7 @@ void Enemy_2::ActionShot::Update(Enemy_2& _owner)
 	}
 
 	// 死亡フラグがtrueのとき
-	if (_owner.m_bitsEachFlg[DeathFlg])
+	if (_owner.m_bitsEachFlg.test(DeathFlg))
 	{
 		// "ActionDeath"に切り替え
 		_owner.ChangeActionState(std::make_shared<ActionDeath>());
@@ -1127,10 +1127,10 @@ void Enemy_2::ActionAressted::Update(Enemy_2& _owner)
 	const std::shared_ptr<Player> spPlayer = _owner.m_wpPlayer.lock();
 
 	// 発見フラグがfalseのとき
-	if (!_owner.m_bitsEachFlg[FindFlg])
+	if (!_owner.m_bitsEachFlg.test(FindFlg))
 	{
 		// 発見フラグをtrueにする
-		_owner.m_bitsEachFlg[FindFlg] = true;
+		_owner.m_bitsEachFlg.set(FindFlg, true);
 	}
 
 	// プレイヤーの情報があるとき
@@ -1170,11 +1170,11 @@ void Enemy_2::ActionAressted_Death::Update(Enemy_2& _owner)
 	// アニメーションが終了していれば
 	if (_owner.m_nowAnimeFrm >= _owner.m_exeAnimFrm)
 	{
-		_owner.m_bitsEachFlg[DissolveFlg] = true;
+		_owner.m_bitsEachFlg.set(DissolveFlg, true);
 	}
 
 	// ディゾルブフラグがtrueのとき
-	if (_owner.m_bitsEachFlg[DissolveFlg])
+	if (_owner.m_bitsEachFlg.test(DissolveFlg))
 	{
 		// ディゾルブカウントを進める
 		_owner.m_dissolveCnt += _owner.m_dissolveSpd;
@@ -1256,7 +1256,7 @@ void Enemy_2::ActionReload::Update(Enemy_2& _owner)
 			spGun->Reload();
 
 			// 発見フラグがtrueのとき
-			if (_owner.m_bitsEachFlg[FindFlg])
+			if (_owner.m_bitsEachFlg.test(FindFlg))
 			{
 				// ActionReadyに切り替え
 				_owner.ChangeActionState(std::make_shared<ActionReady>());
@@ -1324,11 +1324,11 @@ void Enemy_2::ActionDeath::Update(Enemy_2& _owner)
 	if (_owner.m_nowAnimeFrm >= _owner.m_reloadAnimFrm)
 	{
 		_owner.m_spDeathSound->Stop();
-		_owner.m_bitsEachFlg[DissolveFlg] = true;
+		_owner.m_bitsEachFlg.set(DissolveFlg, true);
 	}
 
 	// ディゾルブフラグがtrueのとき
-	if (_owner.m_bitsEachFlg[DissolveFlg])
+	if (_owner.m_bitsEachFlg.test(DissolveFlg))
 	{
 		// ディゾルブカウントを進める
 		_owner.m_dissolveCnt += _owner.m_dissolveSpd;
